@@ -24,6 +24,13 @@ public class AbsenceResponse {
     private String category;
 
     /**
+     * Add a default constructor which can be used by JSON parsers or other libraries which prefer get/setter methods.
+     */
+    public AbsenceResponse ( ) {
+        //Do not set anything - instead use getters and setters.
+    }
+
+    /**
      * Create a new absence response based on the supplied information.
      * @param company a <code>String</code> of the company that the person who is absent works for.
      * @param username a <code>String</code> of the username of the person making the absence request.
