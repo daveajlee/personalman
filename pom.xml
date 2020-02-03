@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>de.davelee</groupId>
 		<artifactId>ci-springboot-parent-pom</artifactId>
-		<version>1.1.0</version>
+		<version>2.1.0</version>
 	</parent>
 	
 	<!-- Git Connection -->
