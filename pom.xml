@@ -8,10 +8,32 @@
 	<packaging>pom</packaging>
 
 	<name>PersonalMan - RESTful Web Service</name>
+	
+	<parent>
+		<groupId>de.davelee</groupId>
+		<artifactId>ci-springboot-parent-pom</artifactId>
+		<version>1.1.0</version>
+	</parent>
+	
+	<!-- Git Connection -->
+	<scm>
+        <connection>scm:git:https://github.com/daveajlee/personalman</connection>
+        <url>https://github.com/daveajlee/personalman</url>
+  	  	<tag>HEAD</tag>
+  	</scm>
+  	
+  	<!-- GitHub Packages -->
+  	<distributionManagement>
+   		<repository>
+     		<id>github</id>
+     		<name>GitHub daveajlee Apache Maven Packages</name>
+     		<url>https://maven.pkg.github.com/daveajlee/personalman</url>
+   		</repository>
+	</distributionManagement>
 
 	<modules>
-    <module>api</module>
-    <module>server</module>
-  </modules>
+    	<module>api</module>
+    	<module>server</module>
+  	</modules>
 
 </project>
