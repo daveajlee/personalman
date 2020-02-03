@@ -3,7 +3,7 @@
 
 	<groupId>de.davelee.personalman</groupId>
 	<artifactId>personalman_server</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>PersonalMan - REST Server</name>
@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>de.davelee</groupId>
 		<artifactId>personalman</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 
 	<dependencies>
