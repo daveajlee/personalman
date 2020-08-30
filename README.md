@@ -1,4 +1,7 @@
 # personalman
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/14098397910b469084be11762d5c063d)](https://app.codacy.com/manual/dave_33/personalman?utm_source=github.com&utm_medium=referral&utm_content=daveajlee/personalman&utm_campaign=Badge_Grade_Dashboard)
+
 PersonalMan provides absence management for employees or volunteers. It is designed as a server application with a RESTful API which any client can then implement in any programming language.
 
 **How to use**
