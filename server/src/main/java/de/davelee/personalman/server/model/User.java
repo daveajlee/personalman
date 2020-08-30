@@ -1,6 +1,16 @@
 package de.davelee.personalman.server.model;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.persistence.Id;
+import javax.persistence.GenerationType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.ElementCollection;
+import javax.persistence.FetchType;
+import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
@@ -18,7 +28,7 @@ public class User {
      */
     @Id
     @GeneratedValue( strategy = GenerationType.AUTO )
-    @Column ( name = "ID" )
+    @Column( name = "ID" )
     private long id;
 
     /**

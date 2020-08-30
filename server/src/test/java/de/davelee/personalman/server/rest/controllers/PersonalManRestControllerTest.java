@@ -6,6 +6,7 @@ import de.davelee.personalman.api.UserRequest;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,6 +51,7 @@ public class PersonalManRestControllerTest {
         validUserRequest.setUsername("dlee");
         validUserRequest.setCompany("MyCompany");
         validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        assertEquals("David", validUserRequest.getFirstName());
         given()
                 .contentType("application/json")
                 .body(validUserRequest)
@@ -80,6 +82,7 @@ public class PersonalManRestControllerTest {
      */
     public void testInvalidDate() {
         AbsenceRequest validAbsenceRequest = new AbsenceRequest("MyCompany", "dlee", "30-11-2016", "30-11", "Holiday");
+        assertEquals("30-11-2016", validAbsenceRequest.getStartDate());
         given()
                 .contentType("application/json")
                 .body(validAbsenceRequest)
@@ -96,6 +99,7 @@ public class PersonalManRestControllerTest {
      */
     public void testEndDateBeforeStartDate() {
         AbsenceRequest validAbsenceRequest = new AbsenceRequest("MyCompany", "dlee", "30-11-2017", "30-11-2016", "Holiday");
+        assertEquals("30-11-2017", validAbsenceRequest.getStartDate());
         given()
                 .contentType("application/json")
                 .body(validAbsenceRequest)
@@ -112,6 +116,7 @@ public class PersonalManRestControllerTest {
      */
     public void testMissingCategory() {
         AbsenceRequest validAbsenceRequest = new AbsenceRequest("MyCompany", "dlee", "30-11-2017", "30-11-2016", "");
+        assertEquals("", validAbsenceRequest.getCategory());
         given()
                 .contentType("application/json")
                 .body(validAbsenceRequest)
@@ -128,6 +133,7 @@ public class PersonalManRestControllerTest {
      */
     public void testMissingCompany() {
         AbsenceRequest validAbsenceRequest = new AbsenceRequest("", "dlee", "30-11-2017", "30-11-2016", "Holiday");
+        assertEquals("", validAbsenceRequest.getCompany());
         given()
                 .contentType("application/json")
                 .body(validAbsenceRequest)
@@ -144,6 +150,7 @@ public class PersonalManRestControllerTest {
      */
     public void testMissingEndDate() {
         AbsenceRequest validAbsenceRequest = new AbsenceRequest("MyCompany", "dlee", "30-11-2017", "", "Holiday");
+        assertEquals("", validAbsenceRequest.getEndDate());
         given()
                 .contentType("application/json")
                 .body(validAbsenceRequest)
@@ -160,6 +167,7 @@ public class PersonalManRestControllerTest {
      */
     public void testMissingStartDate() {
         AbsenceRequest validAbsenceRequest = new AbsenceRequest("MyCompany", "dlee", "", "30-11-2016", "Holiday");
+        assertEquals("", validAbsenceRequest.getStartDate());
         given()
                 .contentType("application/json")
                 .body(validAbsenceRequest)
@@ -176,6 +184,7 @@ public class PersonalManRestControllerTest {
      */
     public void testMissingUsername() {
         AbsenceRequest validAbsenceRequest = new AbsenceRequest("MyCompany", "", "30-11-2017", "30-11-2016", "Holiday");
+        assertEquals("", validAbsenceRequest.getUsername());
         given()
                 .contentType("application/json")
                 .body(validAbsenceRequest)
@@ -382,6 +391,7 @@ public class PersonalManRestControllerTest {
         validUserRequest.setUsername("dlee");
         validUserRequest.setCompany("MyCompany");
         validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        assertEquals("David", validUserRequest.getFirstName());
         given()
                 .contentType("application/json")
                 .body(validUserRequest)
@@ -406,6 +416,7 @@ public class PersonalManRestControllerTest {
         validUserRequest.setUsername("dlee");
         validUserRequest.setCompany("MyCompany");
         validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        assertEquals(-1, validUserRequest.getLeaveEntitlementPerYear());
         given()
                 .contentType("application/json")
                 .body(validUserRequest)
@@ -430,6 +441,7 @@ public class PersonalManRestControllerTest {
         validUserRequest.setUsername("dlee");
         validUserRequest.setCompany("MyCompany");
         validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        assertEquals("33-11-2016", validUserRequest.getStartDate());
         given()
                 .contentType("application/json")
                 .body(validUserRequest)
@@ -453,6 +465,7 @@ public class PersonalManRestControllerTest {
         validUserRequest.setUsername("dlee");
         validUserRequest.setCompany("MyCompany");
         validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        assertNull(validUserRequest.getFirstName());
         given()
                 .contentType("application/json")
                 .body(validUserRequest)
@@ -476,6 +489,7 @@ public class PersonalManRestControllerTest {
         validUserRequest.setUsername("dlee");
         validUserRequest.setCompany("MyCompany");
         validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        assertEquals(0, validUserRequest.getLeaveEntitlementPerYear());
         given()
                 .contentType("application/json")
                 .body(validUserRequest)
@@ -499,6 +513,7 @@ public class PersonalManRestControllerTest {
         validUserRequest.setUsername("dlee");
         validUserRequest.setCompany("MyCompany");
         validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        assertNull(validUserRequest.getPosition());
         given()
                 .contentType("application/json")
                 .body(validUserRequest)
@@ -522,6 +537,7 @@ public class PersonalManRestControllerTest {
         validUserRequest.setUsername("dlee");
         validUserRequest.setCompany("MyCompany");
         validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        assertNull(validUserRequest.getStartDate());
         given()
                 .contentType("application/json")
                 .body(validUserRequest)
@@ -545,6 +561,7 @@ public class PersonalManRestControllerTest {
         validUserRequest.setUsername("dlee");
         validUserRequest.setCompany("MyCompany");
         validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        assertNull(validUserRequest.getSurname());
         given()
                 .contentType("application/json")
                 .body(validUserRequest)
@@ -568,6 +585,7 @@ public class PersonalManRestControllerTest {
         validUserRequest.setSurname("Lee");
         validUserRequest.setCompany("MyCompany");
         validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        assertNull(validUserRequest.getUsername());
         given()
                 .contentType("application/json")
                 .body(validUserRequest)
@@ -591,6 +609,7 @@ public class PersonalManRestControllerTest {
         validUserRequest.setSurname("Lee");
         validUserRequest.setUsername("dlee");
         validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        assertNull(validUserRequest.getCompany());
         given()
                 .contentType("application/json")
                 .body(validUserRequest)
@@ -614,6 +633,7 @@ public class PersonalManRestControllerTest {
         validUserRequest.setSurname("Lee");
         validUserRequest.setUsername("dlee");
         validUserRequest.setCompany("MyCompany");
+        assertNull(validUserRequest.getWorkingDays());
         given()
                 .contentType("application/json")
                 .body(validUserRequest)
@@ -737,6 +757,18 @@ public class PersonalManRestControllerTest {
                 .get("/swagger-ui.html")
                 .then()
                 .statusCode(200);
+    }
+
+    private void assertEquals ( final String expected, final String actual ) {
+        Assertions.assertEquals(expected, actual);
+    }
+
+    private void assertEquals ( final int expected, final int actual ) {
+        Assertions.assertEquals(expected, actual);
+    }
+
+    private void assertNull ( final Object actual ) {
+        Assertions.assertNull(actual);
     }
 
 }
