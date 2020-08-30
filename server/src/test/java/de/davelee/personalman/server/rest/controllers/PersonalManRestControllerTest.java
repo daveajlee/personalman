@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.equalTo;
 public class PersonalManRestControllerTest {
 
     @Value("${local.server.port}")
-    int port;
+    private int port;
 
     @Before
     /**

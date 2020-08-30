@@ -36,7 +36,7 @@ public class AbsenceUtilsTest {
     private static final String THIRD_EMPLOYEE_USERNAME = "jmctavish";
 
     @Value("${local.server.port}")
-    int port;
+    private int port;
 
     @Autowired
     private AbsenceService absenceService;

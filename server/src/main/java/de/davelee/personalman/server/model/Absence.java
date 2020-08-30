@@ -2,7 +2,13 @@ package de.davelee.personalman.server.model;
 
 import com.google.common.base.Objects;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.persistence.Id;
+import javax.persistence.GenerationType;
+import javax.persistence.Column;
 import java.io.Serializable;
 import java.time.LocalDate;
 

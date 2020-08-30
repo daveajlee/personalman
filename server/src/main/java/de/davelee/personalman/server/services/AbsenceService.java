@@ -117,10 +117,7 @@ public class AbsenceService {
         try {
             long numAnnualLeave = countAbsences(company, employeeName, LocalDate.of(year,1,1), LocalDate.of(year,12,31), category);
             numAnnualLeave += AbsenceUtils.countAbsencesInDays(absences);
-            if ( numAnnualLeave > user.getLeaveEntitlementPerYear() ) {
-                return false;
-            }
-            return true;
+            return numAnnualLeave <= user.getLeaveEntitlementPerYear();
         } catch ( NumberFormatException nfe ) {
             LOG.error("Could not convert year " + year + " to a number as it is not a valid number!");
             return false;

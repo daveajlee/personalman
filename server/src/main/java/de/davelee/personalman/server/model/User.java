@@ -72,6 +72,22 @@ public class User {
     private LocalDate startDate;
 
     /**
+     * Return the id of this absence.
+     * @return a <code>long</code> with the absence id.
+     */
+    public long getId() {
+        return id;
+    }
+
+    /**
+     * Set a new id for this absence.
+     * @param id a <code>long</code> containing the new id.
+     */
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    /**
      * Return the first name of this user.
      * @return a <code>String</code> containing the first name of this user.
      */

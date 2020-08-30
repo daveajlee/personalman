@@ -84,6 +84,8 @@ public class UserUtils {
                 case "Sunday":
                     daysOfWeekList.add(DayOfWeek.SUNDAY);
                     break;
+                default:
+                    break;
             }
         }
         return daysOfWeekList;

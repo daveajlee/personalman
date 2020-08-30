@@ -10,7 +10,6 @@ import de.davelee.personalman.server.model.User;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 
