@@ -200,10 +200,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: status ok.
      */
     public void testValidFindAbsencesWithoutUsername() {
-        assertNotNull(when()
+        when()
                 .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016")
                 .then()
-                .statusCode(HttpStatus.SC_OK));
+                .statusCode(HttpStatus.SC_OK);
     }
 
     @Test
@@ -212,10 +212,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: status ok.
      */
     public void testValidFindAbsencesWithUsername() {
-        assertNotNull(when()
+        when()
                 .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee")
                 .then()
-                .statusCode(HttpStatus.SC_OK));
+                .statusCode(HttpStatus.SC_OK);
     }
 
     @Test
@@ -224,10 +224,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testMissingDatesFindAbsences() {
-        assertNotNull(when()
+        when()
                 .get("/personalman/absences?company=MyCompany")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST));
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -236,10 +236,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testEndDateBeforeStartDateFindAbsences() {
-        assertNotNull(when()
+        when()
                 .get("/personalman/absences?company=MyCompany&startDate=30-11-2017&endDate=30-11-2016")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST));
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -248,11 +248,11 @@ public class PersonalManRestControllerTest {
      * Expected Result: status ok and count 0.
      */
     public void testCountAbsencesWithoutUsername() {
-        assertNotNull(when()
+        when()
                 .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&category=Holiday&onlyCount=true")
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body("count", equalTo(0)));
+                .body("count", equalTo(0));
     }
 
     @Test
@@ -261,10 +261,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: status ok.
      */
     public void testValidCountAbsencesWithUsername() {
-        assertNotNull(when()
+        when()
                 .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&category=Holiday&onlyCount=true")
                 .then()
-                .statusCode(HttpStatus.SC_OK));
+                .statusCode(HttpStatus.SC_OK);
     }
 
     @Test
@@ -273,11 +273,11 @@ public class PersonalManRestControllerTest {
      * Expected Result: status ok and 0.
      */
     public void testValidCountAbsencesWithUsernameWhenNoAbsences() {
-        assertNotNull(when()
+        when()
                 .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&category=Illness&onlyCount=true")
                 .then()
                 .statusCode(HttpStatus.SC_OK)
-                .body("count", equalTo(0)));
+                .body("count", equalTo(0));
     }
 
     @Test
@@ -286,10 +286,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testMissingDateCountAbsences() {
-        assertNotNull(when()
+        when()
                 .get("/personalman/absences?company=MyCompany&onlyCount=true")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST));
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -298,10 +298,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testEndDateBeforeStartDateCountAbsences() {
-        assertNotNull(when()
+        when()
                 .get("/personalman/absences?company=MyCompany&startDate=30-11-2017&endDate=30-11-2016&onlyCount=true")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST));
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -310,10 +310,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testMissingCategoryCountAbsence() {
-        assertNotNull(when()
+        when()
                 .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&onlyCount=true")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST));
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -322,10 +322,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testInvalidCategoryCountAbsence() {
-        assertNotNull(when()
+        when()
                 .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&category=MyHoliday&onlyCount=true")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST));
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -334,10 +334,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: status ok.
      */
     public void testValidDeleteAbsencesWithoutUsername() {
-        assertNotNull(when()
+        when()
                 .delete("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016")
                 .then()
-                .statusCode(HttpStatus.SC_OK));
+                .statusCode(HttpStatus.SC_OK);
     }
 
     @Test
@@ -346,10 +346,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: status ok.
      */
     public void testValidDeleteAbsencesWithUsername() {
-        assertNotNull(when()
+        when()
                 .delete("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee")
                 .then()
-                .statusCode(HttpStatus.SC_OK));
+                .statusCode(HttpStatus.SC_OK);
     }
 
     @Test
@@ -358,10 +358,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testMissingDatesDeleteAbsences() {
-        assertNotNull(when()
+        when()
                 .delete("/personalman/absences?company=MyCompany")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST));
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -370,10 +370,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testEndDateBeforeStartDateDeleteAbsences() {
-        assertNotNull(when()
+        when()
                 .delete("/personalman/absences?company=MyCompany&startDate=30-11-2017&endDate=30-11-2016")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST));
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -649,10 +649,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: no content.
      */
     public void testValidFindUsersNotFound() {
-        assertNotNull(when()
+        when()
                 .get("/personalman/users?company=MyNoCompany")
                 .then()
-                .statusCode(HttpStatus.SC_NO_CONTENT));
+                .statusCode(HttpStatus.SC_NO_CONTENT);
     }
 
     @Test
@@ -661,10 +661,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testInvalidFindUsers() {
-        assertNotNull(when()
+        when()
                 .get("/personalman/users")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST));
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -673,18 +673,18 @@ public class PersonalManRestControllerTest {
      * Expected Result: status ok.
      */
      public void testValidFindUserAndThenFindUsersAndThenDelete() {
-        assertNotNull(when()
+        when()
                 .get("/personalman/user?company=MyCompany&username=dlee")
                 .then()
-                .statusCode(HttpStatus.SC_OK));
-        assertNotNull(when()
+                .statusCode(HttpStatus.SC_OK);
+        when()
                 .get("/personalman/users?company=MyCompany")
                 .then()
-                .statusCode(HttpStatus.SC_OK));
-        assertNotNull(when()
+                .statusCode(HttpStatus.SC_OK);
+        when()
                 .delete("/personalman/user?company=MyCompany&username=dlee")
                 .then()
-                .statusCode(HttpStatus.SC_OK));
+                .statusCode(HttpStatus.SC_OK);
     }
 
     @Test
@@ -693,10 +693,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: no content.
      */
     public void testValidFindUserNotFound() {
-        assertNotNull(when()
+        when()
                 .get("/personalman/user?company=MyCompany&username=mlee")
                 .then()
-                .statusCode(HttpStatus.SC_NO_CONTENT));
+                .statusCode(HttpStatus.SC_NO_CONTENT);
     }
 
     @Test
@@ -705,10 +705,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testInvalidFindUser() {
-        assertNotNull(when()
+        when()
                 .get("/personalman/user")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST));
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -717,10 +717,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testInvalidFindUserWithOnlyCompany() {
-        assertNotNull(when()
+        when()
                 .get("/personalman/user?company=MyCompany")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST));
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -729,10 +729,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: no content.
      */
     public void testValidDeleteUserNotFound() {
-        assertNotNull(when()
+        when()
                 .delete("/personalman/user?company=MyCompany&username=mlee")
                 .then()
-                .statusCode(HttpStatus.SC_NO_CONTENT));
+                .statusCode(HttpStatus.SC_NO_CONTENT);
     }
 
     @Test
@@ -741,10 +741,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testInvalidDeleteUser() {
-        assertNotNull(when()
+        when()
                 .delete("/personalman/user")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST));
+                .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
     @Test
@@ -753,10 +753,10 @@ public class PersonalManRestControllerTest {
      * Expected Result: status ok.
      */
     public void testSwagger() {
-        assertNotNull(when()
+        when()
                 .get("/swagger-ui.html")
                 .then()
-                .statusCode(200));
+                .statusCode(200);
     }
 
     private void assertEquals ( final String expected, final String actual ) {
