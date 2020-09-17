@@ -1,20 +1,21 @@
 package de.davelee.personalman.server.rest.controllers;
 
-import com.jayway.restassured.RestAssured;
 import de.davelee.personalman.api.AbsenceRequest;
 import de.davelee.personalman.api.UserRequest;
+import io.restassured.RestAssured;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
+import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test cases for the PersonalMan REST API.
@@ -42,15 +43,7 @@ public class PersonalManRestControllerTest {
      */
     public void testValidAdd() {
         //Add user so that test is successfully.
-        UserRequest validUserRequest = new UserRequest();
-        validUserRequest.setFirstName("David");
-        validUserRequest.setLeaveEntitlementPerYear(16);
-        validUserRequest.setPosition("Tester");
-        validUserRequest.setStartDate("01-12-2016");
-        validUserRequest.setSurname("Lee");
-        validUserRequest.setUsername("dlee");
-        validUserRequest.setCompany("MyCompany");
-        validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        UserRequest validUserRequest = generateValidUserRequest();
         assertEquals("David", validUserRequest.getFirstName());
         given()
                 .contentType("application/json")
@@ -60,7 +53,7 @@ public class PersonalManRestControllerTest {
                 .then()
                 .statusCode(HttpStatus.SC_CREATED);
         //Do actual test.
-        AbsenceRequest validAbsenceRequest = new AbsenceRequest("MyCompany", "dlee", "30-11-2016", "30-11-2016", "Holiday");
+        AbsenceRequest validAbsenceRequest = generateValidAbsenceRequest();
         given()
                 .contentType("application/json")
                 .body(validAbsenceRequest)
@@ -81,7 +74,13 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testInvalidDate() {
-        AbsenceRequest validAbsenceRequest = new AbsenceRequest("MyCompany", "dlee", "30-11-2016", "30-11", "Holiday");
+        AbsenceRequest validAbsenceRequest = AbsenceRequest.builder()
+                .company("MyCompany")
+                .username("dlee")
+                .startDate("30-11-2016")
+                .endDate("30-11")
+                .category("Holiday")
+                .build();
         assertEquals("30-11-2016", validAbsenceRequest.getStartDate());
         given()
                 .contentType("application/json")
@@ -98,7 +97,13 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testEndDateBeforeStartDate() {
-        AbsenceRequest validAbsenceRequest = new AbsenceRequest("MyCompany", "dlee", "30-11-2017", "30-11-2016", "Holiday");
+        AbsenceRequest validAbsenceRequest = AbsenceRequest.builder()
+                .company("MyCompany")
+                .username("dlee")
+                .startDate("30-11-2017")
+                .endDate("30-11-2016")
+                .category("Holiday")
+                .build();
         assertEquals("30-11-2017", validAbsenceRequest.getStartDate());
         given()
                 .contentType("application/json")
@@ -115,7 +120,13 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testMissingCategory() {
-        AbsenceRequest validAbsenceRequest = new AbsenceRequest("MyCompany", "dlee", "30-11-2017", "30-11-2016", "");
+        AbsenceRequest validAbsenceRequest = AbsenceRequest.builder()
+                .company("MyCompany")
+                .username("dlee")
+                .startDate("30-11-2016")
+                .endDate("30-11-2016")
+                .category("")
+                .build();
         assertEquals("", validAbsenceRequest.getCategory());
         given()
                 .contentType("application/json")
@@ -132,7 +143,13 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testMissingCompany() {
-        AbsenceRequest validAbsenceRequest = new AbsenceRequest("", "dlee", "30-11-2017", "30-11-2016", "Holiday");
+        AbsenceRequest validAbsenceRequest = AbsenceRequest.builder()
+                .company("")
+                .username("dlee")
+                .startDate("30-11-2016")
+                .endDate("30-11-2016")
+                .category("Holiday")
+                .build();
         assertEquals("", validAbsenceRequest.getCompany());
         given()
                 .contentType("application/json")
@@ -149,7 +166,13 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testMissingEndDate() {
-        AbsenceRequest validAbsenceRequest = new AbsenceRequest("MyCompany", "dlee", "30-11-2017", "", "Holiday");
+        AbsenceRequest validAbsenceRequest = AbsenceRequest.builder()
+                .company("MyCompany")
+                .username("dlee")
+                .startDate("30-11-2016")
+                .endDate("")
+                .category("Holiday")
+                .build();
         assertEquals("", validAbsenceRequest.getEndDate());
         given()
                 .contentType("application/json")
@@ -166,7 +189,13 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testMissingStartDate() {
-        AbsenceRequest validAbsenceRequest = new AbsenceRequest("MyCompany", "dlee", "", "30-11-2016", "Holiday");
+        AbsenceRequest validAbsenceRequest = AbsenceRequest.builder()
+                .company("MyCompany")
+                .username("dlee")
+                .startDate("")
+                .endDate("30-11-2016")
+                .category("Holiday")
+                .build();
         assertEquals("", validAbsenceRequest.getStartDate());
         given()
                 .contentType("application/json")
@@ -183,7 +212,13 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testMissingUsername() {
-        AbsenceRequest validAbsenceRequest = new AbsenceRequest("MyCompany", "", "30-11-2017", "30-11-2016", "Holiday");
+        AbsenceRequest validAbsenceRequest = AbsenceRequest.builder()
+                .company("MyCompany")
+                .username("")
+                .startDate("30-11-2016")
+                .endDate("30-11-2016")
+                .category("Holiday")
+                .build();
         assertEquals("", validAbsenceRequest.getUsername());
         given()
                 .contentType("application/json")
@@ -382,15 +417,7 @@ public class PersonalManRestControllerTest {
      * Expected Result: user created successfully.
      */
      public void testValidUser() {
-        UserRequest validUserRequest = new UserRequest();
-        validUserRequest.setFirstName("David");
-        validUserRequest.setLeaveEntitlementPerYear(16);
-        validUserRequest.setPosition("Tester");
-        validUserRequest.setStartDate("01-12-2016");
-        validUserRequest.setSurname("Lee");
-        validUserRequest.setUsername("dlee");
-        validUserRequest.setCompany("MyCompany");
-        validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        UserRequest validUserRequest = generateValidUserRequest();
         assertEquals("David", validUserRequest.getFirstName());
         given()
                 .contentType("application/json")
@@ -407,15 +434,16 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testUserInvalidLeave() {
-        UserRequest validUserRequest = new UserRequest();
-        validUserRequest.setFirstName("David");
-        validUserRequest.setLeaveEntitlementPerYear(-1);
-        validUserRequest.setPosition("Tester");
-        validUserRequest.setStartDate("01-12-2016");
-        validUserRequest.setSurname("Lee");
-        validUserRequest.setUsername("dlee");
-        validUserRequest.setCompany("MyCompany");
-        validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        UserRequest validUserRequest = UserRequest.builder()
+                .firstName("David")
+                .surname("Lee")
+                .username("dlee")
+                .company("MyCompany")
+                .leaveEntitlementPerYear(-1)
+                .position("Tester")
+                .startDate("01-12-2016")
+                .workingDays("Monday,Tuesday,Wednesday")
+                .build();
         assertEquals(-1, validUserRequest.getLeaveEntitlementPerYear());
         given()
                 .contentType("application/json")
@@ -432,15 +460,16 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testUserInvalidStartDate() {
-        UserRequest validUserRequest = new UserRequest();
-        validUserRequest.setFirstName("David");
-        validUserRequest.setLeaveEntitlementPerYear(16);
-        validUserRequest.setPosition("Tester");
-        validUserRequest.setStartDate("33-11-2016");
-        validUserRequest.setSurname("Lee");
-        validUserRequest.setUsername("dlee");
-        validUserRequest.setCompany("MyCompany");
-        validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        UserRequest validUserRequest = UserRequest.builder()
+                .firstName("David")
+                .surname("Lee")
+                .username("dlee")
+                .company("MyCompany")
+                .leaveEntitlementPerYear(-1)
+                .position("Tester")
+                .startDate("33-11-2016")
+                .workingDays("Monday,Tuesday,Wednesday")
+                .build();
         assertEquals("33-11-2016", validUserRequest.getStartDate());
         given()
                 .contentType("application/json")
@@ -457,14 +486,15 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testUserMissingFirstName() {
-        UserRequest validUserRequest = new UserRequest();
-        validUserRequest.setLeaveEntitlementPerYear(16);
-        validUserRequest.setPosition("Tester");
-        validUserRequest.setStartDate("01-12-2016");
-        validUserRequest.setSurname("Lee");
-        validUserRequest.setUsername("dlee");
-        validUserRequest.setCompany("MyCompany");
-        validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        UserRequest validUserRequest = UserRequest.builder()
+                .surname("Lee")
+                .username("dlee")
+                .company("MyCompany")
+                .leaveEntitlementPerYear(-1)
+                .position("Tester")
+                .startDate("01-12-2016")
+                .workingDays("Monday,Tuesday,Wednesday")
+                .build();
         assertNull(validUserRequest.getFirstName());
         given()
                 .contentType("application/json")
@@ -481,14 +511,15 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testUserMissingLeaveEntitlement() {
-        UserRequest validUserRequest = new UserRequest();
-        validUserRequest.setFirstName("David");
-        validUserRequest.setPosition("Tester");
-        validUserRequest.setStartDate("01-12-2016");
-        validUserRequest.setSurname("Lee");
-        validUserRequest.setUsername("dlee");
-        validUserRequest.setCompany("MyCompany");
-        validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        UserRequest validUserRequest = UserRequest.builder()
+                .firstName("David")
+                .surname("Lee")
+                .username("dlee")
+                .company("MyCompany")
+                .position("Tester")
+                .startDate("01-12-2016")
+                .workingDays("Monday,Tuesday,Wednesday")
+                .build();
         assertEquals(0, validUserRequest.getLeaveEntitlementPerYear());
         given()
                 .contentType("application/json")
@@ -505,14 +536,15 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testUserMissingPosition() {
-        UserRequest validUserRequest = new UserRequest();
-        validUserRequest.setFirstName("David");
-        validUserRequest.setLeaveEntitlementPerYear(16);
-        validUserRequest.setStartDate("01-12-2016");
-        validUserRequest.setSurname("Lee");
-        validUserRequest.setUsername("dlee");
-        validUserRequest.setCompany("MyCompany");
-        validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        UserRequest validUserRequest = UserRequest.builder()
+                .firstName("David")
+                .surname("Lee")
+                .username("dlee")
+                .company("MyCompany")
+                .leaveEntitlementPerYear(-1)
+                .startDate("01-12-2016")
+                .workingDays("Monday,Tuesday,Wednesday")
+                .build();
         assertNull(validUserRequest.getPosition());
         given()
                 .contentType("application/json")
@@ -529,14 +561,15 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testUserMissingStartDate() {
-        UserRequest validUserRequest = new UserRequest();
-        validUserRequest.setFirstName("David");
-        validUserRequest.setLeaveEntitlementPerYear(16);
-        validUserRequest.setPosition("Tester");
-        validUserRequest.setSurname("Lee");
-        validUserRequest.setUsername("dlee");
-        validUserRequest.setCompany("MyCompany");
-        validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        UserRequest validUserRequest = UserRequest.builder()
+                .firstName("David")
+                .surname("Lee")
+                .username("dlee")
+                .company("MyCompany")
+                .leaveEntitlementPerYear(-1)
+                .position("Tester")
+                .workingDays("Monday,Tuesday,Wednesday")
+                .build();
         assertNull(validUserRequest.getStartDate());
         given()
                 .contentType("application/json")
@@ -553,14 +586,15 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testUserMissingSurname() {
-        UserRequest validUserRequest = new UserRequest();
-        validUserRequest.setFirstName("David");
-        validUserRequest.setLeaveEntitlementPerYear(16);
-        validUserRequest.setPosition("Tester");
-        validUserRequest.setStartDate("01-12-2016");
-        validUserRequest.setUsername("dlee");
-        validUserRequest.setCompany("MyCompany");
-        validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        UserRequest validUserRequest = UserRequest.builder()
+                .firstName("David")
+                .username("dlee")
+                .company("MyCompany")
+                .leaveEntitlementPerYear(-1)
+                .position("Tester")
+                .startDate("01-12-2016")
+                .workingDays("Monday,Tuesday,Wednesday")
+                .build();
         assertNull(validUserRequest.getSurname());
         given()
                 .contentType("application/json")
@@ -577,14 +611,15 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
      public void testUserMissingUsername() {
-        UserRequest validUserRequest = new UserRequest();
-        validUserRequest.setFirstName("David");
-        validUserRequest.setLeaveEntitlementPerYear(16);
-        validUserRequest.setPosition("Tester");
-        validUserRequest.setStartDate("01-12-2016");
-        validUserRequest.setSurname("Lee");
-        validUserRequest.setCompany("MyCompany");
-        validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        UserRequest validUserRequest = UserRequest.builder()
+                .firstName("David")
+                .surname("Lee")
+                .company("MyCompany")
+                .leaveEntitlementPerYear(-1)
+                .position("Tester")
+                .startDate("01-12-2016")
+                .workingDays("Monday,Tuesday,Wednesday")
+                .build();
         assertNull(validUserRequest.getUsername());
         given()
                 .contentType("application/json")
@@ -601,14 +636,15 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testUserMissingCompany() {
-        UserRequest validUserRequest = new UserRequest();
-        validUserRequest.setFirstName("David");
-        validUserRequest.setLeaveEntitlementPerYear(16);
-        validUserRequest.setPosition("Tester");
-        validUserRequest.setStartDate("01-12-2016");
-        validUserRequest.setSurname("Lee");
-        validUserRequest.setUsername("dlee");
-        validUserRequest.setWorkingDays("Monday,Tuesday,Wednesday");
+        UserRequest validUserRequest = UserRequest.builder()
+                .firstName("David")
+                .surname("Lee")
+                .username("dlee")
+                .leaveEntitlementPerYear(-1)
+                .position("Tester")
+                .startDate("01-12-2016")
+                .workingDays("Monday,Tuesday,Wednesday")
+                .build();
         assertNull(validUserRequest.getCompany());
         given()
                 .contentType("application/json")
@@ -625,14 +661,15 @@ public class PersonalManRestControllerTest {
      * Expected Result: bad request.
      */
     public void testUserMissingWorkingDays() {
-        UserRequest validUserRequest = new UserRequest();
-        validUserRequest.setFirstName("David");
-        validUserRequest.setLeaveEntitlementPerYear(16);
-        validUserRequest.setPosition("Tester");
-        validUserRequest.setStartDate("01-12-2016");
-        validUserRequest.setSurname("Lee");
-        validUserRequest.setUsername("dlee");
-        validUserRequest.setCompany("MyCompany");
+        UserRequest validUserRequest = UserRequest.builder()
+                .firstName("David")
+                .surname("Lee")
+                .username("dlee")
+                .company("MyCompany")
+                .leaveEntitlementPerYear(-1)
+                .position("Tester")
+                .startDate("01-12-2016")
+                .build();
         assertNull(validUserRequest.getWorkingDays());
         given()
                 .contentType("application/json")
@@ -754,25 +791,40 @@ public class PersonalManRestControllerTest {
      */
     public void testSwagger() {
         when()
-                .get("/swagger-ui.html")
+                .get("/swagger-ui/")
                 .then()
                 .statusCode(200);
     }
 
-    private void assertEquals ( final String expected, final String actual ) {
-        Assertions.assertEquals(expected, actual);
+    /**
+     * Private helper method to generate a valid user request.
+     * @return a <code>UserRequest</code> object containing valid test data.
+     */
+    private UserRequest generateValidUserRequest( ) {
+        return UserRequest.builder()
+                .firstName("David")
+                .surname("Lee")
+                .username("dlee")
+                .company("MyCompany")
+                .leaveEntitlementPerYear(16)
+                .position("Tester")
+                .startDate("01-12-2016")
+                .workingDays("Monday,Tuesday,Wednesday")
+                .build();
     }
 
-    private void assertEquals ( final int expected, final int actual ) {
-        Assertions.assertEquals(expected, actual);
-    }
-
-    private void assertNull ( final Object actual ) {
-        Assertions.assertNull(actual);
-    }
-
-    private void assertNotNull ( final Object actual ) {
-        Assertions.assertNull(actual);
+    /**
+     * Private helper method to generate a valid absence request.
+     * @return a <code>AbsenceRequest</code> object containing valid test data.
+     */
+    private AbsenceRequest generateValidAbsenceRequest( ) {
+        return AbsenceRequest.builder()
+                .company("MyCompany")
+                .username("dlee")
+                .startDate("30-11-2016")
+                .endDate("30-11-2016")
+                .category("Holiday")
+                .build();
     }
 
 }

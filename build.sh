@@ -1,1 +1,3 @@
-mvn clean install
+#!/bin/bash
+
+cd server && mvn clean install

@@ -1,6 +1,11 @@
 package de.davelee.personalman.server.model;
 
-import com.google.common.base.Objects;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +23,12 @@ import java.time.LocalDate;
  */
 @Entity
 @Table( name = "ABSENCE", uniqueConstraints=@UniqueConstraint(columnNames = {"company", "username", "startDate", "endDate"})  )
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Getter
+@Setter
+@ToString
 public class Absence implements Serializable {
 
 	/**
@@ -62,136 +73,5 @@ public class Absence implements Serializable {
 	 */
 	@Column ( name = "CATEGORY")
 	private AbsenceCategory category;
-	
-	/**
-	 * Default constructor for Spring etc.
-	 */
-	public Absence() {
-		
-	}
-	
-	/**
-	 * Create a new absence.
-	 * @param username a <code>String</code> with the user name of the person who is absent.
-	 * @param company a <code>String</code> with the company that the person works for.
-	 * @param startDate a <code>LocalDate</code> with the start date of the absence.
-	 * @param endDate a <code>LocalDate</code> with the end date of the absence.
-	 * @param absenceCategory a <code>AbsenceCategory</code> with the category for the absence (see AbsenceCategory Enum).
-	 */
-	public Absence(final String username, final String company, final LocalDate startDate, final LocalDate endDate,
-				   final AbsenceCategory absenceCategory) {
-		this.username = username;
-		this.company = company;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.category = absenceCategory;
-	}
-
-	/**
-	 * Return the id of this absence.
-	 * @return a <code>long</code> with the absence id.
-	 */
-	public long getId() {
-		return id;
-	}
-
-	/**
-	 * Set a new id for this absence.
-	 * @param id a <code>long</code> containing the new id.
-	 */
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	/**
-	 * Return the user name of the person who is absent.
-	 * @return a <code>String</code> containing the user name.
-	 */
-	public String getUsername() {
-		return username;
-	}
-
-	/**
-	 * Set the user name of the person who is absent.
-	 * @param username a <code>String</code> with the new user name.
-	 */
-	public void setUsername(final String username) {
-		this.username = username;
-	}
-
-	/**
-	 * Return the start date of the absence.
-	 * @return a <code>LocalDate</code> containing the start date of the absence.
-	 */
-	public LocalDate getStartDate() {
-		return startDate;
-	}
-
-	/**
-	 * Set the start date of the absence.
-	 * @param startDate a <code>LocalDate</code> containing the start date of the absence.
-	 */
-	public void setStartDate(final LocalDate startDate) {
-		this.startDate = startDate;
-	}
-
-	/**
-	 * Return the end date of the absence.
-	 * @return a <code>LocalDate</code> containing the end date of the absence.
-	 */
-	public LocalDate getEndDate() {
-		return endDate;
-	}
-
-	/**
-	 * Set the end date of the absence.
-	 * @param endDate a <code>LocalDate</code> containing the end date of the absence.
-	 */
-	public void setEndDate(final LocalDate endDate) {
-		this.endDate = endDate;
-	}
-
-	/**
-	 * Get the category for the absence.
-	 * @return a <code>AbsenceCategory</code> object containing the category for the absence.
-	 */
-	public AbsenceCategory getCategory() {
-		return category;
-	}
-
-	/**
-	 * Set the category for the absence.
-	 * @param category a <code>AbsenceCategory</code> object containing the category for the absence.
-	 */
-	public void setCategory(final AbsenceCategory category) {
-		this.category = category;
-	}
-
-	/**
-	 * Get the company for the absence.
-	 * @return a <code>String</code> object containing the company for the absence.
-	 */
-	public String getCompany() {
-		return company;
-	}
-
-	/**
-	 * Set the company for the absence.
-	 * @param company a <code>String</code> object containing the company for the absence.
-	 */
-	public void setCompany(String company) {
-		this.company = company;
-	}
-
-	/**
-	 * Return a string representation of this object.
-	 * @return a <code>String</code> with all variables contained in this object.
-	 */
-	public String toString() {
-		return Objects.toStringHelper(this.getClass()).add("username", username)
-				.add("startDate", startDate).add("endDate", endDate)
-				.add("company", company)
-				.add("category", category).toString();
-	}
 
 }

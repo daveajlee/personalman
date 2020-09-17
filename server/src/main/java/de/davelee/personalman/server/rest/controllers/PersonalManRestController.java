@@ -102,8 +102,7 @@ public class PersonalManRestController {
             return ResponseEntity.badRequest().body(null);
         }
         //Prepare response object.
-        AbsencesResponse absencesResponse = new AbsencesResponse();
-        absenceService.initialiseHashMapForAbsencesResponse(absencesResponse);
+        AbsencesResponse absencesResponse = absenceService.prepareAbsencesResponse();
         //Check if only count parameter was set to true.
         if ( onlyCount ) {
             //Convert category which is required for count.
@@ -234,10 +233,10 @@ public class PersonalManRestController {
         for ( int i = 0; i < users.size(); i++ ) {
             userResponses[i] = UserUtils.convertUserToUserResponse(users.get(i));
         }
-        UsersResponse usersResponse = new UsersResponse();
-        usersResponse.setCount(new Long(userResponses.length));
-        usersResponse.setUserResponses(userResponses);
-        return ResponseEntity.ok(usersResponse);
+        return ResponseEntity.ok(UsersResponse.builder()
+                .count(Long.valueOf(userResponses.length))
+                .userResponses(userResponses)
+                .build());
     }
 
     @ApiOperation(value = "Delete a user", notes="Delete a user from the system.")

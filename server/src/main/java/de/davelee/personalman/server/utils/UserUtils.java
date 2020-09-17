@@ -22,16 +22,16 @@ public class UserUtils {
      * @return a <code>User</code> object.
      */
     public static User convertUserRequestToUser (final UserRequest userRequest, final LocalDate startDate ) {
-        User user = new User();
-        user.setFirstName(userRequest.getFirstName());
-        user.setLastName(userRequest.getSurname());
-        user.setLeaveEntitlementPerYear(userRequest.getLeaveEntitlementPerYear());
-        user.setPosition(userRequest.getPosition());
-        user.setStartDate(startDate);
-        user.setUserName(userRequest.getUsername());
-        user.setCompany(userRequest.getCompany());
-        user.setWorkingDays(convertToDayOfWeek(userRequest.getWorkingDays()));
-        return user;
+        return User.builder()
+                .firstName(userRequest.getFirstName())
+                .lastName(userRequest.getSurname())
+                .leaveEntitlementPerYear(userRequest.getLeaveEntitlementPerYear())
+                .position(userRequest.getPosition())
+                .startDate(startDate)
+                .userName(userRequest.getUsername())
+                .company(userRequest.getCompany())
+                .workingDays(convertToDayOfWeek(userRequest.getWorkingDays()))
+                .build();
     }
 
     /**
@@ -40,16 +40,16 @@ public class UserUtils {
      * @return a converted <code>UserResponse</code> object.
      */
     public static UserResponse convertUserToUserResponse (final User user ) {
-        UserResponse userResponse = new UserResponse();
-        userResponse.setFirstName(user.getFirstName());
-        userResponse.setLeaveEntitlementPerYear(user.getLeaveEntitlementPerYear());
-        userResponse.setPosition(user.getPosition());
-        userResponse.setStartDate(DateUtils.convertLocalDateToDate(user.getStartDate()));
-        userResponse.setSurname(user.getLastName());
-        userResponse.setUsername(user.getUserName());
-        userResponse.setCompany(user.getCompany());
-        userResponse.setWorkingDays(convertFromDayOfWeek(user.getWorkingDays()));
-        return userResponse;
+        return UserResponse.builder()
+                .firstName(user.getFirstName())
+                .surname(user.getLastName())
+                .company(user.getCompany())
+                .leaveEntitlementPerYear(user.getLeaveEntitlementPerYear())
+                .position(user.getPosition())
+                .startDate(DateUtils.convertLocalDateToDate(user.getStartDate()))
+                .username(user.getUserName())
+                .workingDays(convertFromDayOfWeek(user.getWorkingDays()))
+                .build();
     }
 
     /**

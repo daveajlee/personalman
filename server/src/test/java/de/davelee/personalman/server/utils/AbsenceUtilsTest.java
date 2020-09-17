@@ -1,11 +1,11 @@
 package de.davelee.personalman.server.utils;
 
-import com.jayway.restassured.RestAssured;
 import de.davelee.personalman.server.model.Absence;
 import de.davelee.personalman.server.model.AbsenceCategory;
 import de.davelee.personalman.server.model.User;
 import de.davelee.personalman.server.services.AbsenceService;
 import de.davelee.personalman.server.services.UserService;
+import io.restassured.RestAssured;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,18 +59,16 @@ public class AbsenceUtilsTest {
      * Expected Result: correct amount calculated.
      */
     public void testGenerateAndCountAbsences() {
-        User employee = new User();
-        employee.setCompany("MyCompany");
-        employee.setFirstName("Max");
-        employee.setLastName("Mustermann");
-        employee.setLeaveEntitlementPerYear(5);
-        employee.setPosition("Tester");
-        List<DayOfWeek> dayOfWeekList = new ArrayList<>();
-        dayOfWeekList.add(DayOfWeek.MONDAY); dayOfWeekList.add(DayOfWeek.TUESDAY); dayOfWeekList.add(DayOfWeek.WEDNESDAY);
-        dayOfWeekList.add(DayOfWeek.THURSDAY); dayOfWeekList.add(DayOfWeek.FRIDAY);
-        employee.setWorkingDays(dayOfWeekList);
-        employee.setStartDate(LocalDate.of(2015,3,1));
-        employee.setUserName(EMPLOYEE_USERNAME);
+        User employee = User.builder()
+                .company("MyCompany")
+                .firstName("Max")
+                .lastName("Mustermann")
+                .leaveEntitlementPerYear(5)
+                .position("Tester")
+                .workingDays(List.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY))
+                .startDate(LocalDate.of(2015,3,1))
+                .userName(EMPLOYEE_USERNAME)
+                .build();
         userService.delete(employee);
         userService.save(employee);
         //Test 1 - no free days inbetween
@@ -128,56 +126,54 @@ public class AbsenceUtilsTest {
      * Expected Result: based on the test case, the absence should be either added correctly or refused.
      */
     public void testGenerateAndCountAbsencesOverYears() {
-        User employee = new User();
-        employee.setCompany("MyCompany");
-        employee.setFirstName("Chris");
-        employee.setLastName("Smith");
-        employee.setLeaveEntitlementPerYear(5);
-        employee.setPosition("Doctor");
-        List<DayOfWeek> dayOfWeekList = new ArrayList<>();
-        dayOfWeekList.add(DayOfWeek.TUESDAY); dayOfWeekList.add(DayOfWeek.WEDNESDAY);
-        dayOfWeekList.add(DayOfWeek.THURSDAY); dayOfWeekList.add(DayOfWeek.FRIDAY); dayOfWeekList.add(DayOfWeek.SATURDAY);
-        employee.setWorkingDays(dayOfWeekList);
-        employee.setStartDate(LocalDate.of(2015,4,1));
-        employee.setUserName(SECOND_EMPLOYEE_USERNAME);
+        User employee = User.builder()
+                .company("MyCompany")
+                .firstName("Chris")
+                .lastName("Smith")
+                .leaveEntitlementPerYear(5)
+                .position("Doctor")
+                .workingDays(List.of(DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY))
+                .startDate(LocalDate.of(2015,4,1))
+                .userName(SECOND_EMPLOYEE_USERNAME)
+                .build();
         userService.delete(employee);
         userService.save(employee);
         //Test 1 - absence over christmas and new year - two different years.
         absenceService.delete("MyCompany", SECOND_EMPLOYEE_USERNAME, LocalDate.of(2015,12,29), LocalDate.of(2016,1,4));
-        Absence absence = new Absence();
-        absence.setCompany("MyCompany");
-        absence.setCategory(AbsenceCategory.HOLIDAY);
-        absence.setStartDate(LocalDate.of(2015,12,29));
-        absence.setEndDate(LocalDate.of(2016,1,4));
-        absence.setUsername(SECOND_EMPLOYEE_USERNAME);
-        assertTrue(absenceService.save(absence));
+        assertTrue(absenceService.save(Absence.builder()
+                .company("MyCompany")
+                .category(AbsenceCategory.HOLIDAY)
+                .startDate(LocalDate.of(2015,12,29))
+                .endDate(LocalDate.of(2016,1,4))
+                .username(SECOND_EMPLOYEE_USERNAME)
+                .build()));
         //Test 2 - absence over christmas and new year - insufficient annual leave in 2015.
         absenceService.delete("MyCompany", SECOND_EMPLOYEE_USERNAME, LocalDate.of(2015,12,20), LocalDate.of(2016,1,4));
-        Absence absence2 = new Absence();
-        absence2.setCompany("MyCompany");
-        absence2.setCategory(AbsenceCategory.HOLIDAY);
-        absence2.setStartDate(LocalDate.of(2015,12,20));
-        absence2.setEndDate(LocalDate.of(2016,1,4));
-        absence2.setUsername(SECOND_EMPLOYEE_USERNAME);
-        assertFalse(absenceService.save(absence2));
+        assertFalse(absenceService.save(Absence.builder()
+                .company("MyCompany")
+                .category(AbsenceCategory.HOLIDAY)
+                .startDate(LocalDate.of(2015,12,20))
+                .endDate(LocalDate.of(2016,1,4))
+                .username(SECOND_EMPLOYEE_USERNAME)
+                .build()));
         //Test 3 - absence over christmas and new year - insufficient annual leave in 2016.
         absenceService.delete("MyCompany", SECOND_EMPLOYEE_USERNAME, LocalDate.of(2015,12,29), LocalDate.of(2016,1,15));
-        Absence absence3 = new Absence();
-        absence3.setCompany("MyCompany");
-        absence3.setCategory(AbsenceCategory.HOLIDAY);
-        absence3.setStartDate(LocalDate.of(2015,12,29));
-        absence3.setEndDate(LocalDate.of(2016,1,15));
-        absence3.setUsername(SECOND_EMPLOYEE_USERNAME);
-        assertFalse(absenceService.save(absence3));
+        assertFalse(absenceService.save(Absence.builder()
+                .company("MyCompany")
+                .category(AbsenceCategory.HOLIDAY)
+                .startDate(LocalDate.of(2015,12,29))
+                .endDate(LocalDate.of(2016,1,15))
+                .username(SECOND_EMPLOYEE_USERNAME)
+                .build()));
         //Test 4 - absence over christmas and new year - three different years.
         absenceService.delete("MyCompany", SECOND_EMPLOYEE_USERNAME, LocalDate.of(2015,12,29), LocalDate.of(2017,1,15));
-        Absence absence4 = new Absence();
-        absence4.setCompany("MyCompany");
-        absence4.setCategory(AbsenceCategory.HOLIDAY);
-        absence4.setStartDate(LocalDate.of(2015,12,29));
-        absence4.setEndDate(LocalDate.of(2017,1,15));
-        absence4.setUsername(SECOND_EMPLOYEE_USERNAME);
-        assertFalse(absenceService.save(absence4));
+        assertFalse(absenceService.save(Absence.builder()
+                .company("MyCompany")
+                .category(AbsenceCategory.HOLIDAY)
+                .startDate(LocalDate.of(2015,12,29))
+                .endDate(LocalDate.of(2017,1,15))
+                .username(SECOND_EMPLOYEE_USERNAME)
+                .build()));
     }
 
     @Test
@@ -187,52 +183,51 @@ public class AbsenceUtilsTest {
      * Expected result: based on the individual situation, the absence is either approved or rejected.
      */
     public void testDaysInLieuAbsences() {
-        User employee = new User();
-        employee.setCompany("MyCompany");
-        employee.setFirstName("Jock");
-        employee.setLastName("McTavish");
-        employee.setLeaveEntitlementPerYear(5);
-        employee.setPosition("Farmer");
-        List<DayOfWeek> dayOfWeekList = new ArrayList<>();
-        dayOfWeekList.add(DayOfWeek.TUESDAY); dayOfWeekList.add(DayOfWeek.WEDNESDAY);
-        employee.setWorkingDays(dayOfWeekList);
-        employee.setStartDate(LocalDate.of(2015,4,1));
-        employee.setUserName(THIRD_EMPLOYEE_USERNAME);
+        User employee = User.builder()
+                .company("MyCompany")
+                .firstName("Jock")
+                .lastName("McTavish")
+                .leaveEntitlementPerYear(5)
+                .position("Farmer")
+                .workingDays(List.of(DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY))
+                .startDate(LocalDate.of(2015,4,1))
+                .userName(THIRD_EMPLOYEE_USERNAME)
+                .build();
         userService.delete(employee);
         userService.save(employee);
         //Test 1 - days in lieu can be taken.
         absenceService.delete("MyCompany", THIRD_EMPLOYEE_USERNAME, LocalDate.of(2015,4,6), LocalDate.of(2015,4,9));
-        Absence absence = new Absence();
-        absence.setCompany("MyCompany");
-        absence.setCategory(AbsenceCategory.TRIP);
-        absence.setStartDate(LocalDate.of(2015,4,6));
-        absence.setEndDate(LocalDate.of(2015,4,9));
-        absence.setUsername(THIRD_EMPLOYEE_USERNAME);
-        assertTrue(absenceService.save(absence));
+        assertTrue(absenceService.save(Absence.builder()
+                .company("MyCompany")
+                .category(AbsenceCategory.TRIP)
+                .startDate(LocalDate.of(2015,4,6))
+                .endDate(LocalDate.of(2015,4,9))
+                .username(THIRD_EMPLOYEE_USERNAME)
+                .build()));
         absenceService.delete("MyCompany", THIRD_EMPLOYEE_USERNAME, LocalDate.of(2015,10,31), LocalDate.of(2015,1,11));
-        Absence absence2 = new Absence();
-        absence2.setCompany("MyCompany");
-        absence2.setCategory(AbsenceCategory.DAY_IN_LIEU);
-        absence2.setStartDate(LocalDate.of(2015,10,31));
-        absence2.setEndDate(LocalDate.of(2015,11,1));
-        absence2.setUsername(THIRD_EMPLOYEE_USERNAME);
-        assertTrue(absenceService.save(absence2));
+        assertTrue(absenceService.save(Absence.builder()
+                .company("MyCompany")
+                .category(AbsenceCategory.HOLIDAY)
+                .startDate(LocalDate.of(2015,10,31))
+                .endDate(LocalDate.of(2015,11,1))
+                .username(THIRD_EMPLOYEE_USERNAME)
+                .build()));
         //Test 2 - days in lieu over multiple years not possible.
-        Absence absence3 = new Absence();
-        absence3.setCompany("MyCompany");
-        absence3.setCategory(AbsenceCategory.DAY_IN_LIEU);
-        absence3.setStartDate(LocalDate.of(2015,12,31));
-        absence3.setEndDate(LocalDate.of(2016,1,1));
-        absence3.setUsername(THIRD_EMPLOYEE_USERNAME);
-        assertFalse(absenceService.save(absence3));
+        assertFalse(absenceService.save(Absence.builder()
+                .company("MyCompany")
+                .category(AbsenceCategory.DAY_IN_LIEU)
+                .startDate(LocalDate.of(2015,12,31))
+                .endDate(LocalDate.of(2016,1,1))
+                .username(THIRD_EMPLOYEE_USERNAME)
+                .build()));
         //Test 3 - not enough days in lieu.
-        Absence absence4 = new Absence();
-        absence4.setCompany("MyCompany");
-        absence4.setCategory(AbsenceCategory.DAY_IN_LIEU);
-        absence4.setStartDate(LocalDate.of(2015,11,7));
-        absence4.setEndDate(LocalDate.of(2016,11,12));
-        absence4.setUsername(THIRD_EMPLOYEE_USERNAME);
-        assertFalse(absenceService.save(absence4));
+        assertFalse(absenceService.save(Absence.builder()
+                .company("MyCompany")
+                .category(AbsenceCategory.DAY_IN_LIEU)
+                .startDate(LocalDate.of(2015,11,7))
+                .endDate(LocalDate.of(2016,11,12))
+                .username(THIRD_EMPLOYEE_USERNAME)
+                .build()));
     }
 
 }

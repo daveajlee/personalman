@@ -169,16 +169,18 @@ public class AbsenceService {
     }
 
     /**
-     * Helper method
-     * @param absencesResponse a <code>AbsencesResponse</code> object to add the basic statistics map to.
+     * Helper method to prepare AbsencesResponse.
+     * @return a <code>AbsencesResponse</code> object containing the basic statistics map to.
      */
-    public void initialiseHashMapForAbsencesResponse ( final AbsencesResponse absencesResponse ) {
+    public AbsencesResponse prepareAbsencesResponse ( ) {
         HashMap<String, Integer> statisticsMap = new HashMap<String, Integer>();
         AbsenceCategory[] absenceCategories = AbsenceCategory.values();
         for ( AbsenceCategory absenceCategory : absenceCategories ) {
             statisticsMap.put(absenceCategory.toString(), 0);
         }
-        absencesResponse.setStatisticsMap(statisticsMap);
+        return AbsencesResponse.builder()
+                .statisticsMap(statisticsMap)
+                .build();
     }
 
 }

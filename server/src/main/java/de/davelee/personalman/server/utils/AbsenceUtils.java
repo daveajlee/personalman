@@ -27,13 +27,13 @@ public class AbsenceUtils {
      * @return a <code>Absence</code> object.
      */
     public static Absence convertAbsenceRequestToAbsence (final AbsenceRequest absenceRequest, final LocalDate startDate, final LocalDate endDate ) {
-        Absence absence = new Absence();
-        absence.setCategory(AbsenceCategory.fromString(absenceRequest.getCategory()));
-        absence.setCompany(absenceRequest.getCompany());
-        absence.setUsername(absenceRequest.getUsername());
-        absence.setEndDate(endDate);
-        absence.setStartDate(startDate);
-        return absence;
+        return Absence.builder()
+                .category(AbsenceCategory.fromString(absenceRequest.getCategory()))
+                .company(absenceRequest.getCompany())
+                .username(absenceRequest.getUsername())
+                .startDate(startDate)
+                .endDate(endDate)
+                .build();
     }
 
     /**
@@ -46,9 +46,12 @@ public class AbsenceUtils {
         List<AbsenceResponse> absenceResponses = new ArrayList<>(absences.size());
         //Now convert each absence to an absence response.
         for ( Absence absence : absences ) {
-            AbsenceResponse absenceResponse = new AbsenceResponse(absence.getCompany(), absence.getUsername(),
-                    DateUtils.convertLocalDateToDate(absence.getStartDate()), DateUtils.convertLocalDateToDate(absence.getEndDate()),
-                    "");
+            AbsenceResponse absenceResponse = AbsenceResponse.builder()
+                    .company(absence.getCompany())
+                    .username(absence.getUsername())
+                    .startDate(DateUtils.convertLocalDateToDate(absence.getStartDate()))
+                    .endDate(DateUtils.convertLocalDateToDate(absence.getEndDate()))
+                    .build();
             if ( absence.getCategory() != null ) {
                 absenceResponse.setCategory(absence.getCategory().toString());
             }
@@ -116,13 +119,13 @@ public class AbsenceUtils {
                 absenceStartDate = absenceStartDate.plusDays(1);
                 currentDate = currentDate.plusDays(1);
             } else if ( isFreeDay ) {
-                Absence absence = new Absence();
-                absence.setCategory(category);
-                absence.setCompany(user.getCompany());
-                absence.setEndDate(currentDate.minusDays(1));
-                absence.setStartDate(absenceStartDate);
-                absence.setUsername(user.getUserName());
-                absences.add(absence);
+                absences.add(Absence.builder()
+                        .category(category)
+                        .startDate(absenceStartDate)
+                        .endDate(currentDate.minusDays(1))
+                        .username(user.getUserName())
+                        .company(user.getCompany())
+                        .build());
                 currentDate = currentDate.plusDays(1);
                 absenceStartDate = LocalDate.of(currentDate.getYear(), currentDate.getMonth(), currentDate.getDayOfMonth());
             } else {
@@ -132,13 +135,13 @@ public class AbsenceUtils {
         }
         //Clean up - add remaining absence.
         if ( !absenceStartDate.isAfter(endDate) && !isFreeDay ) {
-            Absence absence = new Absence();
-            absence.setCategory(category);
-            absence.setCompany(user.getCompany());
-            absence.setEndDate(endDate);
-            absence.setStartDate(absenceStartDate);
-            absence.setUsername(user.getUserName());
-            absences.add(absence);
+            absences.add(Absence.builder()
+                    .category(category)
+                    .company(user.getCompany())
+                    .startDate(absenceStartDate)
+                    .endDate(endDate)
+                    .username(user.getUserName())
+                    .build());
         }
         //Return absences.
         return absences;
@@ -164,13 +167,13 @@ public class AbsenceUtils {
                 }
             }
             if ( isFreeDay ) {
-                Absence absence = new Absence();
-                absence.setCompany(user.getCompany());
-                absence.setCategory(AbsenceCategory.DAY_IN_LIEU_REQUEST);
-                absence.setEndDate(actualDate);
-                absence.setStartDate(actualDate);
-                absence.setUsername(user.getUserName());
-                absences.add(absence);
+                absences.add(Absence.builder()
+                        .company(user.getCompany())
+                        .category(AbsenceCategory.DAY_IN_LIEU_REQUEST)
+                        .startDate(actualDate)
+                        .endDate(actualDate)
+                        .username(user.getUserName())
+                        .build());
             }
             actualDate = actualDate.plusDays(1);
         }
