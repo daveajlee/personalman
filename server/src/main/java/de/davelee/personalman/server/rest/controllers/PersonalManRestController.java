@@ -1,15 +1,12 @@
 package de.davelee.personalman.server.rest.controllers;
 
-import de.davelee.personalman.api.AbsenceRequest;
-import de.davelee.personalman.api.AbsenceResponse;
-import de.davelee.personalman.api.AbsencesResponse;
-import de.davelee.personalman.api.UserRequest;
-import de.davelee.personalman.api.UserResponse;
-import de.davelee.personalman.api.UsersResponse;
+import de.davelee.personalman.api.*;
 import de.davelee.personalman.server.model.Absence;
 import de.davelee.personalman.server.model.AbsenceCategory;
+import de.davelee.personalman.server.model.Company;
 import de.davelee.personalman.server.model.User;
 import de.davelee.personalman.server.services.AbsenceService;
+import de.davelee.personalman.server.services.CompanyService;
 import de.davelee.personalman.server.services.UserService;
 import de.davelee.personalman.server.utils.AbsenceUtils;
 import de.davelee.personalman.server.utils.DateUtils;
@@ -44,6 +41,9 @@ public class PersonalManRestController {
 
     @Autowired
     private AbsenceService absenceService;
+
+    @Autowired
+    private CompanyService companyService;
 
     @Autowired
     private UserService userService;
@@ -155,6 +155,24 @@ public class PersonalManRestController {
         absenceService.delete(company, username, startLocalDate, endLocalDate);
         //Return 200 if deleted successfully or nothing to delete.
         return ResponseEntity.status(200).build();
+    }
+
+    @ApiOperation(value = "Add a company", notes="Add a company to the system.")
+    @PostMapping(value="/company")
+    @ApiResponses(value = {@ApiResponse(code=201,message="Successfully created company")})
+    /**
+     * Add an absence to the database based on the supplied register company request.
+     * @param registerCompanyRequest a <code>RegisterCompanyRequest</code> object representing the company to add.
+     * @return a <code>ResponseEntity</code> containing the result of the action.
+     */
+    public ResponseEntity<Void> addCompany (@RequestBody final RegisterCompanyRequest registerCompanyRequest ) {
+        companyService.save(Company.builder()
+                .name(registerCompanyRequest.getName())
+                .defaultAnnualLeaveInDays(registerCompanyRequest.getDefaultAnnualLeaveInDays())
+                .country(registerCompanyRequest.getCountry())
+                .build());
+        //Return 201 if saved successfully.
+        return ResponseEntity.status(201).build();
     }
 
     @ApiOperation(value = "Add a user", notes="Add a user to the system.")
