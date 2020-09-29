@@ -35,7 +35,7 @@ import java.util.List;
  * @author Dave Lee
  */
 @RestController
-@Api(value="/personalman", description="PersonalMan REST API")
+@Api(value="/personalman")
 @RequestMapping(value="/personalman")
 public class PersonalManRestController {
 
@@ -48,14 +48,14 @@ public class PersonalManRestController {
     @Autowired
     private UserService userService;
 
-    @ApiOperation(value = "Add an absence", notes="Add an absence to the system.")
-    @PostMapping(value="/absences")
-    @ApiResponses(value = {@ApiResponse(code=201,message="Successfully created absence")})
     /**
      * Add an absence to the database based on the supplied absence request.
      * @param absenceRequest a <code>AbsenceRequest</code> object representing the absence to add.
      * @return a <code>ResponseEntity</code> containing the result of the action.
      */
+    @ApiOperation(value = "Add an absence", notes="Add an absence to the system.")
+    @PostMapping(value="/absences")
+    @ApiResponses(value = {@ApiResponse(code=201,message="Successfully created absence")})
     public ResponseEntity<Void> addAbsence (@RequestBody final AbsenceRequest absenceRequest ) {
         //First of all, check if any of the fields are empty or null, then return bad request.
         if (StringUtils.isNullOrEmpty(absenceRequest.getCategory()) || StringUtils.isNullOrEmpty(absenceRequest.getCompany())
@@ -76,9 +76,6 @@ public class PersonalManRestController {
         return ResponseEntity.status(201).build();
     }
 
-    @ApiOperation(value = "Find or count absences", notes="Find or count absences in the system according to the specified criteria.")
-    @GetMapping(value="/absences")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully completed the search for absences")})
     /**
      * Find or count the amount of absences in the database based on the supplied criteria.
      * @param company a <code>String</code> containing the name of the company.
@@ -89,6 +86,9 @@ public class PersonalManRestController {
      * @param onlyCount a <code>boolean</code> which is true iff only the amount of absences should be retrieved (optimised performance). Default is false.
      * @return a <code>ResponseEntity</code> containing the absences found.
      */
+    @ApiOperation(value = "Find or count absences", notes="Find or count absences in the system according to the specified criteria.")
+    @GetMapping(value="/absences")
+    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully completed the search for absences")})
     public ResponseEntity<AbsencesResponse> findAbsence (@RequestParam("company") final String company,
                                                          @RequestParam(value = "username", required=false) final String username,
                                                          @RequestParam("startDate") final String startDate,
@@ -122,7 +122,7 @@ public class PersonalManRestController {
             List<Absence> absences = absenceService.findAbsences(company, username, startLocalDate, endLocalDate);
             //Convert the absences to a list of absence responses.
             List<AbsenceResponse> absenceResponses = AbsenceUtils.convertAbsencesToAbsenceResponses(absences);
-            absencesResponse.setCount(new Long(absenceResponses.size()));
+            absencesResponse.setCount((long) absenceResponses.size());
             absencesResponse.setAbsenceResponseList(absenceResponses);
             absencesResponse = AbsenceUtils.calculateAbsencesResponseStatistics(absencesResponse);
         }
@@ -130,9 +130,6 @@ public class PersonalManRestController {
         return ResponseEntity.ok(absencesResponse);
     }
 
-    @ApiOperation(value = "Delete absences", notes="Delete absences in the system according to the specified criteria.")
-    @DeleteMapping(value="/absences")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully deleted absences")})
     /**
      * Remove absences from the system based on the supplied criteria.
      * @param company a <code>String</code> containing the name of the company.
@@ -141,6 +138,9 @@ public class PersonalManRestController {
      * @param endDate a <code>String</code> containing the end of the absence.
      * @return a <code>ResponseEntity</code> containing the result of the action.
      */
+    @ApiOperation(value = "Delete absences", notes="Delete absences in the system according to the specified criteria.")
+    @DeleteMapping(value="/absences")
+    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully deleted absences")})
     public ResponseEntity<Void> deleteAbsences (@RequestParam("company") final String company,
                                                          @RequestParam(value = "username", required=false) final String username,
                                                          @RequestParam("startDate") final String startDate,
@@ -157,14 +157,14 @@ public class PersonalManRestController {
         return ResponseEntity.status(200).build();
     }
 
-    @ApiOperation(value = "Add a company", notes="Add a company to the system.")
-    @PostMapping(value="/company")
-    @ApiResponses(value = {@ApiResponse(code=201,message="Successfully created company")})
     /**
      * Add an absence to the database based on the supplied register company request.
      * @param registerCompanyRequest a <code>RegisterCompanyRequest</code> object representing the company to add.
      * @return a <code>ResponseEntity</code> containing the result of the action.
      */
+    @ApiOperation(value = "Add a company", notes="Add a company to the system.")
+    @PostMapping(value="/company")
+    @ApiResponses(value = {@ApiResponse(code=201,message="Successfully created company")})
     public ResponseEntity<Void> addCompany (@RequestBody final RegisterCompanyRequest registerCompanyRequest ) {
         companyService.save(Company.builder()
                 .name(registerCompanyRequest.getName())
@@ -175,14 +175,55 @@ public class PersonalManRestController {
         return ResponseEntity.status(201).build();
     }
 
-    @ApiOperation(value = "Add a user", notes="Add a user to the system.")
-    @PostMapping(value="/user")
-    @ApiResponses(value = {@ApiResponse(code=201,message="Successfully created user")})
+    /**
+     * Find all companies stored in PersonalMan.
+     * @return a <code>ResponseEntity</code> containing the names of all companies stored in PersonalMan.
+     */
+    @ApiOperation(value = "Find all companies", notes="Find all companies stored in PersonalMan.")
+    @GetMapping(value="/companies")
+    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully found companies"), @ApiResponse(code=204,message="Successful but no companies in database")})
+    public ResponseEntity<List<String>> getCompanies () {
+        //Retrieve the list of companies.
+        List<String> companyNames = companyService.getAllCompanies();
+        //If no companies then return 204.
+        if ( companyNames.size() == 0 ) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        //Otherwise return 200.
+        return ResponseEntity.ok(companyNames);
+    }
+
+    /**
+     * Delete a specific company from the database based on their name.
+     * @param name a <code>String</code> containing the name of the company.
+     * @return a <code>ResponseEntity</code> containing the results of the action.
+     */
+    @ApiOperation(value = "Delete a company", notes="Delete a company from the system.")
+    @DeleteMapping(value="/company")
+    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully delete company"), @ApiResponse(code=404,message="Company not found")})
+    public ResponseEntity<Void> deleteCompany (@RequestParam("name") final String name ) {
+        //First of all, check if the name field is empty or null, then return bad request.
+        if (StringUtils.isNullOrEmpty(name) ) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        //Now delete the company.
+        if ( companyService.delete(name) ) {
+            //Return 200 if successful delete.
+            return ResponseEntity.status(200).build();
+        } else {
+            //Otherwise 404.
+            return ResponseEntity.status(404).build();
+        }
+    }
+
     /**
      * Add a user to the system.
      * @param userRequest a <code>UserRequest</code> object representing the user to add.
      * @return a <code>ResponseEntity</code> containing the result of the action.
      */
+    @ApiOperation(value = "Add a user", notes="Add a user to the system.")
+    @PostMapping(value="/user")
+    @ApiResponses(value = {@ApiResponse(code=201,message="Successfully created user")})
     public ResponseEntity<Void> addUser (@RequestBody final UserRequest userRequest ) {
         //First of all, check if any of the fields are empty or null, then return bad request.
         if (StringUtils.isNullOrEmpty(userRequest.getFirstName()) || StringUtils.isNullOrEmpty(userRequest.getSurname())
@@ -203,15 +244,15 @@ public class PersonalManRestController {
         return ResponseEntity.status(201).build();
     }
 
-    @ApiOperation(value = "Find a user", notes="Find a user to the system.")
-    @GetMapping(value="/user")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully found user"), @ApiResponse(code=204,message="Successful but no user found")})
     /**
      * Find a user based on their username and company.
      * @param company a <code>String</code> containing the name of the company.
      * @param username a <code>String</code> containing the username.
      * @return a <code>ResponseEntity</code> containing the user found.
      */
+    @ApiOperation(value = "Find a user", notes="Find a user to the system.")
+    @GetMapping(value="/user")
+    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully found user"), @ApiResponse(code=204,message="Successful but no user found")})
     public ResponseEntity<UserResponse> getUser (@RequestParam("company") final String company, @RequestParam("username") final String username ) {
         //First of all, check if the username field is empty or null, then return bad request.
         if (StringUtils.isNullOrEmpty(username) || StringUtils.isNullOrEmpty(company)) {
@@ -227,14 +268,14 @@ public class PersonalManRestController {
         return ResponseEntity.ok(UserUtils.convertUserToUserResponse(user));
     }
 
-    @ApiOperation(value = "Find all users for a company", notes="Find all users for a company to the system.")
-    @GetMapping(value="/users")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully found user(s)"), @ApiResponse(code=204,message="Successful but no users found")})
     /**
      * Find all users for a specific company.
      * @param company a <code>String</code> containing the name of the company.
      * @return a <code>ResponseEntity</code> containing the users for this company.
      */
+    @ApiOperation(value = "Find all users for a company", notes="Find all users for a company to the system.")
+    @GetMapping(value="/users")
+    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully found user(s)"), @ApiResponse(code=204,message="Successful but no users found")})
     public ResponseEntity<UsersResponse> getUsers (@RequestParam("company") final String company ) {
         //First of all, check if the compny field is empty or null, then return bad request.
         if ( StringUtils.isNullOrEmpty(company)) {
@@ -252,20 +293,20 @@ public class PersonalManRestController {
             userResponses[i] = UserUtils.convertUserToUserResponse(users.get(i));
         }
         return ResponseEntity.ok(UsersResponse.builder()
-                .count(Long.valueOf(userResponses.length))
+                .count((long) userResponses.length)
                 .userResponses(userResponses)
                 .build());
     }
 
-    @ApiOperation(value = "Delete a user", notes="Delete a user from the system.")
-    @DeleteMapping(value="/user")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully delete user"), @ApiResponse(code=204,message="Successful but no user found")})
     /**
      * Delete a specific user from the database based on their username and company.
      * @param company a <code>String</code> containing the name of the company.
      * @param username a <code>String</code> containing the username.
      * @return a <code>ResponseEntity</code> containing the results of the action.
      */
+    @ApiOperation(value = "Delete a user", notes="Delete a user from the system.")
+    @DeleteMapping(value="/user")
+    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully delete user"), @ApiResponse(code=204,message="Successful but no user found")})
     public ResponseEntity<Void> deleteUser (@RequestParam("company") final String company, @RequestParam("username") final String username ) {
         //First of all, check if the username field is empty or null, then return bad request.
         if (StringUtils.isNullOrEmpty(username) || StringUtils.isNullOrEmpty(company)) {
