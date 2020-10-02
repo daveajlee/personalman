@@ -19,13 +19,7 @@ import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -191,6 +185,33 @@ public class PersonalManRestController {
         }
         //Otherwise return 200.
         return ResponseEntity.ok(companyNames);
+    }
+
+    /**
+     * Get a specific company from the database based on their name.
+     * @param name a <code>String</code> containing the name of the company.
+     * @return a <code>ResponseEntity</code> containing the results of the action.
+     */
+    @ApiOperation(value = "Retrieve a company", notes="Retrieve a company from the system.")
+    @GetMapping(value="/company")
+    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully retrieved company"), @ApiResponse(code=404,message="Company not found")})
+    @ResponseBody
+    public ResponseEntity<CompanyResponse> getCompany (@RequestParam("name") final String name ) {
+        //First of all, check if the name field is empty or null, then return bad request.
+        if (StringUtils.isNullOrEmpty(name) ) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Company company = companyService.getCompany(name);
+        System.out.println("Retrieved company: " + company);
+        if ( company != null ) {
+            return ResponseEntity.ok(CompanyResponse.builder()
+                    .name(company.getName())
+                    .defaultAnnualLeaveInDays(company.getDefaultAnnualLeaveInDays())
+                    .country(company.getCountry())
+                    .build());
+        }
+        //Otherwise 404 to indicate not found.
+        return ResponseEntity.status(404).build();
     }
 
     /**

@@ -40,6 +40,15 @@ public class CompanyService {
     }
 
     /**
+     * Get the information of a particular company based on its name.
+     * @param name a <code>String</code> containing the name of the company to retrieve.
+     * @return a <code>Company</code> object containing the information for the company or null if the company was not found.
+     */
+    public Company getCompany ( String name ) {
+        return companyRepository.findByName(name);
+    }
+
+    /**
      * Delete the specified company according to the supplied company name.
      * @param name a <code>String</code> with the company name to delete.
      * @return a <code>boolean</code> which is true iff the company was deleted successfully.
