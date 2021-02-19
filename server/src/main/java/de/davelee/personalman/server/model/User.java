@@ -61,6 +61,12 @@ public class User {
     private String userName;
 
     /**
+     * The password for this user.
+     */
+    @Column ( name = "PASSWORD" )
+    private String password;
+
+    /**
      * The company that the user works for.
      */
     @Column ( name = "COMPANY" )

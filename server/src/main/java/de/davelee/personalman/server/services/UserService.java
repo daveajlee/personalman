@@ -2,10 +2,16 @@ package de.davelee.personalman.server.services;
 
 import de.davelee.personalman.server.model.User;
 import de.davelee.personalman.server.repository.UserRepository;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.Charset;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Class to provide service operations for users in the PersonalMan program.
@@ -16,6 +22,14 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Value("${token.length}")
+    private int tokenLength;
+
+    @Value("${logout.minutes}")
+    private int timeoutInMinutes;
+
+    private HashMap<String, LocalDateTime> loggedInTokens = new HashMap<>();
 
     /**
      * Save the specified user object in the database.
@@ -50,6 +64,26 @@ public class UserService {
      */
     public void delete ( final User user ) {
         userRepository.delete(user);
+    }
+
+    /**
+     * Generate a token for this user and add it to the list of logged in tokens. The token should expire after the specified amount of minutes in the config.
+     * Return the token so that the client can also have access to it.
+     * @param userName a <code>String</code> with the user name of the logged in user.
+     * @return a <code>String</code> containing the token which is valid for a limited amount of time.
+     */
+    public String generateAuthToken ( final String userName ) {
+        String token = userName + "-" + RandomStringUtils.randomAlphanumeric(tokenLength);
+        loggedInTokens.put(token, LocalDateTime.now().plusMinutes(timeoutInMinutes));
+        return token;
+    }
+
+    /**
+     * Remove the supplied token from the list of logged in tokens.
+     * @param token a <code>String</code> containing the token to remove from the list of logged in tokens.
+     */
+    public void removeAuthToken ( final String token ) {
+        loggedInTokens.remove(token);
     }
 
 }

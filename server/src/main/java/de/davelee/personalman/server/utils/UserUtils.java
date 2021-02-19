@@ -29,6 +29,7 @@ public class UserUtils {
                 .position(userRequest.getPosition())
                 .startDate(startDate)
                 .userName(userRequest.getUsername())
+                .password(userRequest.getPassword())
                 .company(userRequest.getCompany())
                 .workingDays(convertToDayOfWeek(userRequest.getWorkingDays()))
                 .build();
