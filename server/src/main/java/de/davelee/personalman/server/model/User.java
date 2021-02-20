@@ -98,4 +98,10 @@ public class User {
     @Column ( name = "STARTDATE" )
     private LocalDate startDate;
 
+    /**
+     * The role that the user has in PersonalMan for this company.
+     */
+    @Column ( name = "ROLE" )
+    private String role;
+
 }

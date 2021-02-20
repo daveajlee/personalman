@@ -32,6 +32,7 @@ public class UserUtils {
                 .password(userRequest.getPassword())
                 .company(userRequest.getCompany())
                 .workingDays(convertToDayOfWeek(userRequest.getWorkingDays()))
+                .role(userRequest.getRole())
                 .build();
     }
 
@@ -50,6 +51,7 @@ public class UserUtils {
                 .startDate(DateUtils.convertLocalDateToDate(user.getStartDate()))
                 .username(user.getUserName())
                 .workingDays(convertFromDayOfWeek(user.getWorkingDays()))
+                .role(user.getRole())
                 .build();
     }
 
