@@ -86,4 +86,20 @@ public class UserService {
         loggedInTokens.remove(token);
     }
 
+    /**
+     * Reset the password for a particular user.
+     * @param company a <code>String</code> containing the company that the user is associated with.
+     * @param username a <code>String</code> containing the username of the user who's password should be reset.
+     * @param newPassword a <code>String</code> containing the new password that the user should receive.
+     */
+    public boolean resetUserPassword ( final String company, final String username, final String newPassword ) {
+        User user = userRepository.findByCompanyAndUserName(company, username);
+        if ( user != null ) {
+            user.setPassword(newPassword);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
+
 }
