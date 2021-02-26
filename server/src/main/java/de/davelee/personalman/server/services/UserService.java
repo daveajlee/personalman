@@ -102,4 +102,23 @@ public class UserService {
         return false;
     }
 
+    /**
+     * Change the password for a particular user if the old password matches the current password in database.
+     * @param company a <code>String</code> containing the company that the user is associated with.
+     * @param username a <code>String</code> containing the username of the user who's password should be reset.
+     * @param oldPassword a <code>String</code> containing the old password that the user had.
+     * @param newPassword a <code>String</code> containing the new password that the user should receive.
+     */
+    public boolean changePassword ( final String company, final String username, final String oldPassword, final String newPassword ) {
+        User user = userRepository.findByCompanyAndUserName(company, username);
+        if ( user != null ) {
+            if ( user.getPassword().contentEquals(oldPassword) ) {
+                user.setPassword(newPassword);
+                userRepository.save(user);
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
