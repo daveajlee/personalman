@@ -79,6 +79,15 @@ public class UserService {
     }
 
     /**
+     * Check if this is a valid token which is defined as a token that exists in the token storage and has not yet expired.
+     * @param token a <code>String</code> containing the token to check.
+     * @return a <code>boolean</code> which is true iff the token is valid.
+     */
+    public boolean checkAuthToken ( final String token ) {
+        return loggedInTokens.containsKey(token) && loggedInTokens.get(token).isAfter(LocalDateTime.now());
+    }
+
+    /**
      * Remove the supplied token from the list of logged in tokens.
      * @param token a <code>String</code> containing the token to remove from the list of logged in tokens.
      */

@@ -51,6 +51,10 @@ public class PersonalManRestController {
     @PostMapping(value="/absences")
     @ApiResponses(value = {@ApiResponse(code=201,message="Successfully created absence")})
     public ResponseEntity<Void> addAbsence (@RequestBody final AbsenceRequest absenceRequest ) {
+        //Verify that user is logged in.
+        if ( absenceRequest.getToken() == null || !userService.checkAuthToken(absenceRequest.getToken()) ) {
+            return ResponseEntity.status(403).build();
+        }
         //First of all, check if any of the fields are empty or null, then return bad request.
         if (StringUtils.isNullOrEmpty(absenceRequest.getCategory()) || StringUtils.isNullOrEmpty(absenceRequest.getCompany())
                 || StringUtils.isNullOrEmpty(absenceRequest.getEndDate()) || StringUtils.isNullOrEmpty(absenceRequest.getStartDate())
@@ -78,6 +82,7 @@ public class PersonalManRestController {
      * @param endDate a <code>String</code> containing the end of the date range to search.
      * @param category a <code>String</code> containing the category of the absences to find which may be null (is optional).
      * @param onlyCount a <code>boolean</code> which is true iff only the amount of absences should be retrieved (optimised performance). Default is false.
+     * @param token a <code>String</code> to verify that the user is logged in.
      * @return a <code>ResponseEntity</code> containing the absences found.
      */
     @ApiOperation(value = "Find or count absences", notes="Find or count absences in the system according to the specified criteria.")
@@ -88,7 +93,12 @@ public class PersonalManRestController {
                                                          @RequestParam("startDate") final String startDate,
                                                          @RequestParam("endDate") final String endDate,
                                                          @RequestParam(value="category", required=false) final String category,
-                                                         @RequestParam(value = "onlyCount", defaultValue="false", required=false) final boolean onlyCount) {
+                                                         @RequestParam(value = "onlyCount", defaultValue="false", required=false) final boolean onlyCount,
+                                                         @RequestParam("token") final String token) {
+        //Verify that user is logged in.
+        if ( token == null || !userService.checkAuthToken(token) ) {
+            return ResponseEntity.status(403).build();
+        }
         //Convert the dates to local date. If end date is before start date then return bad request.
         LocalDate startLocalDate = DateUtils.convertDateToLocalDate(startDate);
         LocalDate endLocalDate = DateUtils.convertDateToLocalDate(endDate);
@@ -130,6 +140,7 @@ public class PersonalManRestController {
      * @param username a <code>String</code> containing the username which may be null (is optional).
      * @param startDate a <code>String</code> containing the start of the absence.
      * @param endDate a <code>String</code> containing the end of the absence.
+     * @param token a <code>String</code> to verify if the user is logged in.
      * @return a <code>ResponseEntity</code> containing the result of the action.
      */
     @ApiOperation(value = "Delete absences", notes="Delete absences in the system according to the specified criteria.")
@@ -138,7 +149,12 @@ public class PersonalManRestController {
     public ResponseEntity<Void> deleteAbsences (@RequestParam("company") final String company,
                                                          @RequestParam(value = "username", required=false) final String username,
                                                          @RequestParam("startDate") final String startDate,
-                                                         @RequestParam("endDate") final String endDate) {
+                                                         @RequestParam("endDate") final String endDate,
+                                                         @RequestParam("token") final String token) {
+        //Verify that user is logged in.
+        if ( token == null || !userService.checkAuthToken(token) ) {
+            return ResponseEntity.status(403).build();
+        }
         //Convert the dates to local date. If end date is before start date then return bad request.
         LocalDate startLocalDate = DateUtils.convertDateToLocalDate(startDate);
         LocalDate endLocalDate = DateUtils.convertDateToLocalDate(endDate);
@@ -190,19 +206,23 @@ public class PersonalManRestController {
     /**
      * Get a specific company from the database based on their name.
      * @param name a <code>String</code> containing the name of the company.
+     * @param token a <code>String</code> to verify if the user is logged in.
      * @return a <code>ResponseEntity</code> containing the results of the action.
      */
     @ApiOperation(value = "Retrieve a company", notes="Retrieve a company from the system.")
     @GetMapping(value="/company")
     @ApiResponses(value = {@ApiResponse(code=200,message="Successfully retrieved company"), @ApiResponse(code=404,message="Company not found")})
     @ResponseBody
-    public ResponseEntity<CompanyResponse> getCompany (@RequestParam("name") final String name ) {
+    public ResponseEntity<CompanyResponse> getCompany (@RequestParam("name") final String name, @RequestParam("token") final String token ) {
+        //Verify that user is logged in.
+        if ( token == null || !userService.checkAuthToken(token) ) {
+            return ResponseEntity.status(403).build();
+        }
         //First of all, check if the name field is empty or null, then return bad request.
         if (StringUtils.isNullOrEmpty(name) ) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Company company = companyService.getCompany(name);
-        System.out.println("Retrieved company: " + company);
         if ( company != null ) {
             return ResponseEntity.ok(CompanyResponse.builder()
                     .name(company.getName())
@@ -217,12 +237,17 @@ public class PersonalManRestController {
     /**
      * Delete a specific company from the database based on their name.
      * @param name a <code>String</code> containing the name of the company.
+     * @param token a <code>String</code> to verify if the user is logged in.
      * @return a <code>ResponseEntity</code> containing the results of the action.
      */
     @ApiOperation(value = "Delete a company", notes="Delete a company from the system.")
     @DeleteMapping(value="/company")
     @ApiResponses(value = {@ApiResponse(code=200,message="Successfully delete company"), @ApiResponse(code=404,message="Company not found")})
-    public ResponseEntity<Void> deleteCompany (@RequestParam("name") final String name ) {
+    public ResponseEntity<Void> deleteCompany (@RequestParam("name") final String name, @RequestParam("token") final String token ) {
+        //Verify that user is logged in.
+        if ( token == null || !userService.checkAuthToken(token) ) {
+            return ResponseEntity.status(403).build();
+        }
         //First of all, check if the name field is empty or null, then return bad request.
         if (StringUtils.isNullOrEmpty(name) ) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -269,12 +294,18 @@ public class PersonalManRestController {
      * Find a user based on their username and company.
      * @param company a <code>String</code> containing the name of the company.
      * @param username a <code>String</code> containing the username.
+     * @param token a <code>String</code> containing the token to verify that the user is logged in.
      * @return a <code>ResponseEntity</code> containing the user found.
      */
     @ApiOperation(value = "Find a user", notes="Find a user to the system.")
     @GetMapping(value="/user")
     @ApiResponses(value = {@ApiResponse(code=200,message="Successfully found user"), @ApiResponse(code=204,message="Successful but no user found")})
-    public ResponseEntity<UserResponse> getUser (@RequestParam("company") final String company, @RequestParam("username") final String username ) {
+    public ResponseEntity<UserResponse> getUser (@RequestParam("company") final String company, @RequestParam("username") final String username,
+                                                 @RequestParam("token") final String token) {
+        //Verify that user is logged in.
+        if ( token == null || !userService.checkAuthToken(token) ) {
+            return ResponseEntity.status(403).build();
+        }
         //First of all, check if the username field is empty or null, then return bad request.
         if (StringUtils.isNullOrEmpty(username) || StringUtils.isNullOrEmpty(company)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -292,12 +323,18 @@ public class PersonalManRestController {
     /**
      * Find all users for a specific company.
      * @param company a <code>String</code> containing the name of the company.
+     * @param token a <code>String</code> containing the token to verify that the user is logged in.
      * @return a <code>ResponseEntity</code> containing the users for this company.
      */
     @ApiOperation(value = "Find all users for a company", notes="Find all users for a company to the system.")
     @GetMapping(value="/users")
     @ApiResponses(value = {@ApiResponse(code=200,message="Successfully found user(s)"), @ApiResponse(code=204,message="Successful but no users found")})
-    public ResponseEntity<UsersResponse> getUsers (@RequestParam("company") final String company ) {
+    public ResponseEntity<UsersResponse> getUsers (@RequestParam("company") final String company,
+                                                   @RequestParam("token") final String token) {
+        //Verify that user is logged in.
+        if ( token == null || !userService.checkAuthToken(token) ) {
+            return ResponseEntity.status(403).build();
+        }
         //First of all, check if the compny field is empty or null, then return bad request.
         if ( StringUtils.isNullOrEmpty(company)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -323,12 +360,18 @@ public class PersonalManRestController {
      * Delete a specific user from the database based on their username and company.
      * @param company a <code>String</code> containing the name of the company.
      * @param username a <code>String</code> containing the username.
+     * @param token a <code>String</code> containing the token to verify that the user is logged in.
      * @return a <code>ResponseEntity</code> containing the results of the action.
      */
     @ApiOperation(value = "Delete a user", notes="Delete a user from the system.")
     @DeleteMapping(value="/user")
     @ApiResponses(value = {@ApiResponse(code=200,message="Successfully delete user"), @ApiResponse(code=204,message="Successful but no user found")})
-    public ResponseEntity<Void> deleteUser (@RequestParam("company") final String company, @RequestParam("username") final String username ) {
+    public ResponseEntity<Void> deleteUser (@RequestParam("company") final String company, @RequestParam("username") final String username,
+                                            @RequestParam("token") final String token) {
+        //Verify that user is logged in.
+        if ( token == null || !userService.checkAuthToken(token) ) {
+            return ResponseEntity.status(403).build();
+        }
         //First of all, check if the username field is empty or null, then return bad request.
         if (StringUtils.isNullOrEmpty(username) || StringUtils.isNullOrEmpty(company)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -387,6 +430,10 @@ public class PersonalManRestController {
     @PostMapping(value="/resetUser")
     @ApiResponses(@ApiResponse(code=200,message="Successfully processed reset user request"))
     public ResponseEntity<Void> resetUser (@RequestBody final ResetUserRequest resetUserRequest) {
+        //Verify that user is logged in.
+        if ( resetUserRequest.getToken() == null || !userService.checkAuthToken(resetUserRequest.getToken()) ) {
+            return ResponseEntity.status(403).build();
+        }
         boolean result = userService.resetUserPassword(resetUserRequest.getCompany(), resetUserRequest.getUsername(), resetUserRequest.getPassword());
         //If result is true, then return 200 otherwise return 404 to indicate user not found.
         return result ? ResponseEntity.status(200).build() : ResponseEntity.status(404).build();
@@ -402,6 +449,10 @@ public class PersonalManRestController {
     @PostMapping(value="/changePassword")
     @ApiResponses(@ApiResponse(code=200,message="Successfully processed change password request"))
     public ResponseEntity<Void> changePassword (@RequestBody final ChangePasswordRequest changePasswordRequest) {
+        //Verify that user is logged in.
+        if ( changePasswordRequest.getToken() == null || !userService.checkAuthToken(changePasswordRequest.getToken()) ) {
+            return ResponseEntity.status(403).build();
+        }
         boolean result = userService.changePassword(changePasswordRequest.getCompany(), changePasswordRequest.getUsername(),
                 changePasswordRequest.getCurrentPassword(), changePasswordRequest.getNewPassword());
         //If result is true, then return 200 otherwise return 404 to indicate user not found.
