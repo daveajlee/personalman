@@ -60,12 +60,12 @@ public class PersonalManRestControllerTest {
                 .when()
                 .post("/personalman/absences")
                 .then()
-                .statusCode(HttpStatus.SC_CREATED);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
         //Delete user.
         when()
-                .delete("/personalman/user?company=MyCompany&username=dlee")
+                .delete("/personalman/user?company=MyCompany&username=dlee&token=dlee-lgfkfkfl")
                 .then()
-                .statusCode(HttpStatus.SC_OK);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class PersonalManRestControllerTest {
                 .when()
                 .post("/personalman/absences")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -111,7 +111,7 @@ public class PersonalManRestControllerTest {
                 .when()
                 .post("/personalman/absences")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -134,7 +134,7 @@ public class PersonalManRestControllerTest {
                 .when()
                 .post("/personalman/absences")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -157,7 +157,7 @@ public class PersonalManRestControllerTest {
                 .when()
                 .post("/personalman/absences")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -180,7 +180,7 @@ public class PersonalManRestControllerTest {
                 .when()
                 .post("/personalman/absences")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -203,7 +203,7 @@ public class PersonalManRestControllerTest {
                 .when()
                 .post("/personalman/absences")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -226,7 +226,7 @@ public class PersonalManRestControllerTest {
                 .when()
                 .post("/personalman/absences")
                 .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -236,9 +236,9 @@ public class PersonalManRestControllerTest {
      */
     public void testValidFindAbsencesWithoutUsername() {
         when()
-                .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016")
+                .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&token=dlee-fkgfgg")
                 .then()
-                .statusCode(HttpStatus.SC_OK);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -248,9 +248,9 @@ public class PersonalManRestControllerTest {
      */
     public void testValidFindAbsencesWithUsername() {
         when()
-                .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee")
+                .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&token=dlee-fkmggkgk")
                 .then()
-                .statusCode(HttpStatus.SC_OK);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -284,10 +284,9 @@ public class PersonalManRestControllerTest {
      */
     public void testCountAbsencesWithoutUsername() {
         when()
-                .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&category=Holiday&onlyCount=true")
+                .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&category=Holiday&onlyCount=true&token=dlee-fkgkgkgk")
                 .then()
-                .statusCode(HttpStatus.SC_OK)
-                .body("count", equalTo(0));
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -297,9 +296,9 @@ public class PersonalManRestControllerTest {
      */
     public void testValidCountAbsencesWithUsername() {
         when()
-                .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&category=Holiday&onlyCount=true")
+                .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&category=Holiday&onlyCount=true&token=dlee-fgltglgtl")
                 .then()
-                .statusCode(HttpStatus.SC_OK);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -309,10 +308,9 @@ public class PersonalManRestControllerTest {
      */
     public void testValidCountAbsencesWithUsernameWhenNoAbsences() {
         when()
-                .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&category=Illness&onlyCount=true")
+                .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&category=Illness&onlyCount=true&token=dlee-gkgktgtl")
                 .then()
-                .statusCode(HttpStatus.SC_OK)
-                .body("count", equalTo(0));
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -370,9 +368,9 @@ public class PersonalManRestControllerTest {
      */
     public void testValidDeleteAbsencesWithoutUsername() {
         when()
-                .delete("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016")
+                .delete("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&token=dlee-ffpggoog")
                 .then()
-                .statusCode(HttpStatus.SC_OK);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -382,9 +380,9 @@ public class PersonalManRestControllerTest {
      */
     public void testValidDeleteAbsencesWithUsername() {
         when()
-                .delete("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee")
+                .delete("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&token=dlee-fgglggtlg")
                 .then()
-                .statusCode(HttpStatus.SC_OK);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -417,8 +415,19 @@ public class PersonalManRestControllerTest {
      * Expected Result: user created successfully.
      */
      public void testValidUser() {
-        UserRequest validUserRequest = generateValidUserRequest();
-        assertEquals("David", validUserRequest.getFirstName());
+        UserRequest validUserRequest = UserRequest.builder()
+                .company("Example Company")
+                .firstName("Max")
+                .surname("Mustermann")
+                .leaveEntitlementPerYear(25)
+                .position("Secretary")
+                .username("max.mustermann")
+                .password("test")
+                .role("Employee")
+                .startDate("01-03-2020")
+                .workingDays("Monday,Tuesday,Wednesday,Thursday,Friday")
+                .build();
+        assertEquals("Max", validUserRequest.getFirstName());
         given()
                 .contentType("application/json")
                 .body(validUserRequest)
@@ -687,9 +696,9 @@ public class PersonalManRestControllerTest {
      */
     public void testValidFindUsersNotFound() {
         when()
-                .get("/personalman/users?company=MyNoCompany")
+                .get("/personalman/users?company=MyNoCompany&token=dlee-gkgtkgtgl")
                 .then()
-                .statusCode(HttpStatus.SC_NO_CONTENT);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -711,17 +720,17 @@ public class PersonalManRestControllerTest {
      */
      public void testValidFindUserAndThenFindUsersAndThenDelete() {
         when()
-                .get("/personalman/user?company=MyCompany&username=dlee")
+                .get("/personalman/user?company=MyCompany&username=dlee&token=dlee-fjgkg")
                 .then()
-                .statusCode(HttpStatus.SC_OK);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
         when()
-                .get("/personalman/users?company=MyCompany")
+                .get("/personalman/users?company=MyCompany&token=dlee-gfkggkogt")
                 .then()
-                .statusCode(HttpStatus.SC_OK);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
         when()
-                .delete("/personalman/user?company=MyCompany&username=dlee")
+                .delete("/personalman/user?company=MyCompany&username=dlee&token=dlee-gkgkgkgll")
                 .then()
-                .statusCode(HttpStatus.SC_OK);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -731,9 +740,9 @@ public class PersonalManRestControllerTest {
      */
     public void testValidFindUserNotFound() {
         when()
-                .get("/personalman/user?company=MyCompany&username=mlee")
+                .get("/personalman/user?company=MyCompany&username=mlee&token=dlee-glglglggl")
                 .then()
-                .statusCode(HttpStatus.SC_NO_CONTENT);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
@@ -767,9 +776,9 @@ public class PersonalManRestControllerTest {
      */
     public void testValidDeleteUserNotFound() {
         when()
-                .delete("/personalman/user?company=MyCompany&username=mlee")
+                .delete("/personalman/user?company=MyCompany&username=mlee&token=dlee-fgtgogg")
                 .then()
-                .statusCode(HttpStatus.SC_NO_CONTENT);
+                .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
     @Test
