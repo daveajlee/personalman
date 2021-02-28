@@ -44,7 +44,7 @@ public class AbsenceService {
         //Get the employee information.
         User user = userService.findByCompanyAndUserName(absence.getCompany(), absence.getUsername());
         List<Absence> absences = new ArrayList<>();
-        //Continue processing.
+        //Special processing for particular types of categories.
         if ( absence.getCategory() == AbsenceCategory.HOLIDAY ) {
             if ( absence.getStartDate().getYear() != absence.getEndDate().getYear() &&
                     ChronoUnit.YEARS.between(absence.getStartDate(), absence.getEndDate()) < 2 ) {
@@ -94,6 +94,10 @@ public class AbsenceService {
                 long numDaysDesired = Period.between(absence.getStartDate(), absence.getEndDate()).getDays() + 1;
                 result = numDaysDesired <= numDayInLieuDaysAvailable;
             }
+        } else {
+            // No special processing needed so just add the absence to the list.
+            absences.addAll(AbsenceUtils.generateAbsences(user, absence.getStartDate(),
+                    absence.getEndDate(), absence.getCategory()));
         }
         if ( result ) {
             for ( Absence myAbsence : absences ) {
