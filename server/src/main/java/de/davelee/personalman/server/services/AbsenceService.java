@@ -156,7 +156,14 @@ public class AbsenceService {
      */
     public Long countAbsences ( final String company, final String username, final LocalDate startDate,
                                 final LocalDate endDate, final AbsenceCategory absenceCategory) {
-        return absenceRepository.countByCompanyAndNameAndDate(company, username, startDate, endDate, absenceCategory);
+        long count = 0;
+        List<Absence> matchingAbsences = findAbsences (company, username, startDate, endDate);
+        for ( Absence matchingAbsence : matchingAbsences ) {
+            if ( matchingAbsence.getCategory() == absenceCategory ) {
+                count = Period.between(matchingAbsence.getStartDate(), matchingAbsence.getEndDate()).getDays() + 1;
+            }
+        }
+        return count;
     }
 
     /**
@@ -177,7 +184,7 @@ public class AbsenceService {
      * @return a <code>AbsencesResponse</code> object containing the basic statistics map to.
      */
     public AbsencesResponse prepareAbsencesResponse ( ) {
-        HashMap<String, Integer> statisticsMap = new HashMap<String, Integer>();
+        HashMap<String, Integer> statisticsMap = new HashMap<>();
         AbsenceCategory[] absenceCategories = AbsenceCategory.values();
         for ( AbsenceCategory absenceCategory : absenceCategories ) {
             statisticsMap.put(absenceCategory.toString(), 0);

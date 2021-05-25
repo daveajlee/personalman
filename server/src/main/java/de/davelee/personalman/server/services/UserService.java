@@ -100,6 +100,7 @@ public class UserService {
      * @param company a <code>String</code> containing the company that the user is associated with.
      * @param username a <code>String</code> containing the username of the user who's password should be reset.
      * @param newPassword a <code>String</code> containing the new password that the user should receive.
+     * @return a <code>boolean</code> which is true iff the password could be reset successfully.
      */
     public boolean resetUserPassword ( final String company, final String username, final String newPassword ) {
         User user = userRepository.findByCompanyAndUserName(company, username);
@@ -117,6 +118,7 @@ public class UserService {
      * @param username a <code>String</code> containing the username of the user who's password should be reset.
      * @param oldPassword a <code>String</code> containing the old password that the user had.
      * @param newPassword a <code>String</code> containing the new password that the user should receive.
+     * @return a <code>boolean</code> which is true iff the password could be changed successfully.
      */
     public boolean changePassword ( final String company, final String username, final String oldPassword, final String newPassword ) {
         User user = userRepository.findByCompanyAndUserName(company, username);
