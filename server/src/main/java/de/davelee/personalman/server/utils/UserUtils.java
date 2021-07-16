@@ -101,33 +101,33 @@ public class UserUtils {
      * @return a comma-separated <code>String</code> containing the converted days of week.
      */
     private static String convertFromDayOfWeek ( final List<DayOfWeek> daysOfWeekList ) {
-        String days = "";
+        StringBuilder daysBuilder = new StringBuilder();
         for ( DayOfWeek dayOfWeek : daysOfWeekList) {
             switch ( dayOfWeek ) {
                 case MONDAY:
-                    days += "Monday,";
+                    daysBuilder.append("Monday,");
                     break;
                 case TUESDAY:
-                    days += "Tuesday,";
+                    daysBuilder.append("Tuesday,");
                     break;
                 case WEDNESDAY:
-                    days += "Wednesday,";
+                    daysBuilder.append("Wednesday,");
                     break;
                 case THURSDAY:
-                    days += "Thursday,";
+                    daysBuilder.append("Thursday,");
                     break;
                 case FRIDAY:
-                    days += "Friday";
+                    daysBuilder.append("Friday");
                     break;
                 case SATURDAY:
-                    days += "Saturday";
+                    daysBuilder.append("Saturday");
                     break;
                 case SUNDAY:
-                    days += "Sunday";
+                    daysBuilder.append("Sunday");
                     break;
             }
         }
-        return days;
+        return daysBuilder.toString();
     }
 
 

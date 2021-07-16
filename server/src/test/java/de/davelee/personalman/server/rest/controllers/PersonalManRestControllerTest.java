@@ -13,7 +13,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -28,19 +27,19 @@ public class PersonalManRestControllerTest {
     @Value("${local.server.port}")
     private int port;
 
-    @Before
     /**
      * Before starting the tests, ensure that the port is configured successfully.
      */
+    @Before
     public void setUp() {
         RestAssured.port = port;
     }
 
-    @Test
     /**
      * Test case: add a user to the system based on a valid user request.
      * Expected Result: user added successfully.
      */
+    @Test
     public void testValidAdd() {
         //Add user so that test is successfully.
         UserRequest validUserRequest = generateValidUserRequest();
@@ -68,11 +67,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: add an absence with an invalid date.
      * Expected Result: bad request.
      */
+    @Test
     public void testInvalidDate() {
         AbsenceRequest validAbsenceRequest = AbsenceRequest.builder()
                 .company("MyCompany")
@@ -91,11 +90,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: add an absence with an end date before the start date.
      * Expected Result: bad request.
      */
+    @Test
     public void testEndDateBeforeStartDate() {
         AbsenceRequest validAbsenceRequest = AbsenceRequest.builder()
                 .company("MyCompany")
@@ -114,11 +113,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: add an absence without specifying the category.
      * Expected Result: bad request.
      */
+    @Test
     public void testMissingCategory() {
         AbsenceRequest validAbsenceRequest = AbsenceRequest.builder()
                 .company("MyCompany")
@@ -137,11 +136,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: add an absence without specifying a company.
      * Expected Result: bad request.
      */
+    @Test
     public void testMissingCompany() {
         AbsenceRequest validAbsenceRequest = AbsenceRequest.builder()
                 .company("")
@@ -160,11 +159,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: add an absence without an end date.
      * Expected Result: bad request.
      */
+    @Test
     public void testMissingEndDate() {
         AbsenceRequest validAbsenceRequest = AbsenceRequest.builder()
                 .company("MyCompany")
@@ -183,11 +182,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: add an absence without a start date.
      * Expected Result: bad request.
      */
+    @Test
     public void testMissingStartDate() {
         AbsenceRequest validAbsenceRequest = AbsenceRequest.builder()
                 .company("MyCompany")
@@ -206,11 +205,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: add an absence without a username.
      * Expected Result: bad request.
      */
+    @Test
     public void testMissingUsername() {
         AbsenceRequest validAbsenceRequest = AbsenceRequest.builder()
                 .company("MyCompany")
@@ -229,11 +228,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: find absences for a particular company.
      * Expected Result: status ok.
      */
+    @Test
     public void testValidFindAbsencesWithoutUsername() {
         when()
                 .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&token=dlee-fkgfgg")
@@ -241,11 +240,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: find absences for a particular company and username.
      * Expected Result: status ok.
      */
+    @Test
     public void testValidFindAbsencesWithUsername() {
         when()
                 .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&token=dlee-fkmggkgk")
@@ -253,11 +252,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: find absences for a particular company without specifying a date range.
      * Expected Result: bad request.
      */
+    @Test
     public void testMissingDatesFindAbsences() {
         when()
                 .get("/personalman/absences?company=MyCompany")
@@ -265,11 +264,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: find absences for a particular company with an end date before the start date.
      * Expected Result: bad request.
      */
+    @Test
     public void testEndDateBeforeStartDateFindAbsences() {
         when()
                 .get("/personalman/absences?company=MyCompany&startDate=30-11-2017&endDate=30-11-2016")
@@ -277,11 +276,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: count absences for a particular company.
      * Expected Result: status ok and count 0.
      */
+    @Test
     public void testCountAbsencesWithoutUsername() {
         when()
                 .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&category=Holiday&onlyCount=true&token=dlee-fkgkgkgk")
@@ -289,11 +288,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: find absences for a particular company and username.
      * Expected Result: status ok.
      */
+    @Test
     public void testValidCountAbsencesWithUsername() {
         when()
                 .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&category=Holiday&onlyCount=true&token=dlee-fgltglgtl")
@@ -301,11 +300,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: count absences for a particular company and username where there are no known absences.
      * Expected Result: status ok and 0.
      */
+    @Test
     public void testValidCountAbsencesWithUsernameWhenNoAbsences() {
         when()
                 .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&category=Illness&onlyCount=true&token=dlee-gkgktgtl")
@@ -313,11 +312,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: count absences for a particular company without specifying a date range.
      * Expected Result: bad request.
      */
+    @Test
     public void testMissingDateCountAbsences() {
         when()
                 .get("/personalman/absences?company=MyCompany&onlyCount=true")
@@ -325,11 +324,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: count absences for a particular company with an end date before the start date.
      * Expected Result: bad request.
      */
+    @Test
     public void testEndDateBeforeStartDateCountAbsences() {
         when()
                 .get("/personalman/absences?company=MyCompany&startDate=30-11-2017&endDate=30-11-2016&onlyCount=true")
@@ -337,11 +336,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: count absences for a particular company without specifying a category.
      * Expected Result: bad request.
      */
+    @Test
     public void testMissingCategoryCountAbsence() {
         when()
                 .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&onlyCount=true")
@@ -349,11 +348,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: find absences for a particular company with an invalid category.
      * Expected Result: bad request.
      */
+    @Test
     public void testInvalidCategoryCountAbsence() {
         when()
                 .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&category=MyHoliday&onlyCount=true")
@@ -361,11 +360,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: delete absences for a particular company.
      * Expected Result: status ok.
      */
+    @Test
     public void testValidDeleteAbsencesWithoutUsername() {
         when()
                 .delete("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&token=dlee-ffpggoog")
@@ -373,11 +372,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: delete absences for a particular company and username.
      * Expected Result: status ok.
      */
+    @Test
     public void testValidDeleteAbsencesWithUsername() {
         when()
                 .delete("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&token=dlee-fgglggtlg")
@@ -385,11 +384,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: delete absences for a particular company without specifying a date range.
      * Expected Result: bad request.
      */
+    @Test
     public void testMissingDatesDeleteAbsences() {
         when()
                 .delete("/personalman/absences?company=MyCompany")
@@ -397,11 +396,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: delete absences for a particular company with an end date before the start date.
      * Expected Result: bad request.
      */
+    @Test
     public void testEndDateBeforeStartDateDeleteAbsences() {
         when()
                 .delete("/personalman/absences?company=MyCompany&startDate=30-11-2017&endDate=30-11-2016")
@@ -409,12 +408,12 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: add a user to the system based on a valid user request.
      * Expected Result: user created successfully.
      */
-     public void testValidUser() {
+    @Test
+    public void testValidUser() {
         UserRequest validUserRequest = UserRequest.builder()
                 .company("Example Company")
                 .firstName("Max")
@@ -437,11 +436,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_CREATED);
     }
 
-    @Test
     /**
      * Test case: Attempt to add a user to the system with a negative amount of annual leave.
      * Expected Result: bad request.
      */
+    @Test
     public void testUserInvalidLeave() {
         UserRequest validUserRequest = UserRequest.builder()
                 .firstName("David")
@@ -463,11 +462,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: attempt to add a user to the system with an invalid start date.
      * Expected Result: bad request.
      */
+    @Test
     public void testUserInvalidStartDate() {
         UserRequest validUserRequest = UserRequest.builder()
                 .firstName("David")
@@ -489,11 +488,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: attempt to add a user to the system with no first name.
      * Expected Result: bad request.
      */
+    @Test
     public void testUserMissingFirstName() {
         UserRequest validUserRequest = UserRequest.builder()
                 .surname("Lee")
@@ -514,11 +513,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: attempt to add a user to the system without leave entitlement.
      * Expected Result: bad request.
      */
+    @Test
     public void testUserMissingLeaveEntitlement() {
         UserRequest validUserRequest = UserRequest.builder()
                 .firstName("David")
@@ -539,11 +538,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: attempt to add a user to the system with no job title.
      * Expected Result: bad request.
      */
+    @Test
     public void testUserMissingPosition() {
         UserRequest validUserRequest = UserRequest.builder()
                 .firstName("David")
@@ -564,11 +563,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: attempt to add a user to the system with no start date.
      * Expected Result: bad request.
      */
+    @Test
     public void testUserMissingStartDate() {
         UserRequest validUserRequest = UserRequest.builder()
                 .firstName("David")
@@ -589,11 +588,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: attempt to add a user to the system with no last name.
      * Expected Result: bad request.
      */
+    @Test
     public void testUserMissingSurname() {
         UserRequest validUserRequest = UserRequest.builder()
                 .firstName("David")
@@ -614,12 +613,12 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: attempt to add a user to the system with no username.
      * Expected Result: bad request.
      */
-     public void testUserMissingUsername() {
+    @Test
+    public void testUserMissingUsername() {
         UserRequest validUserRequest = UserRequest.builder()
                 .firstName("David")
                 .surname("Lee")
@@ -639,11 +638,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: attempt to add a user to the system with no company.
      * Expected Result: bad request.
      */
+    @Test
     public void testUserMissingCompany() {
         UserRequest validUserRequest = UserRequest.builder()
                 .firstName("David")
@@ -664,11 +663,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: attempt to add a user to the system with no working days.
      * Expected Result: bad request.
      */
+    @Test
     public void testUserMissingWorkingDays() {
         UserRequest validUserRequest = UserRequest.builder()
                 .firstName("David")
@@ -689,11 +688,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: attempt to find users for a company which has no users.
      * Expected Result: no content.
      */
+    @Test
     public void testValidFindUsersNotFound() {
         when()
                 .get("/personalman/users?company=MyNoCompany&token=dlee-gkgtkgtgl")
@@ -701,11 +700,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: attempt to find users without specifying a company.
      * Expected Result: bad request.
      */
+    @Test
     public void testInvalidFindUsers() {
         when()
                 .get("/personalman/users")
@@ -713,12 +712,12 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: attempt to find a user based on company & username, company & then delete a user based on username and company.
      * Expected Result: status ok.
      */
-     public void testValidFindUserAndThenFindUsersAndThenDelete() {
+    @Test
+    public void testValidFindUserAndThenFindUsersAndThenDelete() {
         when()
                 .get("/personalman/user?company=MyCompany&username=dlee&token=dlee-fjgkg")
                 .then()
@@ -733,11 +732,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: no user exists with the specified company and username.
      * Expected Result: no content.
      */
+    @Test
     public void testValidFindUserNotFound() {
         when()
                 .get("/personalman/user?company=MyCompany&username=mlee&token=dlee-glglglggl")
@@ -745,11 +744,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: attempt to find a user without specifying company or username.
      * Expected Result: bad request.
      */
+    @Test
     public void testInvalidFindUser() {
         when()
                 .get("/personalman/user")
@@ -757,11 +756,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: attempt to find a user without specifying username.
      * Expected Result: bad request.
      */
+    @Test
     public void testInvalidFindUserWithOnlyCompany() {
         when()
                 .get("/personalman/user?company=MyCompany")
@@ -769,11 +768,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: attempt to delete a user which does not exist.
      * Expected Result: no content.
      */
+    @Test
     public void testValidDeleteUserNotFound() {
         when()
                 .delete("/personalman/user?company=MyCompany&username=mlee&token=dlee-fgtgogg")
@@ -781,11 +780,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_FORBIDDEN);
     }
 
-    @Test
     /**
      * Test case: attempt to delete a user without specifying a username.
      * Expected Result: bad request.
      */
+    @Test
     public void testInvalidDeleteUser() {
         when()
                 .delete("/personalman/user")
@@ -793,11 +792,11 @@ public class PersonalManRestControllerTest {
                 .statusCode(HttpStatus.SC_BAD_REQUEST);
     }
 
-    @Test
     /**
      * Test case: check the swagger ui works.
      * Expected Result: status ok.
      */
+    @Test
     public void testSwagger() {
         when()
                 .get("/swagger-ui/")

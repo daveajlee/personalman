@@ -43,20 +43,20 @@ public class AbsenceUtilsTest {
     @Autowired
     private UserService userService;
 
-    @Before
     /**
      * Before starting the tests, ensure that the port is configured successfully.
      */
+    @Before
     public void setUp() {
         RestAssured.port = port;
     }
 
-    @Test
     /**
      * Test cases: generate and count absences including no free days inbetween, start on free day and end on working day,
      * start on a working day and end on a free day and start/end on working day with free days in between.
      * Expected Result: correct amount calculated.
      */
+    @Test
     public void testGenerateAndCountAbsences() {
         User employee = User.builder()
                 .company("MyCompany")
@@ -118,12 +118,12 @@ public class AbsenceUtilsTest {
         assertFalse(absenceService.save(absences4.get(0)));
     }
 
-    @Test
     /**
      * Test case: generate and count absences correctly where the year changes during the absence or there is insufficient
      * leave available.
      * Expected Result: based on the test case, the absence should be either added correctly or refused.
      */
+    @Test
     public void testGenerateAndCountAbsencesOverYears() {
         User employee = User.builder()
                 .company("MyCompany")
@@ -175,12 +175,12 @@ public class AbsenceUtilsTest {
                 .build()));
     }
 
-    @Test
     /**
      * Test Case: check that days in lieu can be taken, that not too many days in lieu can be taken and that they
      * cannot be taken in different years.
      * Expected result: based on the individual situation, the absence is either approved or rejected.
      */
+    @Test
     public void testDaysInLieuAbsences() {
         User employee = User.builder()
                 .company("MyCompany")

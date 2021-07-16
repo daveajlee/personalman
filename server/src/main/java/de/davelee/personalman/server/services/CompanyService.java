@@ -23,8 +23,7 @@ public class CompanyService {
      * @return a <code>boolean</code> which is true iff the company has been validated and saved successfully.
      */
     public boolean save ( final Company company ) {
-        companyRepository.save(company);
-        return true;
+        return companyRepository.save(company) != null;
     }
 
     /**

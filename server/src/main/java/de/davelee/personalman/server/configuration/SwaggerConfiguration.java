@@ -18,11 +18,11 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Profile("dev-test")
 public class SwaggerConfiguration {
 
-    @Bean
     /**
      * This method returns a Docket object containing the api information and endpoints.
      * @return a <code>Docket</code> object containing the api information and endpoints.
      */
+    @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()

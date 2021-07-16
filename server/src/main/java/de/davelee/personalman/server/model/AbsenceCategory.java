@@ -35,7 +35,7 @@ public enum AbsenceCategory {
 	 */
 	FEDERAL_HOLIDAY("Federal Holiday");
 
-	private String displayText;
+	private final String displayText;
 
 	/**
 	 * Create a new <code>AbsenceCategory</code> based on the display text.

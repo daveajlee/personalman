@@ -7,11 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Class to provide service operations for users in the PersonalMan program.
@@ -29,7 +27,7 @@ public class UserService {
     @Value("${logout.minutes}")
     private int timeoutInMinutes;
 
-    private HashMap<String, LocalDateTime> loggedInTokens = new HashMap<>();
+    private final HashMap<String, LocalDateTime> loggedInTokens = new HashMap<>();
 
     /**
      * Save the specified user object in the database.
