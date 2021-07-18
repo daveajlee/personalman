@@ -93,6 +93,8 @@ public class AbsenceService {
                 long numDayInLieuDaysAvailable = numDayInLieuDaysRequests - numDayInLieuDays;
                 long numDaysDesired = Period.between(absence.getStartDate(), absence.getEndDate()).getDays() + 1;
                 result = numDaysDesired <= numDayInLieuDaysAvailable;
+                absences.addAll(AbsenceUtils.generateAbsences(user, absence.getStartDate(),
+                        absence.getEndDate(), absence.getCategory()));
             }
         } else {
             // No special processing needed so just add the absence to the list.

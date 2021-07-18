@@ -106,20 +106,37 @@ public class AbsenceUtils {
         final List<DayOfWeek> workingDays = user.getWorkingDays();
         List<Absence> absences = new ArrayList<>();
         LocalDate currentDate = LocalDate.of(startDate.getYear(), startDate.getMonth(), startDate.getDayOfMonth());
-        LocalDate absenceStartDate = LocalDate.of(startDate.getYear(), startDate.getMonth(), startDate.getDayOfMonth());
-        boolean isFreeDay = true;
         //Start with start date and run until end date.
         while ( !currentDate.isAfter(endDate) ) {
             //Check if it is a free day.
-            isFreeDay = true;
-            for ( DayOfWeek workingDay : workingDays ) {
-                if ( workingDay==currentDate.getDayOfWeek()) {
+            boolean isFreeDay = true;
+            for (DayOfWeek workingDay : workingDays) {
+                if (workingDay == currentDate.getDayOfWeek()) {
                     isFreeDay = false;
                 }
             }
+
+            //If it is not a free day then add the absence.
+            if (!isFreeDay) {
+                absences.add(Absence.builder()
+                        .category(category)
+                        .startDate(currentDate)
+                        .endDate(currentDate)
+                        .username(user.getUserName())
+                        .company(user.getCompany())
+                        .build());
+            }
+
+            //Regardless we need to increase currentDate.
+            currentDate = currentDate.plusDays(1);
+
+        }
+
+        return absences;
+
             //If it is a free day and this is the start date then increase startDate.
             //Otherwise, we need to store last absence and then reset.
-            if ( isFreeDay && currentDate.isEqual(absenceStartDate) ) {
+            /*if ( isFreeDay && currentDate.isEqual(absenceStartDate) ) {
                 absenceStartDate = absenceStartDate.plusDays(1);
                 currentDate = currentDate.plusDays(1);
             } else if ( isFreeDay ) {
@@ -148,7 +165,7 @@ public class AbsenceUtils {
                     .build());
         }
         //Return absences.
-        return absences;
+        return absences;*/
     }
 
     /**

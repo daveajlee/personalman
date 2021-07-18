@@ -22,7 +22,7 @@ import java.time.LocalDate;
  * @author Dave Lee
  */
 @Entity
-@Table( name = "ABSENCE", uniqueConstraints=@UniqueConstraint(columnNames = {"company", "username", "startDate", "endDate"})  )
+@Table( name = "ABSENCE", uniqueConstraints=@UniqueConstraint(columnNames = {"company", "username", "startDate", "endDate", "category"})  )
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

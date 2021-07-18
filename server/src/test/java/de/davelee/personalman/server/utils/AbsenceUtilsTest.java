@@ -73,9 +73,9 @@ public class AbsenceUtilsTest {
         //Test 1 - no free days inbetween
         List<Absence> absences1 = AbsenceUtils.generateAbsences(employee, LocalDate.of(2015,3,18), LocalDate.of(2015,3,19),
                 AbsenceCategory.HOLIDAY);
-        assertEquals(absences1.size(), 1);
+        assertEquals(absences1.size(), 2);
         assertEquals(absences1.get(0).getStartDate(), LocalDate.of(2015,3,18));
-        assertEquals(absences1.get(0).getEndDate(), LocalDate.of(2015,3,19));
+        assertEquals(absences1.get(0).getEndDate(), LocalDate.of(2015,3,18));
         assertEquals(absences1.get(0).getUsername(), EMPLOYEE_USERNAME);
         assertEquals(absences1.get(0).getCategory(), AbsenceCategory.HOLIDAY);
         assertEquals(AbsenceUtils.countAbsencesInDays(absences1), 2);
@@ -84,38 +84,38 @@ public class AbsenceUtilsTest {
         //Test 2 - start on a free day and end on a working day.
         List<Absence> absences2 = AbsenceUtils.generateAbsences(employee, LocalDate.of(2015,3,21), LocalDate.of(2015,3,25),
                 AbsenceCategory.HOLIDAY);
-        assertEquals(absences2.size(), 1);
+        assertEquals(absences2.size(), 3);
         assertEquals(absences2.get(0).getStartDate(),LocalDate.of(2015,3,23));
-        assertEquals(absences2.get(0).getEndDate(), LocalDate.of(2015,3,25));
+        assertEquals(absences2.get(0).getEndDate(), LocalDate.of(2015,3,23));
         assertEquals(absences2.get(0).getUsername(), EMPLOYEE_USERNAME);
         assertEquals(absences2.get(0).getCategory(), AbsenceCategory.HOLIDAY);
         assertEquals(AbsenceUtils.countAbsencesInDays(absences2), 3);
         absenceService.delete("MyCompany", EMPLOYEE_USERNAME, LocalDate.of(2015,3,23), LocalDate.of(2015,3,25));
         assertTrue(absenceService.save(absences2.get(0)));
         //Test 3 - start on a working day and end on a free day.
-        List<Absence> absences3 = AbsenceUtils.generateAbsences(employee, LocalDate.of(2015,3,23), LocalDate.of(2015,3,29),
+        List<Absence> absences3 = AbsenceUtils.generateAbsences(employee, LocalDate.of(2015,4,23), LocalDate.of(2015,4,29),
                 AbsenceCategory.HOLIDAY);
-        assertEquals(absences3.size(), 1);
-        assertEquals(absences3.get(0).getStartDate(), LocalDate.of(2015,3,23));
-        assertEquals(absences3.get(0).getEndDate(), LocalDate.of(2015,3,27));
+        assertEquals(absences3.size(), 5);
+        assertEquals(absences3.get(0).getStartDate(), LocalDate.of(2015,4,23));
+        assertEquals(absences3.get(0).getEndDate(), LocalDate.of(2015,4,23));
         assertEquals(absences3.get(0).getUsername(), EMPLOYEE_USERNAME);
         assertEquals(absences3.get(0).getCategory(), AbsenceCategory.HOLIDAY);
         assertEquals(AbsenceUtils.countAbsencesInDays(absences3), 5);
-        assertFalse(absenceService.save(absences3.get(0)));
+        assertTrue(absenceService.save(absences3.get(0)));
         //Test 4 - start on a working day and end on a working day with free days inbetween.
         List<Absence> absences4 = AbsenceUtils.generateAbsences(employee, LocalDate.of(2015,3,16), LocalDate.of(2015,3,29),
                 AbsenceCategory.HOLIDAY);
-        assertEquals(absences4.size(), 2);
+        assertEquals(absences4.size(), 10);
         assertEquals(absences4.get(0).getStartDate(), LocalDate.of(2015,3,16));
-        assertEquals(absences4.get(0).getEndDate(), LocalDate.of(2015,3,20));
+        assertEquals(absences4.get(0).getEndDate(), LocalDate.of(2015,3,16));
         assertEquals(absences4.get(0).getUsername(), EMPLOYEE_USERNAME);
         assertEquals(absences4.get(0).getCategory(), AbsenceCategory.HOLIDAY);
-        assertEquals(absences4.get(1).getStartDate(), LocalDate.of(2015,3,23));
-        assertEquals(absences4.get(1).getEndDate(), LocalDate.of(2015,3,27));
+        assertEquals(absences4.get(1).getStartDate(), LocalDate.of(2015,3,17));
+        assertEquals(absences4.get(1).getEndDate(), LocalDate.of(2015,3,17));
         assertEquals(absences4.get(1).getUsername(), EMPLOYEE_USERNAME);
         assertEquals(absences4.get(1).getCategory(), AbsenceCategory.HOLIDAY);
         assertEquals(AbsenceUtils.countAbsencesInDays(absences4), 10);
-        assertFalse(absenceService.save(absences4.get(0)));
+        assertTrue(absenceService.save(absences4.get(0)));
     }
 
     /**
