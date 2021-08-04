@@ -41,7 +41,7 @@ public enum AbsenceCategory {
 	 * Create a new <code>AbsenceCategory</code> based on the display text.
 	 * @param displayText a <code>String</code> with the display text to generate the <code>AbsenceCategory</code> from.
 	 */
-	AbsenceCategory(String displayText) {
+	AbsenceCategory(final String displayText) {
 		this.displayText = displayText;
 	}
 	
@@ -50,7 +50,7 @@ public enum AbsenceCategory {
 	 * @param displayText a <code>String</code> with the display text to generate the <code>AbsenceCategory</code> from.
 	 * @return a <code>Reason</code> object representing the reason matching the display text or null if no match found.
 	 */
-	public static AbsenceCategory fromString(String displayText) {
+	public static AbsenceCategory fromString(final String displayText) {
 		for (AbsenceCategory absenceCategory: AbsenceCategory.values() ) {
 			if ( displayText.contentEquals(absenceCategory.displayText) ) {
 				return absenceCategory;
