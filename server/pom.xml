@@ -3,7 +3,7 @@
 
 	<groupId>de.davelee.personalman</groupId>
 	<artifactId>personalman_server</artifactId>
-	<version>1.2.0</version>
+	<version>1.2.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>PersonalMan - REST Server</name>
@@ -23,7 +23,7 @@
 	<scm>
 		<connection>scm:git:https://github.com/daveajlee/personalman</connection>
 		<url>https://github.com/daveajlee/personalman</url>
-	  <tag>v1.2.0</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<!-- GitHub Packages -->
