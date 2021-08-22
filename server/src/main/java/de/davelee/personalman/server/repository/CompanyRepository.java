@@ -1,14 +1,14 @@
 package de.davelee.personalman.server.repository;
 
 import de.davelee.personalman.server.model.Company;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.query.Param;
 
 /**
- * Interface class for database operations on companies - uses Spring Data JPA.
+ * Interface class for database operations on companies - uses Spring Data Mongo.
  * @author Dave Lee
  */
-public interface CompanyRepository extends CrudRepository<Company, Long> {
+public interface CompanyRepository extends MongoRepository<Company, Long> {
 
     /**
      * Find the company according to the name.

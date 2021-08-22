@@ -15,7 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.h2.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,9 +56,9 @@ public class PersonalManRestController {
             return ResponseEntity.status(403).build();
         }
         //First of all, check if any of the fields are empty or null, then return bad request.
-        if (StringUtils.isNullOrEmpty(absenceRequest.getCategory()) || StringUtils.isNullOrEmpty(absenceRequest.getCompany())
-                || StringUtils.isNullOrEmpty(absenceRequest.getEndDate()) || StringUtils.isNullOrEmpty(absenceRequest.getStartDate())
-                || StringUtils.isNullOrEmpty(absenceRequest.getUsername()) ) {
+        if (StringUtils.isBlank(absenceRequest.getCategory()) || StringUtils.isBlank(absenceRequest.getCompany())
+                || StringUtils.isBlank(absenceRequest.getEndDate()) || StringUtils.isBlank(absenceRequest.getStartDate())
+                || StringUtils.isBlank(absenceRequest.getUsername()) ) {
             return ResponseEntity.badRequest().build();
         }
         //Now convert the dates to LocalDate. If end date is before start date then return bad request.
@@ -219,7 +219,7 @@ public class PersonalManRestController {
             return ResponseEntity.status(403).build();
         }
         //First of all, check if the name field is empty or null, then return bad request.
-        if (StringUtils.isNullOrEmpty(name) ) {
+        if (StringUtils.isBlank(name) ) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Company company = companyService.getCompany(name);
@@ -249,7 +249,7 @@ public class PersonalManRestController {
             return ResponseEntity.status(403).build();
         }
         //First of all, check if the name field is empty or null, then return bad request.
-        if (StringUtils.isNullOrEmpty(name) ) {
+        if (StringUtils.isBlank(name) ) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         //Now delete the company.
@@ -272,10 +272,10 @@ public class PersonalManRestController {
     @ApiResponses(value = {@ApiResponse(code=201,message="Successfully created user")})
     public ResponseEntity<Void> addUser (@RequestBody final UserRequest userRequest ) {
         //First of all, check if any of the fields are empty or null, then return bad request.
-        if (StringUtils.isNullOrEmpty(userRequest.getFirstName()) || StringUtils.isNullOrEmpty(userRequest.getSurname())
-                || StringUtils.isNullOrEmpty(userRequest.getPosition()) || StringUtils.isNullOrEmpty(userRequest.getStartDate())
-                || StringUtils.isNullOrEmpty(userRequest.getUsername()) || StringUtils.isNullOrEmpty(userRequest.getWorkingDays())
-                || userRequest.getLeaveEntitlementPerYear() <= 0 || StringUtils.isNullOrEmpty(userRequest.getCompany())) {
+        if (StringUtils.isBlank(userRequest.getFirstName()) || StringUtils.isBlank(userRequest.getSurname())
+                || StringUtils.isBlank(userRequest.getPosition()) || StringUtils.isBlank(userRequest.getStartDate())
+                || StringUtils.isBlank(userRequest.getUsername()) || StringUtils.isBlank(userRequest.getWorkingDays())
+                || userRequest.getLeaveEntitlementPerYear() <= 0 || StringUtils.isBlank(userRequest.getCompany())) {
             return ResponseEntity.badRequest().build();
         }
         //Now convert the dates to LocalDate. If end date is before start date then return bad request.
@@ -307,7 +307,7 @@ public class PersonalManRestController {
             return ResponseEntity.status(403).build();
         }
         //First of all, check if the username field is empty or null, then return bad request.
-        if (StringUtils.isNullOrEmpty(username) || StringUtils.isNullOrEmpty(company)) {
+        if (StringUtils.isBlank(username) || StringUtils.isBlank(company)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         //Now retrieve the user based on the username.
@@ -336,7 +336,7 @@ public class PersonalManRestController {
             return ResponseEntity.status(403).build();
         }
         //First of all, check if the compny field is empty or null, then return bad request.
-        if ( StringUtils.isNullOrEmpty(company)) {
+        if ( StringUtils.isBlank(company)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         //Now retrieve the user based on the username.
@@ -373,7 +373,7 @@ public class PersonalManRestController {
             return ResponseEntity.status(403).build();
         }
         //First of all, check if the username field is empty or null, then return bad request.
-        if (StringUtils.isNullOrEmpty(username) || StringUtils.isNullOrEmpty(company)) {
+        if (StringUtils.isBlank(username) || StringUtils.isBlank(company)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         //Now retrieve the user based on the username.

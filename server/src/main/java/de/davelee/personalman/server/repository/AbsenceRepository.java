@@ -1,17 +1,16 @@
 package de.davelee.personalman.server.repository;
 
 import de.davelee.personalman.server.model.Absence;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Interface class for database operations on absences - uses Spring Data JPA.
+ * Interface class for database operations on absences - uses Spring Data Mongo.
  * @author Dave Lee
  */
-public interface AbsenceRepository extends CrudRepository<Absence, Long> {
+public interface AbsenceRepository extends MongoRepository<Absence, Long> {
 
     /**
      * Find all absences for the specified date range in the specified company.
@@ -20,9 +19,9 @@ public interface AbsenceRepository extends CrudRepository<Absence, Long> {
      * @param endDate a <code>LocalDate</code> with the requested end date for absences (inclusive).
      * @return a <code>List</code> of <code>Absence</code> objects containing all absences for the specified date range.
      */
-    @Query("select a from Absence a " +
-            "where a.company = ?1 and a.startDate >= ?2 and a.startDate <= ?3 and a.endDate >= ?2 and a.endDate <= ?3")
-    List<Absence> findByCompanyAndDate(final String company, final LocalDate startDate, final LocalDate endDate);
+    /*@Query("select a from Absence a " +
+            "where a.company = ?1 and a.startDate >= ?2 and a.startDate <= ?3 and a.endDate >= ?2 and a.endDate <= ?3")*/
+    List<Absence> findByCompanyAndStartDateAndEndDate(final String company, final LocalDate startDate, final LocalDate endDate);
 
     /**
      * Find all absences for the specified user name between the startDate and endDate (both dates in the range are inclusive)
@@ -32,8 +31,8 @@ public interface AbsenceRepository extends CrudRepository<Absence, Long> {
      * @param endDate a <code>LocalDate</code> with the end date of the range (inclusive)
      * @return a <code>List</code> of <code>Absence</code> objects containing all absences for the specified date range.
      */
-    @Query("select a from Absence a " +
-            "where a.company = ?1 and a.username = ?2 and a.startDate >= ?3 and a.startDate <= ?4 and a.endDate >= ?3 and a.endDate <= ?4")
-    List<Absence> findByCompanyAndNameAndDate(final String company, final String username, final LocalDate startDate, final LocalDate endDate);
+    /*@Query("select a from Absence a " +
+            "where a.company = ?1 and a.username = ?2 and a.startDate >= ?3 and a.startDate <= ?4 and a.endDate >= ?3 and a.endDate <= ?4")*/
+    List<Absence> findByCompanyAndUsernameAndStartDateAndEndDate(final String company, final String username, final LocalDate startDate, final LocalDate endDate);
 
 }

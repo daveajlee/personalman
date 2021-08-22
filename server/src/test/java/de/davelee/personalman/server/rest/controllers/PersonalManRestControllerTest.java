@@ -1,39 +1,36 @@
 package de.davelee.personalman.server.rest.controllers;
 
-import de.davelee.personalman.api.AbsenceRequest;
-import de.davelee.personalman.api.UserRequest;
-import io.restassured.RestAssured;
-import org.apache.http.HttpStatus;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Value;
+import de.davelee.personalman.api.*;
+import de.davelee.personalman.server.services.AbsenceService;
+import de.davelee.personalman.server.services.CompanyService;
+import de.davelee.personalman.server.services.UserService;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.when;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for the PersonalMan REST API.
  * @author Dave Lee
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 public class PersonalManRestControllerTest {
 
-    @Value("${local.server.port}")
-    private int port;
+    @InjectMocks
+    private PersonalManRestController personalManRestController;
 
-    /**
-     * Before starting the tests, ensure that the port is configured successfully.
-     */
-    @Before
-    public void setUp() {
-        RestAssured.port = port;
-    }
+    @Mock
+    private AbsenceService absenceService;
+
+    @Mock
+    private CompanyService companyService;
+
+    @Mock
+    private UserService userService;
 
     /**
      * Test case: add a user to the system based on a valid user request.
@@ -44,27 +41,12 @@ public class PersonalManRestControllerTest {
         //Add user so that test is successfully.
         UserRequest validUserRequest = generateValidUserRequest();
         assertEquals("David", validUserRequest.getFirstName());
-        given()
-                .contentType("application/json")
-                .body(validUserRequest)
-                .when()
-                .post("/personalman/user")
-                .then()
-                .statusCode(HttpStatus.SC_CREATED);
+        ResponseEntity<Void> responseEntity = personalManRestController.addUser(validUserRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.CREATED.value());
         //Do actual test.
         AbsenceRequest validAbsenceRequest = generateValidAbsenceRequest();
-        given()
-                .contentType("application/json")
-                .body(validAbsenceRequest)
-                .when()
-                .post("/personalman/absences")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
-        //Delete user.
-        when()
-                .delete("/personalman/user?company=MyCompany&username=dlee&token=dlee-lgfkfkfl")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        responseEntity = personalManRestController.addAbsence(validAbsenceRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -81,13 +63,8 @@ public class PersonalManRestControllerTest {
                 .category("Holiday")
                 .build();
         assertEquals("30-11-2016", validAbsenceRequest.getStartDate());
-        given()
-                .contentType("application/json")
-                .body(validAbsenceRequest)
-                .when()
-                .post("/personalman/absences")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        ResponseEntity<Void> responseEntity = personalManRestController.addAbsence(validAbsenceRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -104,13 +81,8 @@ public class PersonalManRestControllerTest {
                 .category("Holiday")
                 .build();
         assertEquals("30-11-2017", validAbsenceRequest.getStartDate());
-        given()
-                .contentType("application/json")
-                .body(validAbsenceRequest)
-                .when()
-                .post("/personalman/absences")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        ResponseEntity<Void> responseEntity = personalManRestController.addAbsence(validAbsenceRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -127,13 +99,8 @@ public class PersonalManRestControllerTest {
                 .category("")
                 .build();
         assertEquals("", validAbsenceRequest.getCategory());
-        given()
-                .contentType("application/json")
-                .body(validAbsenceRequest)
-                .when()
-                .post("/personalman/absences")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        ResponseEntity<Void> responseEntity = personalManRestController.addAbsence(validAbsenceRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -150,13 +117,8 @@ public class PersonalManRestControllerTest {
                 .category("Holiday")
                 .build();
         assertEquals("", validAbsenceRequest.getCompany());
-        given()
-                .contentType("application/json")
-                .body(validAbsenceRequest)
-                .when()
-                .post("/personalman/absences")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        ResponseEntity<Void> responseEntity = personalManRestController.addAbsence(validAbsenceRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -173,13 +135,8 @@ public class PersonalManRestControllerTest {
                 .category("Holiday")
                 .build();
         assertEquals("", validAbsenceRequest.getEndDate());
-        given()
-                .contentType("application/json")
-                .body(validAbsenceRequest)
-                .when()
-                .post("/personalman/absences")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        ResponseEntity<Void> responseEntity = personalManRestController.addAbsence(validAbsenceRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -196,13 +153,8 @@ public class PersonalManRestControllerTest {
                 .category("Holiday")
                 .build();
         assertEquals("", validAbsenceRequest.getStartDate());
-        given()
-                .contentType("application/json")
-                .body(validAbsenceRequest)
-                .when()
-                .post("/personalman/absences")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        ResponseEntity<Void> responseEntity = personalManRestController.addAbsence(validAbsenceRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -219,13 +171,8 @@ public class PersonalManRestControllerTest {
                 .category("Holiday")
                 .build();
         assertEquals("", validAbsenceRequest.getUsername());
-        given()
-                .contentType("application/json")
-                .body(validAbsenceRequest)
-                .when()
-                .post("/personalman/absences")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        ResponseEntity<Void> responseEntity = personalManRestController.addAbsence(validAbsenceRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -234,10 +181,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testValidFindAbsencesWithoutUsername() {
-        when()
-                .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&token=dlee-fkgfgg")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        ResponseEntity<AbsencesResponse> responseEntity = personalManRestController.findAbsence("MyCompany", null, "30-11-2016", "30-11-2016", null, false,"dlee-fkgfgg");
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -246,10 +191,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testValidFindAbsencesWithUsername() {
-        when()
-                .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&token=dlee-fkmggkgk")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        ResponseEntity<AbsencesResponse> responseEntity = personalManRestController.findAbsence("MyCompany", "dlee", "30-11-2016", "30-11-2016", null, false, "dlee-fkmggkgk");
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -258,10 +201,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testMissingDatesFindAbsences() {
-        when()
-                .get("/personalman/absences?company=MyCompany")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<AbsencesResponse> responseEntity = personalManRestController.findAbsence("MyCompany", null, null, null, null, false, null);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -270,10 +211,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testEndDateBeforeStartDateFindAbsences() {
-        when()
-                .get("/personalman/absences?company=MyCompany&startDate=30-11-2017&endDate=30-11-2016")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<AbsencesResponse> responseEntity = personalManRestController.findAbsence("MyCompany", null, "30-11-2017", "30-11-2016", null, false, null);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -282,10 +221,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testCountAbsencesWithoutUsername() {
-        when()
-                .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&category=Holiday&onlyCount=true&token=dlee-fkgkgkgk")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        ResponseEntity<AbsencesResponse> responseEntity = personalManRestController.findAbsence("MyCompany", null, "30-11-2016", "30-11-2016", "Holiday", true, "dlee-fkgkgkgk");
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -294,10 +231,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testValidCountAbsencesWithUsername() {
-        when()
-                .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&category=Holiday&onlyCount=true&token=dlee-fgltglgtl")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        ResponseEntity<AbsencesResponse> responseEntity = personalManRestController.findAbsence("MyCompany", "dlee", "30-11-2016", "30-11-2016", "Holiday", true, "dlee-fgltglgtl");
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -306,10 +241,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testValidCountAbsencesWithUsernameWhenNoAbsences() {
-        when()
-                .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&category=Illness&onlyCount=true&token=dlee-gkgktgtl")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        ResponseEntity<AbsencesResponse> responseEntity = personalManRestController.findAbsence("MyCompany", "dlee", "30-11-2016", "30-11-2016", "Illness", true, "dlee-gkgtgtl");
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -318,10 +251,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testMissingDateCountAbsences() {
-        when()
-                .get("/personalman/absences?company=MyCompany&onlyCount=true")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<AbsencesResponse> responseEntity = personalManRestController.findAbsence("MyCompany", null, null, null, null, true, null);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -330,10 +261,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testEndDateBeforeStartDateCountAbsences() {
-        when()
-                .get("/personalman/absences?company=MyCompany&startDate=30-11-2017&endDate=30-11-2016&onlyCount=true")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<AbsencesResponse> responseEntity = personalManRestController.findAbsence("MyCompany", null, "30-11-2017", "30-11-2016", null, true, null);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -342,10 +271,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testMissingCategoryCountAbsence() {
-        when()
-                .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&onlyCount=true")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<AbsencesResponse> responseEntity = personalManRestController.findAbsence("MyCompany", "dlee", "30-11-2016", "30-11-2016", null, true, null);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -354,10 +281,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testInvalidCategoryCountAbsence() {
-        when()
-                .get("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&category=MyHoliday&onlyCount=true")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<AbsencesResponse> responseEntity = personalManRestController.findAbsence("MyCompany", "dlee", "30-11-2016", "30-11-2016", "MyHoliday", true, null);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -366,10 +291,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testValidDeleteAbsencesWithoutUsername() {
-        when()
-                .delete("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&token=dlee-ffpggoog")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        ResponseEntity<Void> responseEntity = personalManRestController.deleteAbsences("MyCompany", null, "30-11-2016", "30-11-2016", "dlee-ffpggoog");
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -378,10 +301,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testValidDeleteAbsencesWithUsername() {
-        when()
-                .delete("/personalman/absences?company=MyCompany&startDate=30-11-2016&endDate=30-11-2016&username=dlee&token=dlee-fgglggtlg")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        ResponseEntity<Void> responseEntity = personalManRestController.deleteAbsences("MyCompany", "dlee", "30-11-2016", "30-11-2016", "dlee-fgglggtlg");
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -390,10 +311,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testMissingDatesDeleteAbsences() {
-        when()
-                .delete("/personalman/absences?company=MyCompany")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<Void> responseEntity = personalManRestController.deleteAbsences("MyCompany", null, null, null, null);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -402,10 +321,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testEndDateBeforeStartDateDeleteAbsences() {
-        when()
-                .delete("/personalman/absences?company=MyCompany&startDate=30-11-2017&endDate=30-11-2016")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<Void> responseEntity = personalManRestController.deleteAbsences("MyCompany", null, "30-11-2017", "30-11-2016", null);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -427,13 +344,8 @@ public class PersonalManRestControllerTest {
                 .workingDays("Monday,Tuesday,Wednesday,Thursday,Friday")
                 .build();
         assertEquals("Max", validUserRequest.getFirstName());
-        given()
-                .contentType("application/json")
-                .body(validUserRequest)
-                .when()
-                .post("/personalman/user")
-                .then()
-                .statusCode(HttpStatus.SC_CREATED);
+        ResponseEntity<Void> responseEntity = personalManRestController.addUser(validUserRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.CREATED.value());
     }
 
     /**
@@ -453,13 +365,8 @@ public class PersonalManRestControllerTest {
                 .workingDays("Monday,Tuesday,Wednesday")
                 .build();
         assertEquals(-1, validUserRequest.getLeaveEntitlementPerYear());
-        given()
-                .contentType("application/json")
-                .body(validUserRequest)
-                .when()
-                .post("/personalman/user")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<Void> responseEntity = personalManRestController.addUser(validUserRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
     }
 
     /**
@@ -479,13 +386,8 @@ public class PersonalManRestControllerTest {
                 .workingDays("Monday,Tuesday,Wednesday")
                 .build();
         assertEquals("33-11-2016", validUserRequest.getStartDate());
-        given()
-                .contentType("application/json")
-                .body(validUserRequest)
-                .when()
-                .post("/personalman/user")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<Void> responseEntity = personalManRestController.addUser(validUserRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
     }
 
     /**
@@ -504,13 +406,8 @@ public class PersonalManRestControllerTest {
                 .workingDays("Monday,Tuesday,Wednesday")
                 .build();
         assertNull(validUserRequest.getFirstName());
-        given()
-                .contentType("application/json")
-                .body(validUserRequest)
-                .when()
-                .post("/personalman/user")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<Void> responseEntity = personalManRestController.addUser(validUserRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
     }
 
     /**
@@ -529,13 +426,8 @@ public class PersonalManRestControllerTest {
                 .workingDays("Monday,Tuesday,Wednesday")
                 .build();
         assertEquals(0, validUserRequest.getLeaveEntitlementPerYear());
-        given()
-                .contentType("application/json")
-                .body(validUserRequest)
-                .when()
-                .post("/personalman/user")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<Void> responseEntity = personalManRestController.addUser(validUserRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
     }
 
     /**
@@ -554,13 +446,8 @@ public class PersonalManRestControllerTest {
                 .workingDays("Monday,Tuesday,Wednesday")
                 .build();
         assertNull(validUserRequest.getPosition());
-        given()
-                .contentType("application/json")
-                .body(validUserRequest)
-                .when()
-                .post("/personalman/user")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<Void> responseEntity = personalManRestController.addUser(validUserRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
     }
 
     /**
@@ -579,13 +466,8 @@ public class PersonalManRestControllerTest {
                 .workingDays("Monday,Tuesday,Wednesday")
                 .build();
         assertNull(validUserRequest.getStartDate());
-        given()
-                .contentType("application/json")
-                .body(validUserRequest)
-                .when()
-                .post("/personalman/user")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<Void> responseEntity = personalManRestController.addUser(validUserRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
     }
 
     /**
@@ -604,13 +486,8 @@ public class PersonalManRestControllerTest {
                 .workingDays("Monday,Tuesday,Wednesday")
                 .build();
         assertNull(validUserRequest.getSurname());
-        given()
-                .contentType("application/json")
-                .body(validUserRequest)
-                .when()
-                .post("/personalman/user")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<Void> responseEntity = personalManRestController.addUser(validUserRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
     }
 
     /**
@@ -629,13 +506,8 @@ public class PersonalManRestControllerTest {
                 .workingDays("Monday,Tuesday,Wednesday")
                 .build();
         assertNull(validUserRequest.getUsername());
-        given()
-                .contentType("application/json")
-                .body(validUserRequest)
-                .when()
-                .post("/personalman/user")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<Void> responseEntity = personalManRestController.addUser(validUserRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
     }
 
     /**
@@ -654,13 +526,8 @@ public class PersonalManRestControllerTest {
                 .workingDays("Monday,Tuesday,Wednesday")
                 .build();
         assertNull(validUserRequest.getCompany());
-        given()
-                .contentType("application/json")
-                .body(validUserRequest)
-                .when()
-                .post("/personalman/user")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<Void> responseEntity = personalManRestController.addUser(validUserRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
     }
 
     /**
@@ -679,13 +546,8 @@ public class PersonalManRestControllerTest {
                 .startDate("01-12-2016")
                 .build();
         assertNull(validUserRequest.getWorkingDays());
-        given()
-                .contentType("application/json")
-                .body(validUserRequest)
-                .when()
-                .post("/personalman/user")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<Void> responseEntity = personalManRestController.addUser(validUserRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
     }
 
     /**
@@ -694,10 +556,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testValidFindUsersNotFound() {
-        when()
-                .get("/personalman/users?company=MyNoCompany&token=dlee-gkgtkgtgl")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        ResponseEntity<UsersResponse> responseEntity = personalManRestController.getUsers("MyNoCompany", "dlee-gkgtkgtgl");
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -706,10 +566,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testInvalidFindUsers() {
-        when()
-                .get("/personalman/users")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<UsersResponse> responseEntity = personalManRestController.getUsers(null, null);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -718,18 +576,12 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testValidFindUserAndThenFindUsersAndThenDelete() {
-        when()
-                .get("/personalman/user?company=MyCompany&username=dlee&token=dlee-fjgkg")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
-        when()
-                .get("/personalman/users?company=MyCompany&token=dlee-gfkggkogt")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
-        when()
-                .delete("/personalman/user?company=MyCompany&username=dlee&token=dlee-gkgkgkgll")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        ResponseEntity<UserResponse> responseEntity = personalManRestController.getUser("MyCompany", "dlee", "dlee-fjgkg");
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
+        ResponseEntity<UsersResponse> responseEntity1 = personalManRestController.getUsers("MyCompany", "dlee-gfkggkogt");
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
+        ResponseEntity<Void> responseEntity2 = personalManRestController.deleteUser("MyCompany", "dlee", "dlee-gkgkgkgll");
+        assertTrue(responseEntity2.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -738,10 +590,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testValidFindUserNotFound() {
-        when()
-                .get("/personalman/user?company=MyCompany&username=mlee&token=dlee-glglglggl")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        ResponseEntity<UserResponse> responseEntity = personalManRestController.getUser("MyCompany", "mlee", "dlee-glglglggl");
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -750,10 +600,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testInvalidFindUser() {
-        when()
-                .get("/personalman/user")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<UserResponse> responseEntity = personalManRestController.getUser(null, null, null);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -762,10 +610,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testInvalidFindUserWithOnlyCompany() {
-        when()
-                .get("/personalman/user?company=MyCompany")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
+        ResponseEntity<UserResponse> responseEntity = personalManRestController.getUser("MyCompany", null, null);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -774,10 +620,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testValidDeleteUserNotFound() {
-        when()
-                .delete("/personalman/user?company=MyCompany&username=mlee&token=dlee-fgtgogg")
-                .then()
-                .statusCode(HttpStatus.SC_FORBIDDEN);
+        ResponseEntity<Void> responseEntity = personalManRestController.deleteUser("MyCompany", "mlee", "dlee-fgtgogg");
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
@@ -786,22 +630,8 @@ public class PersonalManRestControllerTest {
      */
     @Test
     public void testInvalidDeleteUser() {
-        when()
-                .delete("/personalman/user")
-                .then()
-                .statusCode(HttpStatus.SC_BAD_REQUEST);
-    }
-
-    /**
-     * Test case: check the swagger ui works.
-     * Expected Result: status ok.
-     */
-    @Test
-    public void testSwagger() {
-        when()
-                .get("/swagger-ui/")
-                .then()
-                .statusCode(200);
+        ResponseEntity<Void> responseEntity = personalManRestController.deleteUser(null, null, null);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**

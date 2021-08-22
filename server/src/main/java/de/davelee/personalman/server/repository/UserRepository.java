@@ -1,16 +1,16 @@
 package de.davelee.personalman.server.repository;
 
 import de.davelee.personalman.server.model.User;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 /**
- * Interface class for database operations on users - uses Spring Data JPA.
+ * Interface class for database operations on users - uses Spring Data Mongo.
  * @author Dave Lee
  */
-public interface UserRepository extends CrudRepository<User, Long> {
+public interface UserRepository extends MongoRepository<User, Long> {
 
     /**
      * Find a user according to their company and user name.

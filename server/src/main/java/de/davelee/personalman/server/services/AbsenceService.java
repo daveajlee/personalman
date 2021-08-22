@@ -142,9 +142,9 @@ public class AbsenceService {
                                         final LocalDate endDate ) {
         //Call the appropriate DB method depending on whether a specified username is supplied.
         if ( username == null ) {
-            return absenceRepository.findByCompanyAndDate(company, startDate, endDate);
+            return absenceRepository.findByCompanyAndStartDateAndEndDate(company, startDate, endDate);
         }
-        return absenceRepository.findByCompanyAndNameAndDate(company, username, startDate, endDate);
+        return absenceRepository.findByCompanyAndUsernameAndStartDateAndEndDate(company, username, startDate, endDate);
     }
 
     /**
