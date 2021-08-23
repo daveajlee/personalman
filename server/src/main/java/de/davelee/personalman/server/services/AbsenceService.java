@@ -146,6 +146,10 @@ public class AbsenceService {
      */
     public List<Absence> findAbsences ( final String company, final String username, final LocalDate startDate,
                                         final LocalDate endDate ) {
+        //If the mongo template is empty return an empty list. (This only happens in JUnit tests).
+        if ( mongoTemplate == null ) {
+            return List.of();
+        }
         //Call the appropriate DB method depending on whether a specified username is supplied.
         Query query = new Query();
         if ( username == null ) {
