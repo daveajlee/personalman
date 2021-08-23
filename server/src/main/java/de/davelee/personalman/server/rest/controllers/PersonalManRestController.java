@@ -1,7 +1,7 @@
 package de.davelee.personalman.server.rest.controllers;
 
 import de.davelee.personalman.api.*;
-import de.davelee.personalman.server.model.Absence;
+
 import de.davelee.personalman.server.model.AbsenceCategory;
 import de.davelee.personalman.server.model.Company;
 import de.davelee.personalman.server.model.User;
@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,8 +69,7 @@ public class PersonalManRestController {
             return ResponseEntity.badRequest().build();
         }
         //Now convert to absence object.
-        Absence absence = AbsenceUtils.convertAbsenceRequestToAbsence(absenceRequest, startLocalDate, endLocalDate);
-        absenceService.save(absence);
+        absenceService.save(AbsenceUtils.convertAbsenceRequestToAbsence(absenceRequest, startLocalDate, endLocalDate));
         //Return 201 if saved successfully.
         return ResponseEntity.status(201).build();
     }
@@ -122,10 +122,8 @@ public class PersonalManRestController {
             //Set count.
             absencesResponse.setCount(count);
         } else {
-            //Now try and find absences.
-            List<Absence> absences = absenceService.findAbsences(company, username, startLocalDate, endLocalDate);
-            //Convert the absences to a list of absence responses.
-            List<AbsenceResponse> absenceResponses = AbsenceUtils.convertAbsencesToAbsenceResponses(absences);
+            //Now try and find absences. Convert the absences to a list of absence responses.
+            List<AbsenceResponse> absenceResponses = AbsenceUtils.convertAbsencesToAbsenceResponses(absenceService.findAbsences(company, username, startLocalDate, endLocalDate));
             absencesResponse.setCount((long) absenceResponses.size());
             absencesResponse.setAbsenceResponseList(absenceResponses);
             absencesResponse = AbsenceUtils.calculateAbsencesResponseStatistics(absencesResponse);
@@ -177,6 +175,7 @@ public class PersonalManRestController {
     @ApiResponses(value = {@ApiResponse(code=201,message="Successfully created company")})
     public ResponseEntity<Void> addCompany (@RequestBody final RegisterCompanyRequest registerCompanyRequest ) {
         companyService.save(Company.builder()
+                .id(new ObjectId())
                 .name(registerCompanyRequest.getName())
                 .defaultAnnualLeaveInDays(registerCompanyRequest.getDefaultAnnualLeaveInDays())
                 .country(registerCompanyRequest.getCountry())

@@ -1,6 +1,7 @@
 package de.davelee.personalman.server.model;
 
 import lombok.*;
+import org.bson.types.ObjectId;
 
 import java.io.Serializable;
 
@@ -19,7 +20,7 @@ public class Company implements Serializable {
     /**
      * A unique id for this absence.
      */
-    private long id;
+    private ObjectId id;
 
     /**
      * The name of the company.

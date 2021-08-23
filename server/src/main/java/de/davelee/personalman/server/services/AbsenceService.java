@@ -9,6 +9,9 @@ import de.davelee.personalman.server.utils.AbsenceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -32,6 +35,9 @@ public class AbsenceService {
     private UserService userService;
 
     private final static Logger LOG = LoggerFactory.getLogger(AbsenceService.class);
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     /**
      * Save the specified absence object in the database.
@@ -141,10 +147,13 @@ public class AbsenceService {
     public List<Absence> findAbsences ( final String company, final String username, final LocalDate startDate,
                                         final LocalDate endDate ) {
         //Call the appropriate DB method depending on whether a specified username is supplied.
+        Query query = new Query();
         if ( username == null ) {
-            return absenceRepository.findByCompanyAndStartDateAndEndDate(company, startDate, endDate);
+            query.addCriteria(Criteria.where("company").is(company).and("startDate").gte(startDate).and("endDate").lte(endDate));
+            return mongoTemplate.find(query, Absence.class);
         }
-        return absenceRepository.findByCompanyAndUsernameAndStartDateAndEndDate(company, username, startDate, endDate);
+        query.addCriteria(Criteria.where("company").is(company).and("username").is(username).and("startDate").gte(startDate).and("endDate").lte(endDate));
+        return mongoTemplate.find(query, Absence.class);
     }
 
     /**

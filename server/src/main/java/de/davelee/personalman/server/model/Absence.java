@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.bson.types.ObjectId;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -30,7 +31,7 @@ public class Absence implements Serializable {
 	/**
 	 * A unique id for this absence.
 	 */
-	private long id;
+	private ObjectId id;
 
 	/**
 	 * The user who will be absent.

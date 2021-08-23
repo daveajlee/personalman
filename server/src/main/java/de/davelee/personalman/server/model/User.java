@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Setter;
 import lombok.Builder;
+import org.bson.types.ObjectId;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -24,7 +25,7 @@ public class User {
     /**
      * A unique id for this user.
      */
-    private long id;
+    private ObjectId id;
 
     /**
      * The first name of this user.

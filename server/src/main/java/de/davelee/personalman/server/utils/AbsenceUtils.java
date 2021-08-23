@@ -6,6 +6,7 @@ import de.davelee.personalman.api.AbsencesResponse;
 import de.davelee.personalman.server.model.Absence;
 import de.davelee.personalman.server.model.AbsenceCategory;
 import de.davelee.personalman.server.model.User;
+import org.bson.types.ObjectId;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -28,6 +29,7 @@ public class AbsenceUtils {
      */
     public static Absence convertAbsenceRequestToAbsence (final AbsenceRequest absenceRequest, final LocalDate startDate, final LocalDate endDate ) {
         return Absence.builder()
+                .id(new ObjectId())
                 .category(AbsenceCategory.fromString(absenceRequest.getCategory()))
                 .company(absenceRequest.getCompany())
                 .username(absenceRequest.getUsername())
@@ -119,6 +121,7 @@ public class AbsenceUtils {
             //If it is not a free day then add the absence.
             if (!isFreeDay) {
                 absences.add(Absence.builder()
+                        .id(new ObjectId())
                         .category(category)
                         .startDate(currentDate)
                         .endDate(currentDate)
@@ -133,39 +136,6 @@ public class AbsenceUtils {
         }
 
         return absences;
-
-            //If it is a free day and this is the start date then increase startDate.
-            //Otherwise, we need to store last absence and then reset.
-            /*if ( isFreeDay && currentDate.isEqual(absenceStartDate) ) {
-                absenceStartDate = absenceStartDate.plusDays(1);
-                currentDate = currentDate.plusDays(1);
-            } else if ( isFreeDay ) {
-                absences.add(Absence.builder()
-                        .category(category)
-                        .startDate(absenceStartDate)
-                        .endDate(currentDate.minusDays(1))
-                        .username(user.getUserName())
-                        .company(user.getCompany())
-                        .build());
-                currentDate = currentDate.plusDays(1);
-                absenceStartDate = LocalDate.of(currentDate.getYear(), currentDate.getMonth(), currentDate.getDayOfMonth());
-            } else {
-                //Regardless we need to increase currentDate.
-                currentDate = currentDate.plusDays(1);
-            }
-        }
-        //Clean up - add remaining absence.
-        if ( !absenceStartDate.isAfter(endDate) && !isFreeDay ) {
-            absences.add(Absence.builder()
-                    .category(category)
-                    .company(user.getCompany())
-                    .startDate(absenceStartDate)
-                    .endDate(endDate)
-                    .username(user.getUserName())
-                    .build());
-        }
-        //Return absences.
-        return absences;*/
     }
 
     /**
@@ -189,6 +159,7 @@ public class AbsenceUtils {
             }
             if ( isFreeDay ) {
                 absences.add(Absence.builder()
+                        .id(new ObjectId())
                         .company(user.getCompany())
                         .category(AbsenceCategory.DAY_IN_LIEU_REQUEST)
                         .startDate(actualDate)

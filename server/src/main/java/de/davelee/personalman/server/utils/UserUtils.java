@@ -3,6 +3,7 @@ package de.davelee.personalman.server.utils;
 import de.davelee.personalman.api.UserRequest;
 import de.davelee.personalman.api.UserResponse;
 import de.davelee.personalman.server.model.User;
+import org.bson.types.ObjectId;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ public class UserUtils {
      */
     public static User convertUserRequestToUser (final UserRequest userRequest, final LocalDate startDate ) {
         return User.builder()
+                .id(new ObjectId())
                 .firstName(userRequest.getFirstName())
                 .lastName(userRequest.getSurname())
                 .leaveEntitlementPerYear(userRequest.getLeaveEntitlementPerYear())
