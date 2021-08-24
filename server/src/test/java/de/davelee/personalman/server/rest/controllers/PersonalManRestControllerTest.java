@@ -342,6 +342,7 @@ public class PersonalManRestControllerTest {
                 .role("Employee")
                 .startDate("01-03-2020")
                 .workingDays("Monday,Tuesday,Wednesday,Thursday,Friday")
+                .dateOfBirth("31-12-1992")
                 .build();
         assertEquals("Max", validUserRequest.getFirstName());
         ResponseEntity<Void> responseEntity = personalManRestController.addUser(validUserRequest);
@@ -648,6 +649,7 @@ public class PersonalManRestControllerTest {
                 .position("Tester")
                 .startDate("01-12-2016")
                 .workingDays("Monday,Tuesday,Wednesday")
+                .dateOfBirth("31-12-1992")
                 .build();
     }
 

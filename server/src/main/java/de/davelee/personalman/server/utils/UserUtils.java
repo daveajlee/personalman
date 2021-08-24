@@ -35,6 +35,7 @@ public class UserUtils {
                 .company(userRequest.getCompany())
                 .workingDays(convertToDayOfWeek(userRequest.getWorkingDays()))
                 .role(userRequest.getRole())
+                .dateOfBirth(DateUtils.convertDateToLocalDate(userRequest.getDateOfBirth()))
                 .build();
     }
 
@@ -54,6 +55,7 @@ public class UserUtils {
                 .username(user.getUserName())
                 .workingDays(convertFromDayOfWeek(user.getWorkingDays()))
                 .role(user.getRole())
+                .dateOfBirth(DateUtils.convertLocalDateToDate(user.getDateOfBirth()))
                 .build();
     }
 

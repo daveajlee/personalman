@@ -73,6 +73,11 @@ public class User {
     private LocalDate startDate;
 
     /**
+     * The person's date of birth.
+     */
+    private LocalDate dateOfBirth;
+
+    /**
      * The role that the user has in PersonalMan for this company.
      */
     private String role;
