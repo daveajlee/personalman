@@ -388,6 +388,71 @@ public class PersonalManRestController {
     }
 
     /**
+     * Update or set the salary information for a particular user. If the user already has salary information
+     * then these will be overwritten.
+     * @param updateSalaryRequest a <code>UpdateSalaryRequest</code> object containing the information to update.
+     * @return a <code>ResponseEntity</code> containing the results of the action.
+     */
+    @ApiOperation(value = "Update salary information", notes="Update salary information for a particular user.")
+    @PutMapping(value="/user/salary")
+    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully updated salary information"), @ApiResponse(code=204,message="No user found")})
+    public ResponseEntity<Void> updateSalaryInformation (@RequestBody UpdateSalaryRequest updateSalaryRequest) {
+        //Verify that user is logged in.
+        if ( updateSalaryRequest.getToken() == null || !userService.checkAuthToken(updateSalaryRequest.getToken()) ) {
+            return ResponseEntity.status(403).build();
+        }
+        //First of all, check if the username field is empty or null, then return bad request.
+        if (StringUtils.isBlank(updateSalaryRequest.getUsername()) || StringUtils.isBlank(updateSalaryRequest.getCompany())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        //Now retrieve the user based on the username.
+        User user = userService.findByCompanyAndUserName(updateSalaryRequest.getCompany(), updateSalaryRequest.getUsername());
+        //If user is null then return 204.
+        if ( user == null ) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        //Now update salary information.
+        userService.updateSalaryInformation(user, updateSalaryRequest.getHourlyWage(), updateSalaryRequest.getContractedHoursPerWeek() );
+        //Return 200.
+        return ResponseEntity.status(200).build();
+    }
+
+    /**
+     * Add a training course or qualification for this user. If the user already has a training list, the information
+     * will be added otherwise a training list will be created.
+     * @param company a <code>String</code> containing the name of the company.
+     * @param username a <code>String</code> containing the username.
+     * @param token a <code>String</code> containing the token to verify that the user is logged in.
+     * @param trainingCourse a <code>String</code> containing the name of the training course or qualification.
+     * @return a <code>ResponseEntity</code> containing the results of the action.
+     */
+    @ApiOperation(value = "Add a training course", notes="Add a training course for a particular user.")
+    @PutMapping(value="/user/training")
+    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully added training course"), @ApiResponse(code=204,message="No user found")})
+    public ResponseEntity<Void> addTraining (@RequestParam("company") final String company, @RequestParam("username") final String username,
+                                             @RequestParam("token") final String token, @RequestParam("trainingCourse") final String trainingCourse) {
+        //Verify that user is logged in.
+        if ( token == null || !userService.checkAuthToken(token) ) {
+            return ResponseEntity.status(403).build();
+        }
+        //First of all, check if the username field is empty or null, then return bad request.
+        if (StringUtils.isBlank(username) || StringUtils.isBlank(company)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        //Now retrieve the user based on the username.
+        User user = userService.findByCompanyAndUserName(company, username);
+        //If user is null then return 204.
+        if ( user == null ) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        //Now add training course.
+        userService.addTrainingCourse(user, trainingCourse);
+        //Return 200.
+        return ResponseEntity.status(200).build();
+    }
+
+
+    /**
      * Take a LoginRequest and attempt to login in the user. If successful, return a token which can be used for this session.
      * @param loginRequest a <code>LoginRequest</code> containing the company, username and password information for this request.
      * @return a <code>ResponseEntity</code> with response status 200 indicating that it was successful.

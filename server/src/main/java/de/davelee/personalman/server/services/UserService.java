@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +63,32 @@ public class UserService {
      */
     public void delete ( final User user ) {
         userRepository.delete(user);
+    }
+
+    /**
+     * Update the salary information for the specified user object,
+     * @param user a <code>User</code> object to set the salary information for.
+     * @param hourlyWage a <code>BigDecimal</code> object containing the hourly wage to set for this user.
+     * @param contractedHoursPerWeek a <code>int</code> containing the number of contracted hours per week to add.
+     */
+    public void updateSalaryInformation (final User user, final BigDecimal hourlyWage, final int contractedHoursPerWeek ) {
+        user.setHourlyWage(hourlyWage);
+        user.setContractedHoursPerWeek(contractedHoursPerWeek);
+        userRepository.save(user);
+    }
+
+    /**
+     * Add a training course or qualification for the specified user object.
+     * @param user a <code>User</code> object to set the salary information for.
+     * @param trainingCourse a <code>String</code> containing the name of the training course or qualification.
+     */
+    public void addTrainingCourse ( final User user, final String trainingCourse ) {
+        if ( user.getTrainingsList() == null ) {
+            user.setTrainingsList(List.of(trainingCourse));
+        } else {
+            user.addTrainingCourse(trainingCourse);
+        }
+        userRepository.save(user);
     }
 
     /**

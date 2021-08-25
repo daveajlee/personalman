@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.Builder;
 import org.bson.types.ObjectId;
 
+import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
@@ -82,4 +83,26 @@ public class User {
      */
     private String role;
 
+    /**
+     * The hourly wage that the user is paid.
+     */
+    private BigDecimal hourlyWage;
+
+    /**
+     * The number of contracted hours that the user works per week.
+     */
+    private int contractedHoursPerWeek;
+
+    /**
+     * Any trainings or qualifications that the user has.
+     */
+    private List<String> trainingsList;
+
+    /**
+     * Add a new training to the list.
+     * @param trainingCourse a <code>String</code> containing the number of the training course or qualification.
+     */
+    public void addTrainingCourse ( final String trainingCourse ) {
+        trainingsList.add(trainingCourse);
+    }
 }
