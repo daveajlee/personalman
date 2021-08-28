@@ -10,6 +10,7 @@ import org.bson.types.ObjectId;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -99,10 +100,44 @@ public class User {
     private List<String> trainingsList;
 
     /**
+     * The number of hours that a user has worked on a particular day.
+     */
+    private HashMap<LocalDate, Integer> timesheet;
+
+    /**
      * Add a new training to the list.
      * @param trainingCourse a <code>String</code> containing the number of the training course or qualification.
      */
     public void addTrainingCourse ( final String trainingCourse ) {
         trainingsList.add(trainingCourse);
+    }
+
+    /**
+     * Add a number of hours for a particular day to the timesheet.
+     * @param hours a <code>int</code> with the number of hours to add.
+     * @param date a <code>LocalDate</code> object containing the day to add the hours to.
+     */
+    public void addHoursForDate ( final int hours, final LocalDate date ) {
+        //If the date already exists then add the hours to the hours already there.
+        if ( timesheet.get(date) != null ) {
+            timesheet.put(date, timesheet.get(date).intValue() + hours);
+        } else {
+            //If no hours are present then just add it as first entry.
+            timesheet.put(date, hours);
+        }
+    }
+
+    /**
+     * Retrieve the number of hours that the user has worked on a particular day.
+     * @param date a <code>LocalDate</code> object containing the day to retrieve hours for.
+     * @return a <code>int</code> with the number of hours.
+     */
+    public int getHoursForDate ( final LocalDate date ) {
+        //If the date is null then return 0.
+        if ( timesheet.get(date) == null ) {
+            return 0;
+        }
+        //Otherwise return the number of hours.
+        return timesheet.get(date);
     }
 }

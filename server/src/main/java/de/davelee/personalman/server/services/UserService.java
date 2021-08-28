@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -89,6 +90,47 @@ public class UserService {
             user.addTrainingCourse(trainingCourse);
         }
         userRepository.save(user);
+    }
+
+    /**
+     * Add the number of hours for a particular date to the specified user object.
+     * @param user a <code>User</code> object to set the hours for.
+     * @param hours a <code>int</code> with the number of hours to add.
+     * @param date a <code>LocalDate</code> object containing the day to add the hours to.
+     */
+    public void addHoursForDate ( final User user, final int hours, final LocalDate date ) {
+        if ( user.getTimesheet() == null ) {
+            user.setTimesheet(new HashMap<>());
+        }
+        user.addHoursForDate(hours, date);
+        userRepository.save(user);
+    }
+
+    /**
+     * Retrieve the number of hours for a particular date with the specified user object,
+     * @param user a <code>User</code> object to get the hours for.
+     * @param date a <code>LocalDate</code> object containing the day to get the hours for.
+     * @return a <code>int</code> with the number of hours.
+     */
+    public int getHoursForDate ( final User user, final LocalDate date ) {
+        return user.getHoursForDate(date);
+    }
+
+    /**
+     * Retrieve the number of hours for a date range with the specified user object,
+     * @param user a <code>User</code> object to get the hours for.
+     * @param startDate a <code>LocalDate</code> object containing the first day to get the hours for.
+     * @param endDate a <code>LocalDate</code> object containing the last day to get the hours for.
+     * @return a <code>int</code> with the number of hours.
+     */
+    public int getHoursForDateRange ( final User user, final LocalDate startDate, final LocalDate endDate ) {
+        int hours = 0;
+        LocalDate date = startDate;
+        while ( !date.isAfter(endDate) ) {
+            hours += getHoursForDate(user, date);
+            date = date.plusDays(1);
+        }
+        return hours;
     }
 
     /**

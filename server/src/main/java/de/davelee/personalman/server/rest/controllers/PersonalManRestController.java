@@ -451,6 +451,75 @@ public class PersonalManRestController {
         return ResponseEntity.status(200).build();
     }
 
+    /**
+     * Add a number of hours for this user for the particular date. If the user already has hours for this
+     * particular date, the hours will be increased by the supplied amount.
+     * @param addTimeSheetHoursRequest a <code>AddTimeSheetHoursRequest</code> object containing the information to update.
+     * @return a <code>ResponseEntity</code> containing the results of the action.
+     */
+    @ApiOperation(value = "Add a number of hours to the user's timesheet", notes="Add a number of hours to a specified date for a specified user.")
+    @PutMapping(value="/user/timesheet")
+    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully added hours"), @ApiResponse(code=204,message="No user found")})
+    public ResponseEntity<Void> addHoursForDate (@RequestBody AddTimeSheetHoursRequest addTimeSheetHoursRequest) {
+        //Verify that user is logged in.
+        if ( addTimeSheetHoursRequest.getToken() == null || !userService.checkAuthToken(addTimeSheetHoursRequest.getToken()) ) {
+            return ResponseEntity.status(403).build();
+        }
+        //First of all, check if the username field is empty or null, then return bad request.
+        if (StringUtils.isBlank(addTimeSheetHoursRequest.getUsername()) || StringUtils.isBlank(addTimeSheetHoursRequest.getCompany())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        //Now retrieve the user based on the username.
+        User user = userService.findByCompanyAndUserName(addTimeSheetHoursRequest.getCompany(), addTimeSheetHoursRequest.getUsername());
+        //If user is null then return 204.
+        if ( user == null ) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        //Now add the hours.
+        userService.addHoursForDate(user, addTimeSheetHoursRequest.getHours(), DateUtils.convertDateToLocalDate(addTimeSheetHoursRequest.getDate()));
+        //Return 200.
+        return ResponseEntity.status(200).build();
+    }
+
+    /**
+     * Retrieve the number of hours for this user for the particular date or date range.
+     * @param company a <code>String</code> containing the name of the company.
+     * @param username a <code>String</code> containing the username.
+     * @param token a <code>String</code> containing the token to verify that the user is logged in.
+     * @param startDate a <code>String</code> containing the start date to retrieve hours for in format dd-MM-yyyy.
+     * @param endDate a <code>String</code> containing the end date to retrieve hours for in format dd-MM-yyyy.
+     * @return a <code>ResponseEntity</code> containing the results of the action.
+     */
+    @ApiOperation(value = "Retrieve the user's timesheet", notes="Retrieve number of hours for a specified date (range) for a specified user.")
+    @GetMapping(value="/user/timesheet")
+    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully retrieved hours"), @ApiResponse(code=204,message="No user found")})
+    public ResponseEntity<Integer> getHoursForDate (@RequestParam("company") final String company, @RequestParam("username") final String username,
+                                                    @RequestParam("token") final String token, @RequestParam("startDate") final String startDate,
+                                                    @RequestParam("endDate") final String endDate ) {
+        //Verify that user is logged in.
+        if ( token == null || !userService.checkAuthToken(token) ) {
+            return ResponseEntity.status(403).build();
+        }
+        //First of all, check if the username field is empty or null, then return bad request.
+        if (StringUtils.isBlank(username) || StringUtils.isBlank(company)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        //Now retrieve the user based on the username.
+        User user = userService.findByCompanyAndUserName(company, username);
+        //If user is null then return 204.
+        if ( user == null ) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        //Convert dates to LocalDates.
+        LocalDate localStartDate = DateUtils.convertDateToLocalDate(startDate);
+        LocalDate localEndDate = DateUtils.convertDateToLocalDate(endDate);
+        //Perform either date range or single date.
+        if ( localStartDate.isEqual(localEndDate) ) {
+            return ResponseEntity.ok(userService.getHoursForDate(user, localStartDate));
+        } else {
+            return ResponseEntity.ok(userService.getHoursForDateRange(user, localStartDate, localEndDate));
+        }
+    }
 
     /**
      * Take a LoginRequest and attempt to login in the user. If successful, return a token which can be used for this session.
