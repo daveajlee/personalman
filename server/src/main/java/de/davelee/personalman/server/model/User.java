@@ -1,17 +1,13 @@
 package de.davelee.personalman.server.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Setter;
-import lombok.Builder;
+import lombok.*;
 import org.bson.types.ObjectId;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Class to represent users in PersonalMan.
@@ -102,7 +98,7 @@ public class User {
     /**
      * The number of hours that a user has worked on a particular day.
      */
-    private HashMap<LocalDate, Integer> timesheet;
+    private Map<LocalDate, Integer> timesheet;
 
     /**
      * Add a new training to the list.
