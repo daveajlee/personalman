@@ -69,13 +69,11 @@ public class UserController {
     @ApiResponses(value = {@ApiResponse(code=200,message="Successfully found user"), @ApiResponse(code=204,message="Successful but no user found")})
     public ResponseEntity<UserResponse> getUser (@RequestParam("company") final String company, @RequestParam("username") final String username,
                                                  @RequestParam("token") final String token) {
-        //Verify that user is logged in.
-        if ( token == null || !userService.checkAuthToken(token) ) {
-            return ResponseEntity.status(403).build();
-        }
-        //First of all, check if the username field is empty or null, then return bad request.
-        if (StringUtils.isBlank(username) || StringUtils.isBlank(company)) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        //Check valid request including authentication
+        HttpStatus status = validateAndAuthenticateRequest(company, username, token);
+        //If the status is not null then produce response and return.
+        if ( status != null ) {
+            return new ResponseEntity<>(status);
         }
         //Now retrieve the user based on the username.
         User user = userService.findByCompanyAndUserName(company, username);
@@ -100,13 +98,11 @@ public class UserController {
     @ApiResponses(value = {@ApiResponse(code=200,message="Successfully delete user"), @ApiResponse(code=204,message="Successful but no user found")})
     public ResponseEntity<Void> deleteUser (@RequestParam("company") final String company, @RequestParam("username") final String username,
                                             @RequestParam("token") final String token) {
-        //Verify that user is logged in.
-        if ( token == null || !userService.checkAuthToken(token) ) {
-            return ResponseEntity.status(403).build();
-        }
-        //First of all, check if the username field is empty or null, then return bad request.
-        if (StringUtils.isBlank(username) || StringUtils.isBlank(company)) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        //Check valid request including authentication
+        HttpStatus status = validateAndAuthenticateRequest(company, username, token);
+        //If the status is not null then produce response and return.
+        if ( status != null ) {
+            return new ResponseEntity<>(status);
         }
         //Now retrieve the user based on the username.
         User user = userService.findByCompanyAndUserName(company, username);
@@ -130,13 +126,11 @@ public class UserController {
     @PutMapping(value="/salary")
     @ApiResponses(value = {@ApiResponse(code=200,message="Successfully updated salary information"), @ApiResponse(code=204,message="No user found")})
     public ResponseEntity<Void> updateSalaryInformation (@RequestBody UpdateSalaryRequest updateSalaryRequest) {
-        //Verify that user is logged in.
-        if ( updateSalaryRequest.getToken() == null || !userService.checkAuthToken(updateSalaryRequest.getToken()) ) {
-            return ResponseEntity.status(403).build();
-        }
-        //First of all, check if the username field is empty or null, then return bad request.
-        if (StringUtils.isBlank(updateSalaryRequest.getUsername()) || StringUtils.isBlank(updateSalaryRequest.getCompany())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        //Check valid request including authentication
+        HttpStatus status = validateAndAuthenticateRequest(updateSalaryRequest.getCompany(), updateSalaryRequest.getUsername(), updateSalaryRequest.getToken());
+        //If the status is not null then produce response and return.
+        if ( status != null ) {
+            return new ResponseEntity<>(status);
         }
         //Now retrieve the user based on the username.
         User user = userService.findByCompanyAndUserName(updateSalaryRequest.getCompany(), updateSalaryRequest.getUsername());
@@ -160,13 +154,11 @@ public class UserController {
     @PutMapping(value="/training")
     @ApiResponses(value = {@ApiResponse(code=200,message="Successfully added training course"), @ApiResponse(code=204,message="No user found")})
     public ResponseEntity<Void> addTraining (@RequestBody AddTrainingRequest addTrainingRequest) {
-        //Verify that user is logged in.
-        if ( addTrainingRequest.getToken() == null || !userService.checkAuthToken(addTrainingRequest.getToken()) ) {
-            return ResponseEntity.status(403).build();
-        }
-        //First of all, check if the username field is empty or null, then return bad request.
-        if (StringUtils.isBlank(addTrainingRequest.getUsername()) || StringUtils.isBlank(addTrainingRequest.getCompany())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        //Check valid request including authentication
+        HttpStatus status = validateAndAuthenticateRequest(addTrainingRequest.getCompany(), addTrainingRequest.getUsername(), addTrainingRequest.getToken());
+        //If the status is not null then produce response and return.
+        if ( status != null ) {
+            return new ResponseEntity<>(status);
         }
         //Now retrieve the user based on the username.
         User user = userService.findByCompanyAndUserName(addTrainingRequest.getCompany(), addTrainingRequest.getUsername());
@@ -190,13 +182,11 @@ public class UserController {
     @PutMapping(value="/timesheet")
     @ApiResponses(value = {@ApiResponse(code=200,message="Successfully added hours"), @ApiResponse(code=204,message="No user found")})
     public ResponseEntity<Void> addHoursForDate (@RequestBody AddTimeSheetHoursRequest addTimeSheetHoursRequest) {
-        //Verify that user is logged in.
-        if ( addTimeSheetHoursRequest.getToken() == null || !userService.checkAuthToken(addTimeSheetHoursRequest.getToken()) ) {
-            return ResponseEntity.status(403).build();
-        }
-        //First of all, check if the username field is empty or null, then return bad request.
-        if (StringUtils.isBlank(addTimeSheetHoursRequest.getUsername()) || StringUtils.isBlank(addTimeSheetHoursRequest.getCompany())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        //Check valid request including authentication
+        HttpStatus status = validateAndAuthenticateRequest(addTimeSheetHoursRequest.getCompany(), addTimeSheetHoursRequest.getUsername(), addTimeSheetHoursRequest.getToken());
+        //If the status is not null then produce response and return.
+        if ( status != null ) {
+            return new ResponseEntity<>(status);
         }
         //Now retrieve the user based on the username.
         User user = userService.findByCompanyAndUserName(addTimeSheetHoursRequest.getCompany(), addTimeSheetHoursRequest.getUsername());
@@ -225,13 +215,11 @@ public class UserController {
     public ResponseEntity<Integer> getHoursForDate (@RequestParam("company") final String company, @RequestParam("username") final String username,
                                                     @RequestParam("token") final String token, @RequestParam("startDate") final String startDate,
                                                     @RequestParam("endDate") final String endDate ) {
-        //Verify that user is logged in.
-        if ( token == null || !userService.checkAuthToken(token) ) {
-            return ResponseEntity.status(403).build();
-        }
-        //First of all, check if the username field is empty or null, then return bad request.
-        if (StringUtils.isBlank(username) || StringUtils.isBlank(company)) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        //Check valid request including authentication
+        HttpStatus status = validateAndAuthenticateRequest(company, username, token);
+        //If the status is not null then produce response and return.
+        if ( status != null ) {
+            return new ResponseEntity<>(status);
         }
         //Now retrieve the user based on the username.
         User user = userService.findByCompanyAndUserName(company, username);
@@ -248,6 +236,26 @@ public class UserController {
         } else {
             return ResponseEntity.ok(userService.getHoursForDateRange(user, localStartDate, localEndDate));
         }
+    }
+
+    /**
+     * Private helper method to verify that at least username, company and token are all supplied and valid.
+     * @param company a <code>String</code> containing the name of the company.
+     * @param username a <code>String</code> containing the username.
+     * @param token a <code>String</code> containing the token to verify that the user is logged in.
+     * @return a <code>HttpStatus</code> which is either filled if it was not authenticated or null if authenticated and valid.
+     */
+    private HttpStatus validateAndAuthenticateRequest ( final String company, final String username, final String token ) {
+        //First of all, check if the username field is empty or null, then return bad request.
+        if (StringUtils.isBlank(username) || StringUtils.isBlank(company)) {
+            return HttpStatus.BAD_REQUEST;
+        }
+        //Verify that user is logged in.
+        if ( token == null || !userService.checkAuthToken(token) ) {
+            return HttpStatus.FORBIDDEN;
+        }
+        //If everything was ok then return null.
+        return null;
     }
 
 }
