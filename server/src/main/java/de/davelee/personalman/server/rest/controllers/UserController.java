@@ -239,6 +239,28 @@ public class UserController {
     }
 
     /**
+     * Change the password of the supplied user. Return 200 if the password was changed successfully or 404 if the user was not found
+     * or the password supplied did not match the current password of the user.
+     * @param changePasswordRequest a <code>ChangePasswordRequest</code> object containing the company, username, old password and new password.
+     * @return a <code>ResponseEntity</code> object with status 200 if password changed or 404 if user not found.
+     */
+    @ApiOperation(value="changePassword", notes="Change password for a user")
+    @PutMapping(value="/password")
+    @ApiResponses(@ApiResponse(code=200,message="Successfully processed change password request"))
+    public ResponseEntity<Void> changePassword (@RequestBody final ChangePasswordRequest changePasswordRequest) {
+        //Check valid request including authentication
+        HttpStatus status = validateAndAuthenticateRequest(changePasswordRequest.getCompany(), changePasswordRequest.getUsername(), changePasswordRequest.getToken());
+        //If the status is not null then produce response and return.
+        if ( status != null ) {
+            return new ResponseEntity<>(status);
+        }
+        boolean result = userService.changePassword(changePasswordRequest.getCompany(), changePasswordRequest.getUsername(),
+                changePasswordRequest.getCurrentPassword(), changePasswordRequest.getNewPassword());
+        //If result is true, then return 200 otherwise return 404 to indicate user not found.
+        return result ? ResponseEntity.status(200).build() : ResponseEntity.status(404).build();
+    }
+
+    /**
      * Private helper method to verify that at least username, company and token are all supplied and valid.
      * @param company a <code>String</code> containing the name of the company.
      * @param username a <code>String</code> containing the username.

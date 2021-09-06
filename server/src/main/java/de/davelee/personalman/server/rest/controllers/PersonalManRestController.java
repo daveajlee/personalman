@@ -219,24 +219,4 @@ public class PersonalManRestController {
         return result ? ResponseEntity.status(200).build() : ResponseEntity.status(404).build();
     }
 
-    /**
-     * Change the password of the supplied user. Return 200 if the password was changed successfully or 404 if the user was not found
-     * or the password supplied did not match the current password of the user.
-     * @param changePasswordRequest a <code>ChangePasswordRequest</code> object containing the company, username, old password and new password.
-     * @return a <code>ResponseEntity</code> object with status 200 if password changed or 404 if user not found.
-     */
-    @ApiOperation(value="changePassword", notes="Change password for a user")
-    @PostMapping(value="/changePassword")
-    @ApiResponses(@ApiResponse(code=200,message="Successfully processed change password request"))
-    public ResponseEntity<Void> changePassword (@RequestBody final ChangePasswordRequest changePasswordRequest) {
-        //Verify that user is logged in.
-        if ( changePasswordRequest.getToken() == null || !userService.checkAuthToken(changePasswordRequest.getToken()) ) {
-            return ResponseEntity.status(403).build();
-        }
-        boolean result = userService.changePassword(changePasswordRequest.getCompany(), changePasswordRequest.getUsername(),
-                changePasswordRequest.getCurrentPassword(), changePasswordRequest.getNewPassword());
-        //If result is true, then return 200 otherwise return 404 to indicate user not found.
-        return result ? ResponseEntity.status(200).build() : ResponseEntity.status(404).build();
-    }
-
 }

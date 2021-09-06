@@ -470,6 +470,46 @@ public class UserControllerTest {
     }
 
     /**
+     * Test case: change password for a user who exists and then one who does not exist.
+     * Expected Result: forbidden or no content or ok depending on request.
+     */
+    @Test
+    public void testChangePasswordForUser() {
+        //Mock the important methods in user service.
+        Mockito.when(userService.checkAuthToken("max.mustermann-ghgkg")).thenReturn(true);
+        Mockito.when(userService.checkAuthToken("max.mustermann-ghgkf")).thenReturn(false);
+        Mockito.when(userService.changePassword("Example Company", "max.mustermann", "test123", "123test")).thenReturn(true);
+        Mockito.when(userService.changePassword("Example Company", "max.a.mustermann", "test123", "123test")).thenReturn(false);
+        //Perform tests - valid request
+        ResponseEntity<Void> responseEntity = userController.changePassword(ChangePasswordRequest.builder()
+                        .company("Example Company")
+                        .username("max.mustermann")
+                        .currentPassword("test123")
+                        .newPassword("123test")
+                        .token("max.mustermann-ghgkg")
+                        .build());
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
+        //Perform tests - invalid token
+        ResponseEntity<Void> responseEntity2 = userController.changePassword(ChangePasswordRequest.builder()
+                .company("Example Company")
+                .username("max.mustermann")
+                .currentPassword("test123")
+                .newPassword("123test")
+                .token("max.mustermann-ghgkf")
+                .build());
+        assertTrue(responseEntity2.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
+        //Perform tests - no user
+        ResponseEntity<Void> responseEntity3 = userController.changePassword(ChangePasswordRequest.builder()
+                .company("Example Company")
+                .username("max.a.mustermann")
+                .currentPassword("test123")
+                .newPassword("123test")
+                .token("max.mustermann-ghgkg")
+                .build());
+        assertTrue(responseEntity3.getStatusCodeValue() == HttpStatus.NOT_FOUND.value());
+    }
+
+    /**
      * Private helper method to generate a valid user request.
      * @return a <code>UserRequest</code> object containing valid test data.
      */
