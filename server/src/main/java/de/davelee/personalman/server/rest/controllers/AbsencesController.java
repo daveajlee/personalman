@@ -43,7 +43,7 @@ public class AbsencesController {
      * @return a <code>ResponseEntity</code> containing the result of the action.
      */
     @ApiOperation(value = "Add an absence", notes="Add an absence to the system.")
-    @PostMapping(value="/absences")
+    @PostMapping(value="/")
     @ApiResponses(value = {@ApiResponse(code=201,message="Successfully created absence")})
     public ResponseEntity<Void> addAbsence (@RequestBody final AbsenceRequest absenceRequest ) {
         //Verify request was valid and authenticated.
@@ -76,7 +76,7 @@ public class AbsencesController {
      * @return a <code>ResponseEntity</code> containing the absences found.
      */
     @ApiOperation(value = "Find or count absences", notes="Find or count absences in the system according to the specified criteria.")
-    @GetMapping(value="/absences")
+    @GetMapping(value="/")
     @ApiResponses(value = {@ApiResponse(code=200,message="Successfully completed the search for absences")})
     public ResponseEntity<AbsencesResponse> findAbsence (@RequestParam("company") final String company,
                                                          @RequestParam(value = "username", required=false) final String username,
@@ -129,7 +129,7 @@ public class AbsencesController {
      * @return a <code>ResponseEntity</code> containing the result of the action.
      */
     @ApiOperation(value = "Delete absences", notes="Delete absences in the system according to the specified criteria.")
-    @DeleteMapping(value="/absences")
+    @DeleteMapping(value="/")
     @ApiResponses(value = {@ApiResponse(code=200,message="Successfully deleted absences")})
     public ResponseEntity<Void> deleteAbsences (@RequestParam("company") final String company,
                                                 @RequestParam(value = "username", required=false) final String username,
