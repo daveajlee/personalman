@@ -194,19 +194,4 @@ public class AbsenceService {
         absencesToDelete.forEach(absenceRepository::delete);
     }
 
-    /**
-     * Helper method to prepare AbsencesResponse.
-     * @return a <code>AbsencesResponse</code> object containing the basic statistics map to.
-     */
-    public AbsencesResponse prepareAbsencesResponse ( ) {
-        HashMap<String, Integer> statisticsMap = new HashMap<>();
-        AbsenceCategory[] absenceCategories = AbsenceCategory.values();
-        for ( AbsenceCategory absenceCategory : absenceCategories ) {
-            statisticsMap.put(absenceCategory.toString(), 0);
-        }
-        return AbsencesResponse.builder()
-                .statisticsMap(statisticsMap)
-                .build();
-    }
-
 }

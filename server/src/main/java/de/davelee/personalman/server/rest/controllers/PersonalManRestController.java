@@ -2,14 +2,10 @@ package de.davelee.personalman.server.rest.controllers;
 
 import de.davelee.personalman.api.*;
 
-import de.davelee.personalman.server.model.AbsenceCategory;
 import de.davelee.personalman.server.model.Company;
 import de.davelee.personalman.server.model.User;
-import de.davelee.personalman.server.services.AbsenceService;
 import de.davelee.personalman.server.services.CompanyService;
 import de.davelee.personalman.server.services.UserService;
-import de.davelee.personalman.server.utils.AbsenceUtils;
-import de.davelee.personalman.server.utils.DateUtils;
 import de.davelee.personalman.server.utils.UserUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,135 +31,10 @@ import java.util.List;
 public class PersonalManRestController {
 
     @Autowired
-    private AbsenceService absenceService;
-
-    @Autowired
     private CompanyService companyService;
 
     @Autowired
     private UserService userService;
-
-    /**
-     * Add an absence to the database based on the supplied absence request.
-     * @param absenceRequest a <code>AbsenceRequest</code> object representing the absence to add.
-     * @return a <code>ResponseEntity</code> containing the result of the action.
-     */
-    @ApiOperation(value = "Add an absence", notes="Add an absence to the system.")
-    @PostMapping(value="/absences")
-    @ApiResponses(value = {@ApiResponse(code=201,message="Successfully created absence")})
-    public ResponseEntity<Void> addAbsence (@RequestBody final AbsenceRequest absenceRequest ) {
-        //Verify that user is logged in.
-        if ( absenceRequest.getToken() == null || !userService.checkAuthToken(absenceRequest.getToken()) ) {
-            return ResponseEntity.status(403).build();
-        }
-        //First of all, check if any of the fields are empty or null, then return bad request.
-        if (StringUtils.isBlank(absenceRequest.getCategory()) || StringUtils.isBlank(absenceRequest.getCompany())
-                || StringUtils.isBlank(absenceRequest.getEndDate()) || StringUtils.isBlank(absenceRequest.getStartDate())
-                || StringUtils.isBlank(absenceRequest.getUsername()) ) {
-            return ResponseEntity.badRequest().build();
-        }
-        //Now convert the dates to LocalDate. If end date is before start date then return bad request.
-        LocalDate startLocalDate = DateUtils.convertDateToLocalDate(absenceRequest.getStartDate());
-        LocalDate endLocalDate = DateUtils.convertDateToLocalDate(absenceRequest.getEndDate());
-        if ( startLocalDate == null || endLocalDate == null || endLocalDate.isBefore(startLocalDate) ) {
-            return ResponseEntity.badRequest().build();
-        }
-        //Now convert to absence object.
-        absenceService.save(AbsenceUtils.convertAbsenceRequestToAbsence(absenceRequest, startLocalDate, endLocalDate));
-        //Return 201 if saved successfully.
-        return ResponseEntity.status(201).build();
-    }
-
-    /**
-     * Find or count the amount of absences in the database based on the supplied criteria.
-     * @param company a <code>String</code> containing the name of the company.
-     * @param username a <code>String</code> containing the username which may be null (is optional).
-     * @param startDate a <code>String</code> containing the start of the date range to search.
-     * @param endDate a <code>String</code> containing the end of the date range to search.
-     * @param category a <code>String</code> containing the category of the absences to find which may be null (is optional).
-     * @param onlyCount a <code>boolean</code> which is true iff only the amount of absences should be retrieved (optimised performance). Default is false.
-     * @param token a <code>String</code> to verify that the user is logged in.
-     * @return a <code>ResponseEntity</code> containing the absences found.
-     */
-    @ApiOperation(value = "Find or count absences", notes="Find or count absences in the system according to the specified criteria.")
-    @GetMapping(value="/absences")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully completed the search for absences")})
-    public ResponseEntity<AbsencesResponse> findAbsence (@RequestParam("company") final String company,
-                                                         @RequestParam(value = "username", required=false) final String username,
-                                                         @RequestParam("startDate") final String startDate,
-                                                         @RequestParam("endDate") final String endDate,
-                                                         @RequestParam(value="category", required=false) final String category,
-                                                         @RequestParam(value = "onlyCount", defaultValue="false", required=false) final boolean onlyCount,
-                                                         @RequestParam("token") final String token) {
-        //Verify that user is logged in.
-        if ( token == null || !userService.checkAuthToken(token) ) {
-            return ResponseEntity.status(403).build();
-        }
-        //Convert the dates to local date. If end date is before start date then return bad request.
-        LocalDate startLocalDate = DateUtils.convertDateToLocalDate(startDate);
-        LocalDate endLocalDate = DateUtils.convertDateToLocalDate(endDate);
-        if ( startLocalDate == null || endLocalDate == null || endLocalDate.isBefore(startLocalDate) ) {
-            return ResponseEntity.badRequest().body(null);
-        }
-        //Prepare response object.
-        AbsencesResponse absencesResponse = absenceService.prepareAbsencesResponse();
-        //Check if only count parameter was set to true.
-        if ( onlyCount ) {
-            //Convert category which is required for count.
-            AbsenceCategory absenceCategory = null;
-            if ( category != null ) {
-                absenceCategory = AbsenceCategory.fromString(category);
-            }
-            if ( absenceCategory == null ) {
-                return ResponseEntity.badRequest().body(null);
-            }
-            //Now try and count absences.
-            Long count = absenceService.countAbsences(company, username, startLocalDate, endLocalDate, absenceCategory);
-            //Set count.
-            absencesResponse.setCount(count);
-        } else {
-            //Now try and find absences. Convert the absences to a list of absence responses.
-            List<AbsenceResponse> absenceResponses = AbsenceUtils.convertAbsencesToAbsenceResponses(absenceService.findAbsences(company, username, startLocalDate, endLocalDate));
-            absencesResponse.setCount((long) absenceResponses.size());
-            absencesResponse.setAbsenceResponseList(absenceResponses);
-            absencesResponse = AbsenceUtils.calculateAbsencesResponseStatistics(absencesResponse);
-        }
-        //Return 200 and results.
-        return ResponseEntity.ok(absencesResponse);
-    }
-
-    /**
-     * Remove absences from the system based on the supplied criteria.
-     * @param company a <code>String</code> containing the name of the company.
-     * @param username a <code>String</code> containing the username which may be null (is optional).
-     * @param startDate a <code>String</code> containing the start of the absence.
-     * @param endDate a <code>String</code> containing the end of the absence.
-     * @param token a <code>String</code> to verify if the user is logged in.
-     * @return a <code>ResponseEntity</code> containing the result of the action.
-     */
-    @ApiOperation(value = "Delete absences", notes="Delete absences in the system according to the specified criteria.")
-    @DeleteMapping(value="/absences")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully deleted absences")})
-    public ResponseEntity<Void> deleteAbsences (@RequestParam("company") final String company,
-                                                         @RequestParam(value = "username", required=false) final String username,
-                                                         @RequestParam("startDate") final String startDate,
-                                                         @RequestParam("endDate") final String endDate,
-                                                         @RequestParam("token") final String token) {
-        //Verify that user is logged in.
-        if ( token == null || !userService.checkAuthToken(token) ) {
-            return ResponseEntity.status(403).build();
-        }
-        //Convert the dates to local date. If end date is before start date then return bad request.
-        LocalDate startLocalDate = DateUtils.convertDateToLocalDate(startDate);
-        LocalDate endLocalDate = DateUtils.convertDateToLocalDate(endDate);
-        if ( startLocalDate == null || endLocalDate == null || endLocalDate.isBefore(startLocalDate) ) {
-            return ResponseEntity.badRequest().body(null);
-        }
-        //Now try and delete absences.
-        absenceService.delete(company, username, startLocalDate, endLocalDate);
-        //Return 200 if deleted successfully or nothing to delete.
-        return ResponseEntity.status(200).build();
-    }
 
     /**
      * Add an absence to the database based on the supplied register company request.
