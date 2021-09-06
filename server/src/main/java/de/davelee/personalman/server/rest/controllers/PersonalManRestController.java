@@ -56,24 +56,6 @@ public class PersonalManRestController {
     }
 
     /**
-     * Find all companies stored in PersonalMan.
-     * @return a <code>ResponseEntity</code> containing the names of all companies stored in PersonalMan.
-     */
-    @ApiOperation(value = "Find all companies", notes="Find all companies stored in PersonalMan.")
-    @GetMapping(value="/companies")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully found companies"), @ApiResponse(code=204,message="Successful but no companies in database")})
-    public ResponseEntity<List<String>> getCompanies () {
-        //Retrieve the list of companies.
-        List<String> companyNames = companyService.getAllCompanies();
-        //If no companies then return 204.
-        if ( companyNames.size() == 0 ) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        //Otherwise return 200.
-        return ResponseEntity.ok(companyNames);
-    }
-
-    /**
      * Get a specific company from the database based on their name.
      * @param name a <code>String</code> containing the name of the company.
      * @param token a <code>String</code> to verify if the user is logged in.

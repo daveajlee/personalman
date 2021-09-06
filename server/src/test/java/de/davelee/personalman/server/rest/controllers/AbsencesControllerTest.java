@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 
 /**
- * Test cases for the User endpoints in the Personalman REST API.
+ * Test cases for the absences endpoints in the Personalman REST API.
  * @author Dave Lee
  */
 @SpringBootTest
@@ -36,6 +36,10 @@ public class AbsencesControllerTest {
     @Mock
     private UserService userService;
 
+    /**
+     * Test case: add a valid absence.
+     * Expected Result: created.
+     */
     @Test
     public void testValidAbsence() {
         //Mock the important methods in user service.
