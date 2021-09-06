@@ -1,6 +1,5 @@
 package de.davelee.personalman.server.rest.controllers;
 
-import de.davelee.personalman.api.AbsenceRequest;
 import de.davelee.personalman.server.services.CompanyService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -14,7 +13,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
 
 /**
  * Test cases for the companies endpoints in the Personalman REST API.

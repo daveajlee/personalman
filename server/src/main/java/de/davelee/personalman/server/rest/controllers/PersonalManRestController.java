@@ -115,42 +115,6 @@ public class PersonalManRestController {
     }
 
     /**
-     * Find all users for a specific company.
-     * @param company a <code>String</code> containing the name of the company.
-     * @param token a <code>String</code> containing the token to verify that the user is logged in.
-     * @return a <code>ResponseEntity</code> containing the users for this company.
-     */
-    @ApiOperation(value = "Find all users for a company", notes="Find all users for a company to the system.")
-    @GetMapping(value="/users")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully found user(s)"), @ApiResponse(code=204,message="Successful but no users found")})
-    public ResponseEntity<UsersResponse> getUsers (@RequestParam("company") final String company,
-                                                   @RequestParam("token") final String token) {
-        //Verify that user is logged in.
-        if ( token == null || !userService.checkAuthToken(token) ) {
-            return ResponseEntity.status(403).build();
-        }
-        //First of all, check if the compny field is empty or null, then return bad request.
-        if ( StringUtils.isBlank(company)) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        //Now retrieve the user based on the username.
-        List<User> users = userService.findByCompany(company);
-        //If users is empty then return 204.
-        if ( users.size() == 0 ) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        //Convert to UserResponse object and return 200.
-        UserResponse[] userResponses = new UserResponse[users.size()];
-        for ( int i = 0; i < users.size(); i++ ) {
-            userResponses[i] = UserUtils.convertUserToUserResponse(users.get(i));
-        }
-        return ResponseEntity.ok(UsersResponse.builder()
-                .count((long) userResponses.length)
-                .userResponses(userResponses)
-                .build());
-    }
-
-    /**
      * Take a LoginRequest and attempt to login in the user. If successful, return a token which can be used for this session.
      * @param loginRequest a <code>LoginRequest</code> containing the company, username and password information for this request.
      * @return a <code>ResponseEntity</code> with response status 200 indicating that it was successful.
