@@ -612,7 +612,7 @@ public class UserControllerTest {
                 .password("test")
                 .role("Employee")
                 .startDate("01-03-2020")
-                .workingDays("Monday,Tuesday,Wednesday,Thursday,Friday")
+                .workingDays("Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday")
                 .dateOfBirth("31-12-1992")
                 .build();
     }
@@ -632,7 +632,7 @@ public class UserControllerTest {
                 .password("test")
                 .role("Employee")
                 .startDate(LocalDate.of(2020,3,1))
-                .workingDays(List.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY))
+                .workingDays(List.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY))
                 .dateOfBirth(LocalDate.of(1992,12,31))
                 .build();
     }

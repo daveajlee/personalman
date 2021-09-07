@@ -3,6 +3,7 @@ package de.davelee.personalman.server.rest.controllers;
 import de.davelee.personalman.api.AbsenceRequest;
 import de.davelee.personalman.api.AbsencesResponse;
 import de.davelee.personalman.server.model.Absence;
+import de.davelee.personalman.server.model.AbsenceCategory;
 import de.davelee.personalman.server.services.AbsenceService;
 import de.davelee.personalman.server.services.UserService;
 import org.junit.jupiter.api.Test;
@@ -217,6 +218,7 @@ public class AbsencesControllerTest {
                         .company("MyCompany")
                         .startDate(LocalDate.of(2016,11,30))
                         .endDate(LocalDate.of(2016,11,30))
+                        .category(AbsenceCategory.HOLIDAY)
                         .build())
         );
         //Perform test
@@ -238,6 +240,7 @@ public class AbsencesControllerTest {
                         .company("MyCompany")
                         .startDate(LocalDate.of(2016,11,30))
                         .endDate(LocalDate.of(2016,11,30))
+                        .category(AbsenceCategory.HOLIDAY)
                         .build())
         );
         //Perform test
@@ -296,6 +299,7 @@ public class AbsencesControllerTest {
                         .company("MyCompany")
                         .startDate(LocalDate.of(2016,11,30))
                         .endDate(LocalDate.of(2016,11,30))
+                        .category(AbsenceCategory.HOLIDAY)
                         .build())
         );
         ResponseEntity<AbsencesResponse> responseEntity = absencesController.findAbsence("MyCompany", "max.mustermann", "30-11-2016", "30-11-2016", "Holiday", true, "dlee-fgltglgtl");
