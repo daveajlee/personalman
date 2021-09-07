@@ -37,7 +37,7 @@ public class CompanyController {
      * @return a <code>ResponseEntity</code> containing the result of the action.
      */
     @ApiOperation(value = "Add a company", notes="Add a company to the system.")
-    @PostMapping(value="/company")
+    @PostMapping(value="/")
     @ApiResponses(value = {@ApiResponse(code=201,message="Successfully created company")})
     public ResponseEntity<Void> addCompany (@RequestBody final RegisterCompanyRequest registerCompanyRequest ) {
         companyService.save(Company.builder()
@@ -57,7 +57,7 @@ public class CompanyController {
      * @return a <code>ResponseEntity</code> containing the results of the action.
      */
     @ApiOperation(value = "Retrieve a company", notes="Retrieve a company from the system.")
-    @GetMapping(value="/company")
+    @GetMapping(value="/")
     @ApiResponses(value = {@ApiResponse(code=200,message="Successfully retrieved company"), @ApiResponse(code=404,message="Company not found")})
     @ResponseBody
     public ResponseEntity<CompanyResponse> getCompany (@RequestParam("name") final String name, @RequestParam("token") final String token ) {
@@ -86,7 +86,7 @@ public class CompanyController {
      * @return a <code>ResponseEntity</code> containing the results of the action.
      */
     @ApiOperation(value = "Delete a company", notes="Delete a company from the system.")
-    @DeleteMapping(value="/company")
+    @DeleteMapping(value="/")
     @ApiResponses(value = {@ApiResponse(code=200,message="Successfully delete company"), @ApiResponse(code=404,message="Company not found")})
     public ResponseEntity<Void> deleteCompany (@RequestParam("name") final String name, @RequestParam("token") final String token ) {
         //Check valid request including authentication

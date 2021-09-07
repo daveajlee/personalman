@@ -3,6 +3,7 @@ package de.davelee.personalman.server.rest.controllers;
 import de.davelee.personalman.api.*;
 import de.davelee.personalman.server.model.User;
 import de.davelee.personalman.server.services.UserService;
+import lombok.extern.java.Log;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -507,6 +508,93 @@ public class UserControllerTest {
                 .token("max.mustermann-ghgkg")
                 .build());
         assertTrue(responseEntity3.getStatusCodeValue() == HttpStatus.NOT_FOUND.value());
+    }
+
+    /**
+     * Test case: login with a valid user/password and invalidation combinations.
+     * Expected Result: forbidden or ok depending on request.
+     */
+    @Test
+    public void testLogin() {
+        //Mock the important methods in user service.
+        Mockito.when(userService.findByCompanyAndUserName("Example Company", "max.mustermann")).thenReturn(generateValidUser());
+        //Test with valid login
+        LoginRequest validLoginRequest = LoginRequest.builder()
+                .company("Example Company")
+                .username("max.mustermann")
+                .password("test")
+                .build();
+        ResponseEntity<LoginResponse> responseEntity = userController.login(validLoginRequest);
+        assertTrue( responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
+        //Test with incorrect password
+        LoginRequest invalidLoginRequest = LoginRequest.builder()
+                .company("Example Company")
+                .username("max.mustermann")
+                .password("123test")
+                .build();
+        ResponseEntity<LoginResponse> responseEntity2 = userController.login(invalidLoginRequest);
+        assertTrue( responseEntity2.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
+        //Test with invalid username
+        LoginRequest invalidLoginRequest2 = LoginRequest.builder()
+                .company("Example Company")
+                .username("max.a.mustermann")
+                .password("123test")
+                .build();
+        ResponseEntity<LoginResponse> responseEntity3 = userController.login(invalidLoginRequest2);
+        assertTrue( responseEntity3.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
+    }
+
+    /**
+     * Test case: logout.
+     * Expected Result: ok.
+     */
+    @Test
+    public void testLogout() {
+        //Do actual test
+        ResponseEntity<Void> responseEntity = userController.logout(LogoutRequest.builder()
+                .token("max.mustermann-ghgkg")
+                .build());
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
+    }
+
+    /**
+     * Test case: reset user which exists or does not exist.
+     * Expected Result: not found or ok depending on request.
+     */
+    @Test
+    public void testReset() {
+        //Mock the important methods in user service.
+        Mockito.when(userService.checkAuthToken("max.mustermann-ghgkg")).thenReturn(true);
+        Mockito.when(userService.checkAuthToken("max.mustermann-ghgkf")).thenReturn(false);
+        Mockito.when(userService.resetUserPassword("Example Company", "max.mustermann", "test")).thenReturn(true);
+        Mockito.when(userService.resetUserPassword("Example Company", "max.a.mustermann", "test")).thenReturn(false);
+        //Test with valid user
+        ResetUserRequest resetUserRequest = ResetUserRequest.builder()
+                .company("Example Company")
+                .username("max.mustermann")
+                .password("test")
+                .token("max.mustermann-ghgkg")
+                .build();
+        ResponseEntity<Void> responseEntity = userController.resetUser(resetUserRequest);
+        assertTrue( responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
+        //Test with invalid username
+        ResetUserRequest resetUserRequest2 = ResetUserRequest.builder()
+                .company("Example Company")
+                .username("max.a.mustermann")
+                .password("test")
+                .token("max.mustermann-ghgkg")
+                .build();
+        ResponseEntity<Void> responseEntity2 = userController.resetUser(resetUserRequest2);
+        assertTrue( responseEntity2.getStatusCodeValue() == HttpStatus.NOT_FOUND.value());
+        //Test with invalid token
+        ResetUserRequest resetUserRequest3 = ResetUserRequest.builder()
+                .company("Example Company")
+                .username("max.mustermann")
+                .password("test")
+                .token("max.mustermann-ghgkf")
+                .build();
+        ResponseEntity<Void> responseEntity3 = userController.resetUser(resetUserRequest3);
+        assertTrue( responseEntity3.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
     }
 
     /**
