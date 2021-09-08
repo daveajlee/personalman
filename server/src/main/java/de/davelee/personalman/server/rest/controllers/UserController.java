@@ -52,9 +52,8 @@ public class UserController {
         }
         //Now convert to user object.
         User user = UserUtils.convertUserRequestToUser(userRequest, startLocalDate);
-        userService.save(user);
         //Return 201 if saved successfully.
-        return ResponseEntity.status(201).build();
+        return userService.save(user) ? ResponseEntity.status(201).build() : ResponseEntity.status(500).build();
     }
 
     /**
@@ -138,10 +137,9 @@ public class UserController {
         if ( user == null ) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        //Now update salary information.
-        userService.updateSalaryInformation(user, updateSalaryRequest.getHourlyWage(), updateSalaryRequest.getContractedHoursPerWeek() );
-        //Return 200.
-        return ResponseEntity.status(200).build();
+        //Now update salary information and return 200 or 500 depending on DB success.
+        return userService.updateSalaryInformation(user, updateSalaryRequest.getHourlyWage(), updateSalaryRequest.getContractedHoursPerWeek() ) ?
+            ResponseEntity.status(200).build() : ResponseEntity.status(500).build();
     }
 
     /**
@@ -166,10 +164,9 @@ public class UserController {
         if ( user == null ) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        //Now add training course.
-        userService.addTrainingCourse(user, addTrainingRequest.getTrainingCourse());
-        //Return 200.
-        return ResponseEntity.status(200).build();
+        //Now add training course and return 200 or 500 depending on DB success.
+        return userService.addTrainingCourse(user, addTrainingRequest.getTrainingCourse()) ?
+                ResponseEntity.status(200).build() : ResponseEntity.status(500).build();
     }
 
     /**
@@ -194,10 +191,9 @@ public class UserController {
         if ( user == null ) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        //Now add the hours.
-        userService.addHoursForDate(user, addTimeSheetHoursRequest.getHours(), DateUtils.convertDateToLocalDate(addTimeSheetHoursRequest.getDate()));
-        //Return 200.
-        return ResponseEntity.status(200).build();
+        //Now add the hours and return 200 or 500 depending on DB success.
+        return userService.addHoursForDate(user, addTimeSheetHoursRequest.getHours(), DateUtils.convertDateToLocalDate(addTimeSheetHoursRequest.getDate())) ?
+                ResponseEntity.status(200).build() : ResponseEntity.status(500).build();
     }
 
     /**

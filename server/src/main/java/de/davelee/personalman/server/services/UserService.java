@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,9 +35,10 @@ public class UserService {
     /**
      * Save the specified user object in the database.
      * @param user a <code>User</code> object to save in the database.
+     * @return a <code>boolean</code> which is true iff the user has been saved successfully.
      */
-    public void save ( final User user ) {
-        userRepository.save(user);
+    public boolean save ( final User user ) {
+        return userRepository.save(user) != null;
     }
 
     /**
@@ -71,25 +73,26 @@ public class UserService {
      * @param user a <code>User</code> object to set the salary information for.
      * @param hourlyWage a <code>BigDecimal</code> object containing the hourly wage to set for this user.
      * @param contractedHoursPerWeek a <code>int</code> containing the number of contracted hours per week to add.
+     * @return a <code>boolean</code> which is true iff the user has been updated successfully.
      */
-    public void updateSalaryInformation (final User user, final BigDecimal hourlyWage, final int contractedHoursPerWeek ) {
+    public boolean updateSalaryInformation (final User user, final BigDecimal hourlyWage, final int contractedHoursPerWeek ) {
         user.setHourlyWage(hourlyWage);
         user.setContractedHoursPerWeek(contractedHoursPerWeek);
-        userRepository.save(user);
+        return userRepository.save(user) != null;
     }
 
     /**
      * Add a training course or qualification for the specified user object.
      * @param user a <code>User</code> object to set the salary information for.
      * @param trainingCourse a <code>String</code> containing the name of the training course or qualification.
+     * @return a <code>boolean</code> which is true iff the user has been updated successfully.
      */
-    public void addTrainingCourse ( final User user, final String trainingCourse ) {
+    public boolean addTrainingCourse ( final User user, final String trainingCourse ) {
         if ( user.getTrainingsList() == null ) {
-            user.setTrainingsList(List.of(trainingCourse));
-        } else {
-            user.addTrainingCourse(trainingCourse);
+            user.setTrainingsList(new ArrayList<>());
         }
-        userRepository.save(user);
+        user.addTrainingCourse(trainingCourse);
+        return userRepository.save(user) != null;
     }
 
     /**
@@ -97,13 +100,14 @@ public class UserService {
      * @param user a <code>User</code> object to set the hours for.
      * @param hours a <code>int</code> with the number of hours to add.
      * @param date a <code>LocalDate</code> object containing the day to add the hours to.
+     * @return a <code>boolean</code> which is true iff the user has been updated successfully.
      */
-    public void addHoursForDate ( final User user, final int hours, final LocalDate date ) {
+    public boolean addHoursForDate ( final User user, final int hours, final LocalDate date ) {
         if ( user.getTimesheet() == null ) {
             user.setTimesheet(new HashMap<>());
         }
         user.addHoursForDate(hours, date);
-        userRepository.save(user);
+        return userRepository.save(user) != null;
     }
 
     /**
@@ -151,7 +155,7 @@ public class UserService {
      * @return a <code>boolean</code> which is true iff the token is valid.
      */
     public boolean checkAuthToken ( final String token ) {
-        return loggedInTokens.containsKey(token) && loggedInTokens.get(token).isAfter(LocalDateTime.now());
+        return loggedInTokens.containsKey(token) && (loggedInTokens.get(token).isEqual(LocalDateTime.now()) || loggedInTokens.get(token).isAfter(LocalDateTime.now()));
     }
 
     /**
@@ -173,8 +177,7 @@ public class UserService {
         User user = userRepository.findByCompanyAndUserName(company, username);
         if ( user != null ) {
             user.setPassword(newPassword);
-            userRepository.save(user);
-            return true;
+            return userRepository.save(user) != null;
         }
         return false;
     }
@@ -192,8 +195,7 @@ public class UserService {
         if ( user != null ) {
             if ( user.getPassword().contentEquals(oldPassword) ) {
                 user.setPassword(newPassword);
-                userRepository.save(user);
-                return true;
+                return userRepository.save(user) != null;
             }
         }
         return false;

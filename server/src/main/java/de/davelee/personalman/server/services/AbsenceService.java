@@ -118,21 +118,16 @@ public class AbsenceService {
      * Calculate the name of absences per year for a particular reason based on current absences and the planned absence list.
      * @param company a <code>String</code> with the company that the user is associated with.
      * @param employeeName a <code>String</code> containing the name of the employee.
-     * @param year a <code>String</code> with the year to perform the calculation for.
+     * @param year a <code>int</code> with the year to perform the calculation for.
      * @param category a <code>AbsenceCategory</code> enum with the category for absence.
      * @param user a <code>User</code> object representing the user taking absence.
      * @param absences a <code>List</code> of <code>Absence/code> objects representing planned absences.
      * @return a <code>boolean</code> which is true iff the planned absences can be taken without exhausting all annual leave for the supplied year.
      */
     private boolean controlAbsencesForYear ( final String company, final String employeeName, final int year, final AbsenceCategory category, final User user, final List<Absence> absences ) {
-        try {
-            long numAnnualLeave = countAbsences(company, employeeName, LocalDate.of(year,1,1), LocalDate.of(year,12,31), category);
-            numAnnualLeave += AbsenceUtils.countAbsencesInDays(absences);
-            return numAnnualLeave <= user.getLeaveEntitlementPerYear();
-        } catch ( NumberFormatException nfe ) {
-            LOG.error("Could not convert year " + year + " to a number as it is not a valid number!");
-            return false;
-        }
+        long numAnnualLeave = countAbsences(company, employeeName, LocalDate.of(year,1,1), LocalDate.of(year,12,31), category);
+        numAnnualLeave += AbsenceUtils.countAbsencesInDays(absences);
+        return numAnnualLeave <= user.getLeaveEntitlementPerYear();
     }
 
     /**

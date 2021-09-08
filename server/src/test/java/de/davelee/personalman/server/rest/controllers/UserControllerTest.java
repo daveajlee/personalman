@@ -3,6 +3,7 @@ package de.davelee.personalman.server.rest.controllers;
 import de.davelee.personalman.api.*;
 import de.davelee.personalman.server.model.User;
 import de.davelee.personalman.server.services.UserService;
+import de.davelee.personalman.server.utils.UserUtils;
 import lombok.extern.java.Log;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -18,7 +19,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 
 /**
  * Test cases for the User endpoints in the Personalman REST API.
@@ -39,6 +40,8 @@ public class UserControllerTest {
      */
     @Test
     public void testValidAdd() {
+        //Mock important methods in user service.
+        Mockito.when(userService.save(any())).thenReturn(true);
         //Add user so that test is successfully.
         UserRequest validUserRequest = generateValidUserRequest();
         assertEquals("Max", validUserRequest.getFirstName());
@@ -333,6 +336,7 @@ public class UserControllerTest {
         Mockito.when(userService.checkAuthToken("max.mustermann-ghgkg")).thenReturn(true);
         Mockito.when(userService.checkAuthToken("max.mustermann-ghgkf")).thenReturn(false);
         Mockito.when(userService.findByCompanyAndUserName("Example Company", "max.mustermann")).thenReturn(generateValidUser());
+        Mockito.when(userService.updateSalaryInformation(any(), any(), eq(40))).thenReturn(true);
         //Perform tests - valid request
         UpdateSalaryRequest updateSalaryRequest = UpdateSalaryRequest.builder()
                 .contractedHoursPerWeek(40)
@@ -375,6 +379,7 @@ public class UserControllerTest {
         Mockito.when(userService.checkAuthToken("max.mustermann-ghgkg")).thenReturn(true);
         Mockito.when(userService.checkAuthToken("max.mustermann-ghgkf")).thenReturn(false);
         Mockito.when(userService.findByCompanyAndUserName("Example Company", "max.mustermann")).thenReturn(generateValidUser());
+        Mockito.when(userService.addTrainingCourse(any(), anyString())).thenReturn(true);
         //Perform tests - valid request
         AddTrainingRequest addTrainingRequest = AddTrainingRequest.builder()
                 .username("max.mustermann")
@@ -414,6 +419,7 @@ public class UserControllerTest {
         Mockito.when(userService.checkAuthToken("max.mustermann-ghgkg")).thenReturn(true);
         Mockito.when(userService.checkAuthToken("max.mustermann-ghgkf")).thenReturn(false);
         Mockito.when(userService.findByCompanyAndUserName("Example Company", "max.mustermann")).thenReturn(generateValidUser());
+        Mockito.when(userService.addHoursForDate(any(), eq(8), any())).thenReturn(true);
         //Perform tests - valid request
         AddTimeSheetHoursRequest addTimeSheetHoursRequest = AddTimeSheetHoursRequest.builder()
                 .username("max.mustermann")
