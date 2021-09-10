@@ -1,6 +1,8 @@
 package de.davelee.personalman.server.services;
 
 import de.davelee.personalman.server.model.User;
+import de.davelee.personalman.server.model.UserHistoryEntry;
+import de.davelee.personalman.server.model.UserHistoryReason;
 import de.davelee.personalman.server.repository.UserRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,6 +109,22 @@ public class UserService {
             user.setTimesheet(new HashMap<>());
         }
         user.addHoursForDate(hours, date);
+        return userRepository.save(user) != null;
+    }
+
+    /**
+     * Add a new history entry to the list.
+     * @param user a <code>User</code> object to set the hours for.
+     * @param date a <code>LocalDate</code> containing the date that the entry/event took place.
+     * @param userHistoryReason a <code>UserHistoryReason</code> containing the reason that the entry/event took place.
+     * @param comment a <code>String</code> containing the comment about the entry/event.
+     * @return a <code>boolean</code> which is true iff the user has been updated successfully.
+     */
+    public boolean addUserHistoryEntry (final User user, final LocalDate date, final UserHistoryReason userHistoryReason, final String comment) {
+        if ( user.getUserHistoryEntryList() == null ) {
+            user.setUserHistoryEntryList(new ArrayList<>());
+        }
+        user.addUserHistoryEntry(date, userHistoryReason, comment);
         return userRepository.save(user) != null;
     }
 

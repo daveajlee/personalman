@@ -101,6 +101,11 @@ public class User {
     private Map<LocalDate, Integer> timesheet;
 
     /**
+     * A log of entries representing the history of this user whilst working for this company.
+     */
+    private List<UserHistoryEntry> userHistoryEntryList;
+
+    /**
      * Add a new training to the list.
      * @param trainingCourse a <code>String</code> containing the number of the training course or qualification.
      */
@@ -135,5 +140,19 @@ public class User {
         }
         //Otherwise return the number of hours.
         return timesheet.get(date);
+    }
+
+    /**
+     * Add a new history entry to the list.
+     * @param date a <code>LocalDate</code> containing the date that the entry/event took place.
+     * @param userHistoryReason a <code>UserHistoryReason</code> containing the reason that the entry/event took place.
+     * @param comment a <code>String</code> containing the comment about the entry/event.
+     */
+    public void addUserHistoryEntry ( final LocalDate date, final UserHistoryReason userHistoryReason, final String comment ) {
+        userHistoryEntryList.add(UserHistoryEntry.builder()
+                .date(date)
+                .userHistoryReason(userHistoryReason)
+                .comment(comment)
+                .build());
     }
 }

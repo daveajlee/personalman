@@ -410,6 +410,52 @@ public class UserControllerTest {
     }
 
     /**
+     * Test case: add a history entry for the specified user.
+     * Expected Result: forbidden or no content or ok depending on request.
+     */
+    @Test
+    public void testAddHistoryEntry() {
+        //Mock the important methods in user service.
+        Mockito.when(userService.checkAuthToken("max.mustermann-ghgkg")).thenReturn(true);
+        Mockito.when(userService.checkAuthToken("max.mustermann-ghgkf")).thenReturn(false);
+        Mockito.when(userService.findByCompanyAndUserName("Example Company", "max.mustermann")).thenReturn(generateValidUser());
+        Mockito.when(userService.addUserHistoryEntry(any(), any(), any(), anyString())).thenReturn(true);
+        //Perform tests - valid request
+        AddHistoryEntryRequest addHistoryEntryRequest = AddHistoryEntryRequest.builder()
+                .username("max.mustermann")
+                .token("max.mustermann-ghgkg")
+                .company("Example Company")
+                .date("01-03-2020")
+                .reason("JOINED")
+                .comment("Welcome to the company!")
+                .build();
+        ResponseEntity<Void> responseEntity = userController.addHistoryEntry(addHistoryEntryRequest);
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
+        //Perform tests - invalid token
+        AddHistoryEntryRequest addHistoryEntryRequest2 = AddHistoryEntryRequest.builder()
+                .username("max.mustermann")
+                .token("max.mustermann-ghgkf")
+                .company("Example Company")
+                .date("01-03-2020")
+                .reason("JOINED")
+                .comment("Welcome to the company!")
+                .build();
+        ResponseEntity<Void> responseEntity2 = userController.addHistoryEntry(addHistoryEntryRequest2);
+        assertTrue(responseEntity2.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
+        //Perform tests - no user
+        AddHistoryEntryRequest addHistoryEntryRequest3 = AddHistoryEntryRequest.builder()
+                .username("max.a.mustermann")
+                .token("max.mustermann-ghgkg")
+                .company("Example Company")
+                .date("01-03-2020")
+                .reason("JOINED")
+                .comment("Welcome to the company!")
+                .build();
+        ResponseEntity<Void> responseEntity3 = userController.addHistoryEntry(addHistoryEntryRequest3);
+        assertTrue(responseEntity3.getStatusCodeValue() == HttpStatus.NO_CONTENT.value());
+    }
+
+    /**
      * Test case: add a timesheet date and hours for the specified user.
      * Expected Result: forbidden or no content or ok depending on request.
      */

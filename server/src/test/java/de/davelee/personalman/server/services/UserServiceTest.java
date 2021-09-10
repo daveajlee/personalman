@@ -1,6 +1,7 @@
 package de.davelee.personalman.server.services;
 
 import de.davelee.personalman.server.model.User;
+import de.davelee.personalman.server.model.UserHistoryReason;
 import de.davelee.personalman.server.repository.UserRepository;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -200,6 +201,21 @@ public class UserServiceTest {
         //do actual test.
         assertTrue(userService.changePassword("Example Company", "max.mustermann", user.getPassword(), "123test"));
         assertFalse(userService.changePassword("Example Company 2", "max.mustermann", user.getPassword(), "123test"));
+    }
+
+    /**
+     * Test case: add a new history entry.
+     * Expected result: true.
+     */
+    @Test
+    public void testAddUserHistoryEntry() {
+        //Test data
+        User user = generateValidUser();
+        //Mock important method in repository.
+        Mockito.when(userRepository.save(user)).thenReturn(user);
+        //do actual test.
+        assertTrue(userService.addUserHistoryEntry(user, LocalDate.of(2020,3,1), UserHistoryReason.JOINED, "Welcome to the company!"));
+        assertTrue(userService.addUserHistoryEntry(user, LocalDate.of(2020,3,31), UserHistoryReason.PAID, "Paid 100 Euros"));
     }
 
     /**

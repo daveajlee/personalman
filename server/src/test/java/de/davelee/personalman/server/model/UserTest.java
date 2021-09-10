@@ -42,6 +42,10 @@ public class UserTest {
                 .hourlyWage(new BigDecimal(12))
                 .trainingsList(List.of("Certified Tester"))
                 .timesheet(Map.of(LocalDate.of(2020,3,1), 8))
+                .userHistoryEntryList(List.of(UserHistoryEntry.builder()
+                        .date(LocalDate.of(2020, 3, 1))
+                        .userHistoryReason(UserHistoryReason.JOINED)
+                        .comment("Welcome to the company!").build()))
                 .build();
         assertEquals("Max", user.getFirstName());
         assertEquals("Mustermann", user.getLastName());
@@ -58,6 +62,7 @@ public class UserTest {
         assertEquals(new BigDecimal(12), user.getHourlyWage());
         assertEquals("Certified Tester", user.getTrainingsList().get(0));
         assertEquals(8, user.getTimesheet().get(LocalDate.of(2020,3,1)));
+        assertEquals("Joined", user.getUserHistoryEntryList().get(0).getUserHistoryReason().getText());
     }
 
     @Test
@@ -117,6 +122,26 @@ public class UserTest {
         user.addHoursForDate(2, LocalDate.of(2020,3,2));
         assertEquals(2, user.getHoursForDate(LocalDate.of(2020, 3, 2)));
 
+        //Test adding history entries.
+        user.setUserHistoryEntryList(new ArrayList<>());
+        user.addUserHistoryEntry(LocalDate.of(2020,3,31), UserHistoryReason.PAID, "Paid 100 Euros!");
+        assertNull(user.getUserHistoryEntryList().get(0).getId());
+        assertEquals(LocalDate.of(2020,3,31), user.getUserHistoryEntryList().get(0).getDate());
+        assertEquals("Paid", user.getUserHistoryEntryList().get(0).getUserHistoryReason().getText());
+        assertEquals("Paid 100 Euros!", user.getUserHistoryEntryList().get(0).getComment());
+
+        //Test adding further history entries
+        UserHistoryEntry userHistoryEntry = new UserHistoryEntry();
+        userHistoryEntry.setDate(LocalDate.of(2020,6,15));
+        userHistoryEntry.setUserHistoryReason(UserHistoryReason.EVALUATED);
+        userHistoryEntry.setComment("Very good");
+        assertEquals("Evaluated", userHistoryEntry.getUserHistoryReason().getText());
+        user.addUserHistoryEntry(LocalDate.of(2020,7,1), UserHistoryReason.WARNED, "Disruptive behaviour");
+        assertEquals("Warned", user.getUserHistoryEntryList().get(1).getUserHistoryReason().getText());
+        user.addUserHistoryEntry(LocalDate.of(2020,7,8), UserHistoryReason.SACKED, "Late after warning");
+        assertEquals("Sacked", user.getUserHistoryEntryList().get(2).getUserHistoryReason().getText());
+        user.addUserHistoryEntry(LocalDate.of(2020,7,8), UserHistoryReason.RESIGNED, "Resigned during sacking");
+        assertEquals("Resigned", user.getUserHistoryEntryList().get(3).getUserHistoryReason().getText());
     }
 
 }

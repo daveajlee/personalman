@@ -2,6 +2,7 @@ package de.davelee.personalman.server.rest.controllers;
 
 import de.davelee.personalman.api.*;
 import de.davelee.personalman.server.model.User;
+import de.davelee.personalman.server.model.UserHistoryReason;
 import de.davelee.personalman.server.services.UserService;
 import de.davelee.personalman.server.utils.DateUtils;
 import de.davelee.personalman.server.utils.UserUtils;
@@ -305,6 +306,33 @@ public class UserController {
         boolean result = userService.resetUserPassword(resetUserRequest.getCompany(), resetUserRequest.getUsername(), resetUserRequest.getPassword());
         //If result is true, then return 200 otherwise return 404 to indicate user not found.
         return result ? ResponseEntity.status(200).build() : ResponseEntity.status(404).build();
+    }
+
+    /**
+     * Add a new history entry to the list.
+     * @param addHistoryEntryRequest a <code>AddHistoryEntryRequest</code> object containing the information to update.
+     * @return a <code>ResponseEntity</code> containing the results of the action.
+     */
+    @ApiOperation(value = "Add a new history entry", notes="Add a new history entry for a particular user.")
+    @PutMapping(value="/history")
+    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully added history entry"), @ApiResponse(code=204,message="No user found")})
+    public ResponseEntity<Void> addHistoryEntry (@RequestBody AddHistoryEntryRequest addHistoryEntryRequest) {
+        //Check valid request including authentication
+        HttpStatus status = validateAndAuthenticateRequest(addHistoryEntryRequest.getCompany(), addHistoryEntryRequest.getUsername(), addHistoryEntryRequest.getToken());
+        //If the status is not null then produce response and return.
+        if ( status != null ) {
+            return new ResponseEntity<>(status);
+        }
+        //Now retrieve the user based on the username.
+        User user = userService.findByCompanyAndUserName(addHistoryEntryRequest.getCompany(), addHistoryEntryRequest.getUsername());
+        //If user is null then return 204.
+        if ( user == null ) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        //Now add training course and return 200 or 500 depending on DB success.
+        return userService.addUserHistoryEntry(user, DateUtils.convertDateToLocalDate(addHistoryEntryRequest.getDate()),
+                UserHistoryReason.valueOf(addHistoryEntryRequest.getReason()), addHistoryEntryRequest.getComment()) ?
+                ResponseEntity.status(200).build() : ResponseEntity.status(500).build();
     }
 
     /**
