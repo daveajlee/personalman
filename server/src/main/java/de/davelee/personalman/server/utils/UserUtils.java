@@ -1,8 +1,10 @@
 package de.davelee.personalman.server.utils;
 
+import de.davelee.personalman.api.UserHistoryResponse;
 import de.davelee.personalman.api.UserRequest;
 import de.davelee.personalman.api.UserResponse;
 import de.davelee.personalman.server.model.User;
+import de.davelee.personalman.server.model.UserHistoryEntry;
 import org.bson.types.ObjectId;
 
 import java.time.DayOfWeek;
@@ -56,7 +58,31 @@ public class UserUtils {
                 .workingDays(convertFromDayOfWeek(user.getWorkingDays()))
                 .role(user.getRole())
                 .dateOfBirth(DateUtils.convertLocalDateToDate(user.getDateOfBirth()))
+                .hourlyWage(user.getHourlyWage())
+                .contractedHoursPerWeek(user.getContractedHoursPerWeek())
+                .trainings(user.getTrainingsList())
+                .userHistory(convertToUserHistoryResponse(user.getUserHistoryEntryList()))
                 .build();
+    }
+
+    /**
+     * Convert the supplied list of <code>UserHistoryEntry</code> objects into Response objects which can be returned by the API
+     * @param userHistoryEntryList a code>UserHistoryEntry</code> list of objects to convert
+     * @return a <code>UserHistoryResponse</code> list of converted objects
+     */
+    private static List<UserHistoryResponse> convertToUserHistoryResponse (final List<UserHistoryEntry> userHistoryEntryList ) {
+        List<UserHistoryResponse> userHistoryResponses = new ArrayList<>();
+        if ( userHistoryEntryList == null ) {
+            return userHistoryResponses;
+        }
+        for ( UserHistoryEntry userHistoryEntry : userHistoryEntryList ) {
+            userHistoryResponses.add(UserHistoryResponse.builder()
+                    .date(DateUtils.convertLocalDateToDate(userHistoryEntry.getDate()))
+                    .comment(userHistoryEntry.getComment())
+                    .userHistoryReason(userHistoryEntry.getUserHistoryReason().getText())
+                    .build());
+        }
+        return userHistoryResponses;
     }
 
     /**

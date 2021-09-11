@@ -2,6 +2,8 @@ package de.davelee.personalman.server.rest.controllers;
 
 import de.davelee.personalman.api.*;
 import de.davelee.personalman.server.model.User;
+import de.davelee.personalman.server.model.UserHistoryEntry;
+import de.davelee.personalman.server.model.UserHistoryReason;
 import de.davelee.personalman.server.services.UserService;
 import de.davelee.personalman.server.utils.UserUtils;
 import lombok.extern.java.Log;
@@ -686,6 +688,14 @@ public class UserControllerTest {
                 .startDate(LocalDate.of(2020,3,1))
                 .workingDays(List.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY))
                 .dateOfBirth(LocalDate.of(1992,12,31))
+                .hourlyWage(new BigDecimal(12))
+                .contractedHoursPerWeek(40)
+                .trainingsList(List.of("Certified Tester"))
+                .userHistoryEntryList(List.of(UserHistoryEntry.builder()
+                        .comment("Welcome to the company!")
+                        .userHistoryReason(UserHistoryReason.JOINED)
+                        .date(LocalDate.of(2020,3,1))
+                        .build()))
                 .build();
     }
 
