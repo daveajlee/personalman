@@ -4,7 +4,6 @@ import de.davelee.personalman.server.model.User;
 import de.davelee.personalman.server.model.UserHistoryReason;
 import de.davelee.personalman.server.repository.UserRepository;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -216,6 +215,21 @@ public class UserServiceTest {
         //do actual test.
         assertTrue(userService.addUserHistoryEntry(user, LocalDate.of(2020,3,1), UserHistoryReason.JOINED, "Welcome to the company!"));
         assertTrue(userService.addUserHistoryEntry(user, LocalDate.of(2020,3,31), UserHistoryReason.PAID, "Paid 100 Euros"));
+    }
+
+    /**
+     * Test case: deactivate a user.
+     * Expected result: 13 as the number of days that the user can take this year.
+     */
+    @Test
+    public void testDeactivateUser() {
+        //Test data
+        User user = generateValidUser();
+        //Mock important method in repository.
+        Mockito.when(userRepository.save(user)).thenReturn(user);
+        //do actual test.
+        assertEquals(13, userService.deactivate(user, LocalDate.of(2020, 6, 30), true, "Found new job."));
+        assertEquals(13, userService.deactivate(user, LocalDate.of(2020, 6, 30), false, "Unprofessional behaviour."));
     }
 
     /**

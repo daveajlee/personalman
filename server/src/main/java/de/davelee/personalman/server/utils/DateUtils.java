@@ -39,6 +39,9 @@ public class DateUtils {
      * @return a <code>String</code> with the converted String.
      */
     public static String convertLocalDateToDate ( final LocalDate date ) {
+        if ( date == null ) {
+            return null;
+        }
         return date.format(DATE_TIME_FORMATTER);
     }
 

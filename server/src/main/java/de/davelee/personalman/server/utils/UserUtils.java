@@ -4,6 +4,7 @@ import de.davelee.personalman.api.UserHistoryResponse;
 import de.davelee.personalman.api.UserRequest;
 import de.davelee.personalman.api.UserResponse;
 import de.davelee.personalman.server.model.User;
+import de.davelee.personalman.server.model.UserAccountStatus;
 import de.davelee.personalman.server.model.UserHistoryEntry;
 import org.bson.types.ObjectId;
 
@@ -38,6 +39,7 @@ public class UserUtils {
                 .workingDays(convertToDayOfWeek(userRequest.getWorkingDays()))
                 .role(userRequest.getRole())
                 .dateOfBirth(DateUtils.convertDateToLocalDate(userRequest.getDateOfBirth()))
+                .accountStatus(UserAccountStatus.ACTIVE)
                 .build();
     }
 
@@ -54,6 +56,7 @@ public class UserUtils {
                 .leaveEntitlementPerYear(user.getLeaveEntitlementPerYear())
                 .position(user.getPosition())
                 .startDate(DateUtils.convertLocalDateToDate(user.getStartDate()))
+                .endDate(DateUtils.convertLocalDateToDate(user.getEndDate()))
                 .username(user.getUserName())
                 .workingDays(convertFromDayOfWeek(user.getWorkingDays()))
                 .role(user.getRole())

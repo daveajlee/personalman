@@ -2,6 +2,7 @@ package de.davelee.personalman.server.rest.controllers;
 
 import de.davelee.personalman.api.*;
 import de.davelee.personalman.server.model.User;
+import de.davelee.personalman.server.model.UserAccountStatus;
 import de.davelee.personalman.server.model.UserHistoryEntry;
 import de.davelee.personalman.server.model.UserHistoryReason;
 import de.davelee.personalman.server.services.UserService;
@@ -565,6 +566,51 @@ public class UserControllerTest {
     }
 
     /**
+     * Test case: deactivate for a user who exists and then one who does not exist.
+     * Expected Result: forbidden or no content or ok depending on request.
+     */
+    @Test
+    public void testDeactivateForUser() {
+        //Mock the important methods in user service.
+        Mockito.when(userService.checkAuthToken("max.mustermann-ghgkg")).thenReturn(true);
+        Mockito.when(userService.checkAuthToken("max.mustermann-ghgkf")).thenReturn(false);
+        Mockito.when(userService.deactivate(any(),eq(LocalDate.of(2020,6,30)),eq(false),eq("Unprofessional behaviour"))).thenReturn(13);
+        Mockito.when(userService.changePassword("Example Company", "max.a.mustermann", "test123", "123test")).thenReturn(false);
+        Mockito.when(userService.findByCompanyAndUserName("Example Company", "max.mustermann")).thenReturn(generateValidUser());
+        //Perform tests - valid request
+        ResponseEntity<DeactivateUserResponse> responseEntity = userController.deactivateUser(DeactivateUserRequest.builder()
+                .company("Example Company")
+                .username("max.mustermann")
+                .token("max.mustermann-ghgkg")
+                .leavingDate("30-06-2020")
+                .reason("Unprofessional behaviour")
+                .resigned(false)
+                .build());
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
+        assertEquals(13, responseEntity.getBody().getLeaveEntitlementForThisYear());
+        //Perform tests - invalid token
+        ResponseEntity<DeactivateUserResponse> responseEntity2 = userController.deactivateUser(DeactivateUserRequest.builder()
+                .company("Example Company")
+                .username("max.mustermann")
+                .token("max.mustermann-ghgkf")
+                .leavingDate("30-06-2020")
+                .reason("Unprofessional behaviour")
+                .resigned(false)
+                .build());
+        assertTrue(responseEntity2.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
+        //Perform tests - no user
+        ResponseEntity<DeactivateUserResponse> responseEntity3 = userController.deactivateUser(DeactivateUserRequest.builder()
+                .company("Example Company")
+                .username("max.a.mustermann")
+                .token("max.mustermann-ghgkg")
+                .leavingDate("30-06-2020")
+                .reason("Unprofessional behaviour")
+                .resigned(false)
+                .build());
+        assertTrue(responseEntity3.getStatusCodeValue() == HttpStatus.NO_CONTENT.value());
+    }
+
+    /**
      * Test case: login with a valid user/password and invalidation combinations.
      * Expected Result: forbidden or ok depending on request.
      */
@@ -610,6 +656,7 @@ public class UserControllerTest {
                 .build());
         assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
     }
+
 
     /**
      * Test case: reset user which exists or does not exist.
@@ -685,6 +732,7 @@ public class UserControllerTest {
                 .userName("max.mustermann")
                 .password("test")
                 .role("Employee")
+                .accountStatus(UserAccountStatus.ACTIVE)
                 .startDate(LocalDate.of(2020,3,1))
                 .workingDays(List.of(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY, DayOfWeek.SUNDAY))
                 .dateOfBirth(LocalDate.of(1992,12,31))

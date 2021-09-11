@@ -1,10 +1,12 @@
 package de.davelee.personalman.server.services;
 
 import de.davelee.personalman.server.model.User;
+import de.davelee.personalman.server.model.UserAccountStatus;
 import de.davelee.personalman.server.model.UserHistoryEntry;
 import de.davelee.personalman.server.model.UserHistoryReason;
 import de.davelee.personalman.server.repository.UserRepository;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,6 +72,36 @@ public class UserService {
      */
     public void delete ( final User user ) {
         userRepository.delete(user);
+    }
+
+    /**
+     * Deactivate the specified user object from the database.
+     * Also calculate annual leave entitlement for this year and return it.
+     * @param user a <code>User</code> object to delete from the database.
+     * @param leavingDate a <code>LocalDate</code> object containing the date that the user will leave.
+     * @param resigned a <code>boolean</code> which is true iff the user resigned and was not sacked.
+     * @param reason a <code>String</code> with a comment why the user is leaving
+     * @return a <code>int</code> containing the number of days of annual leave the user may use this year.
+     */
+    public int deactivate (final User user, final LocalDate leavingDate, final boolean resigned, final String reason ) {
+        //Set end date for this user as their leaving date.
+        user.setEndDate(leavingDate);
+        //Add a note to their profile with reason for leaving or being sacked.
+        if ( resigned ) {
+            user.addUserHistoryEntry(leavingDate, UserHistoryReason.RESIGNED, reason);
+        } else {
+            user.addUserHistoryEntry(leavingDate, UserHistoryReason.SACKED, reason);
+        }
+        //Deactivate user account.
+        user.setAccountStatus(UserAccountStatus.DEACTIVATED);
+        //Calculate remaining annual leave.
+        int remainingAnnualLeave = 0;
+        //Calculate number of days that user worked this year.
+        long numWorkingDays = ChronoUnit.DAYS.between(LocalDate.of(leavingDate.getYear(), 1, 1), leavingDate);
+        //1. Divide the user's annual leave by 365 days and then multiply by the number of working days - rounding up as necessary.
+        remainingAnnualLeave = (int) Math.ceil(( (double) user.getLeaveEntitlementPerYear() / 365) * (double) numWorkingDays);
+        //Return the annual leave entitlement in this year.
+        return remainingAnnualLeave;
     }
 
     /**

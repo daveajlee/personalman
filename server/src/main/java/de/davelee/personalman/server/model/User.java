@@ -6,6 +6,7 @@ import org.bson.types.ObjectId;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -69,6 +70,16 @@ public class User {
      * The date that the person started at the company.
      */
     private LocalDate startDate;
+
+    /**
+     * The date that the person stopped working for the company.
+     */
+    private LocalDate endDate;
+
+    /**
+     * The status of this user's account.
+     */
+    private UserAccountStatus accountStatus;
 
     /**
      * The person's date of birth.
@@ -149,6 +160,9 @@ public class User {
      * @param comment a <code>String</code> containing the comment about the entry/event.
      */
     public void addUserHistoryEntry ( final LocalDate date, final UserHistoryReason userHistoryReason, final String comment ) {
+        if ( userHistoryEntryList == null ) {
+            userHistoryEntryList = new ArrayList<>();
+        }
         userHistoryEntryList.add(UserHistoryEntry.builder()
                 .date(date)
                 .userHistoryReason(userHistoryReason)

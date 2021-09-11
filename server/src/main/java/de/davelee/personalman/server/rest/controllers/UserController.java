@@ -2,6 +2,7 @@ package de.davelee.personalman.server.rest.controllers;
 
 import de.davelee.personalman.api.*;
 import de.davelee.personalman.server.model.User;
+import de.davelee.personalman.server.model.UserAccountStatus;
 import de.davelee.personalman.server.model.UserHistoryReason;
 import de.davelee.personalman.server.services.UserService;
 import de.davelee.personalman.server.utils.DateUtils;
@@ -114,6 +115,34 @@ public class UserController {
         userService.delete(user);
         //Return 200.
         return ResponseEntity.status(200).build();
+    }
+
+    /**
+     * Deactivate a specific user from the database based on their username and company.
+     * @param deactivateUserRequest a <code>DeactivateUserRequest</code> object which contains the information on leaving.
+     * @return a <code>ResponseEntity</code> containing the results of the action.
+     */
+    @ApiOperation(value = "Deactivate a user", notes="Deactivate a user from the system.")
+    @PutMapping(value="/deactivate")
+    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully deactivated user"), @ApiResponse(code=204,message="Successful but no user found")})
+    public ResponseEntity<DeactivateUserResponse> deactivateUser (@RequestBody final DeactivateUserRequest deactivateUserRequest) {
+        //Check valid request including authentication
+        HttpStatus status = validateAndAuthenticateRequest(deactivateUserRequest.getCompany(), deactivateUserRequest.getUsername(), deactivateUserRequest.getToken());
+        //If the status is not null then produce response and return.
+        if ( status != null ) {
+            return new ResponseEntity<>(status);
+        }
+        //Now retrieve the user based on the username.
+        User user = userService.findByCompanyAndUserName(deactivateUserRequest.getCompany(), deactivateUserRequest.getUsername());
+        //If user is null then return 204.
+        if ( user == null ) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        //Now deactivate the user based on the username and return the result.
+        return ResponseEntity.ok(DeactivateUserResponse.builder()
+                .leaveEntitlementForThisYear(userService.deactivate(user, DateUtils.convertDateToLocalDate(deactivateUserRequest.getLeavingDate()),
+                        deactivateUserRequest.isResigned(), deactivateUserRequest.getReason()))
+                .build());
     }
 
     /**
@@ -267,7 +296,7 @@ public class UserController {
     @ApiResponses(@ApiResponse(code=200,message="Successfully processed login request"))
     public ResponseEntity<LoginResponse> login (@RequestBody final LoginRequest loginRequest) {
         User user = userService.findByCompanyAndUserName(loginRequest.getCompany(), loginRequest.getUsername());
-        if ( user != null && user.getPassword().contentEquals(loginRequest.getPassword()) ) {
+        if ( user != null && user.getAccountStatus()== UserAccountStatus.ACTIVE && user.getPassword().contentEquals(loginRequest.getPassword()) ) {
             return ResponseEntity.ok().body(LoginResponse.builder().token(userService.generateAuthToken(loginRequest.getUsername())).build());
         } else if ( user != null ) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(LoginResponse.builder().errorMessage("Password was incorrect!").build());
