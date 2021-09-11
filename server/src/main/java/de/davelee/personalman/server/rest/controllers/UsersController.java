@@ -1,9 +1,11 @@
 package de.davelee.personalman.server.rest.controllers;
 
+import de.davelee.personalman.api.PayUsersResponse;
 import de.davelee.personalman.api.UserResponse;
 import de.davelee.personalman.api.UsersResponse;
 import de.davelee.personalman.server.model.User;
 import de.davelee.personalman.server.services.UserService;
+import de.davelee.personalman.server.utils.DateUtils;
 import de.davelee.personalman.server.utils.UserUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,7 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class defines the endpoints for the REST API which manipulate users and delegates the actions to the UserService class.
@@ -65,6 +71,55 @@ public class UsersController {
         return ResponseEntity.ok(UsersResponse.builder()
                 .count((long) userResponses.length)
                 .userResponses(userResponses)
+                .build());
+    }
+
+    /**
+     * Pay all users for a specific company who have worked within a supplied date range.
+     * @param company a <code>String</code> containing the name of the company.
+     * @param token a <code>String</code> containing the token to verify that the user is logged in.
+     * @param startDate a <code>String</code> containing the start date (inclusive) of the date range in format dd-MM-yyyy.
+     * @param endDate a <code>String</code> containing the end date (inclusive) of the date range in format dd-MM-yyyy.
+     * @return a <code>ResponseEntity</code> containing the users for this company.
+     */
+    @ApiOperation(value = "Pay all users for a company", notes="Pay all users for a company within a specific date range.")
+    @GetMapping(value="/pay")
+    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully found user(s) and their pay"), @ApiResponse(code=204,message="Successful but no users found")})
+    public ResponseEntity<PayUsersResponse> payUsers (@RequestParam("company") final String company,
+                                                      @RequestParam("token") final String token,
+                                                      @RequestParam("startDate") final String startDate,
+                                                      @RequestParam("endDate") final String endDate) {
+        //Verify that user is logged in.
+        if ( token == null || !userService.checkAuthToken(token) ) {
+            return ResponseEntity.status(403).build();
+        }
+        //First of all, check if the compny field is empty or null, then return bad request.
+        if ( StringUtils.isBlank(company)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        //Now retrieve the user based on the username.
+        List<User> users = userService.findByCompany(company);
+        //If users is empty then return 204.
+        if ( users.size() == 0 ) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        //Now go through each user if they have worked during the date range and then calculate pay.
+        BigDecimal totalSum = new BigDecimal(0); Map<String, BigDecimal> employeePayTable = new HashMap<>();
+        for ( User user : users ) {
+            BigDecimal sumToBePaid = new BigDecimal(0);
+            LocalDate startLocalDate = DateUtils.convertDateToLocalDate(startDate);
+            LocalDate endLocalDate = DateUtils.convertDateToLocalDate(endDate);
+            while ( startLocalDate.isBefore(endLocalDate) || startLocalDate.isEqual(endLocalDate) ) {
+                sumToBePaid = sumToBePaid.add(new BigDecimal(userService.getHoursForDate(user, startLocalDate)).multiply(user.getHourlyWage()));
+                startLocalDate = startLocalDate.plusDays(1);
+            }
+            employeePayTable.put(user.getUserName(), sumToBePaid);
+            totalSum = totalSum.add(sumToBePaid);
+        }
+        //Return response.
+        return ResponseEntity.ok(PayUsersResponse.builder()
+                .employeePayTable(employeePayTable)
+                .totalSum(totalSum)
                 .build());
     }
 
