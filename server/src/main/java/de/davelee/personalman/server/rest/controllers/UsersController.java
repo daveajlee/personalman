@@ -1,9 +1,11 @@
 package de.davelee.personalman.server.rest.controllers;
 
+import de.davelee.personalman.api.PaidUserRequest;
 import de.davelee.personalman.api.PayUsersResponse;
 import de.davelee.personalman.api.UserResponse;
 import de.davelee.personalman.api.UsersResponse;
 import de.davelee.personalman.server.model.User;
+import de.davelee.personalman.server.model.UserHistoryReason;
 import de.davelee.personalman.server.services.UserService;
 import de.davelee.personalman.server.utils.DateUtils;
 import de.davelee.personalman.server.utils.UserUtils;
@@ -15,16 +17,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This class defines the endpoints for the REST API which manipulate users and delegates the actions to the UserService class.
@@ -104,7 +104,7 @@ public class UsersController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         //Now go through each user if they have worked during the date range and then calculate pay.
-        BigDecimal totalSum = new BigDecimal(0); Map<String, BigDecimal> employeePayTable = new HashMap<>();
+        BigDecimal totalSum = new BigDecimal(0); Map<String, Double> employeePayTable = new HashMap<>();
         for ( User user : users ) {
             BigDecimal sumToBePaid = new BigDecimal(0);
             LocalDate startLocalDate = DateUtils.convertDateToLocalDate(startDate);
@@ -113,14 +113,46 @@ public class UsersController {
                 sumToBePaid = sumToBePaid.add(new BigDecimal(userService.getHoursForDate(user, startLocalDate)).multiply(user.getHourlyWage()));
                 startLocalDate = startLocalDate.plusDays(1);
             }
-            employeePayTable.put(user.getUserName(), sumToBePaid);
+            employeePayTable.put(user.getUserName(), sumToBePaid.doubleValue());
             totalSum = totalSum.add(sumToBePaid);
         }
         //Return response.
         return ResponseEntity.ok(PayUsersResponse.builder()
                 .employeePayTable(employeePayTable)
-                .totalSum(totalSum)
+                .totalSum(totalSum.doubleValue())
                 .build());
+    }
+
+    /**
+     * Mark all supplied users for a specific company as paid within a particular date range.
+     * @param paidUserRequest a <code>PaidUserRequest</code> object containing the information to save.
+     * @return a <code>ResponseEntity</code> confirming operation was successful.
+     */
+    @ApiOperation(value = "Mark users as paid for a company", notes="Mark users as paid for a company within a specific date range.")
+    @GetMapping(value="/paid")
+    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully found user(s) and their pay"), @ApiResponse(code=204,message="Successful but no users found")})
+    public ResponseEntity<Void> paidUsers (@RequestBody final PaidUserRequest paidUserRequest) {
+        //Verify that user is logged in.
+        if ( paidUserRequest.getToken() == null || !userService.checkAuthToken(paidUserRequest.getToken()) ) {
+            return ResponseEntity.status(403).build();
+        }
+        //First of all, check if the compny field is empty or null, then return bad request.
+        if ( StringUtils.isBlank(paidUserRequest.getCompany())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        //For each user in the supplied map.
+        Set<String> usernameSet = paidUserRequest.getEmployeePayTable().keySet();
+        for ( String username : usernameSet ) {
+            //Find the relevant user.
+            User user = userService.findByCompanyAndUserName(paidUserRequest.getCompany(), username);
+            if ( !userService.addUserHistoryEntry(user, LocalDate.now(), UserHistoryReason.PAID,
+                    "Paid " + paidUserRequest.getEmployeePayTable().get(username) + " for date range " +
+                    paidUserRequest.getStartDate() + " - " + paidUserRequest.getEndDate())) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        }
+        //Return empty ok response if no exceptions.
+        return ResponseEntity.ok().build();
     }
 
 }

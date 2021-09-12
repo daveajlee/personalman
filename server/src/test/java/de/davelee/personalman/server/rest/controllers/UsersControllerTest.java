@@ -1,5 +1,6 @@
 package de.davelee.personalman.server.rest.controllers;
 
+import de.davelee.personalman.api.PaidUserRequest;
 import de.davelee.personalman.api.PayUsersResponse;
 import de.davelee.personalman.api.UsersResponse;
 import de.davelee.personalman.server.model.User;
@@ -16,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -95,7 +97,7 @@ public class UsersControllerTest {
         ResponseEntity<PayUsersResponse> responseEntity = usersController.payUsers("MyNoCompany", "max.mustermann-ghgkg", "01-01-2020","04-01-2020");
         assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
         assertEquals(1, responseEntity.getBody().getEmployeePayTable().size());
-        assertEquals(new BigDecimal(384), responseEntity.getBody().getTotalSum());
+        assertEquals(384.0, responseEntity.getBody().getTotalSum());
         //Test where token is invalid.
         ResponseEntity<PayUsersResponse> responseEntity2 = usersController.payUsers("MyNoCompany", "max.mustermann-ghgkf", "01-01-2020","04-01-2020");
         assertTrue(responseEntity2.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
@@ -105,6 +107,70 @@ public class UsersControllerTest {
         //Test where company is empty.
         ResponseEntity<PayUsersResponse> responseEntity4 = usersController.payUsers("MyEmptyCompany", "max.mustermann-ghgkg", "01-01-2020","04-01-2020");
         assertTrue(responseEntity4.getStatusCodeValue() == HttpStatus.NO_CONTENT.value());
+    }
+
+    /**
+     * Test case: mark users as paid for a company.
+     * Expected Result: success or forbidden or bad request depending on request
+     */
+    @Test
+    public void testValidPaidUsers() {
+        //Mock the important methods in user service.
+        Mockito.when(userService.checkAuthToken("max.mustermann-ghgkg")).thenReturn(true);
+        Mockito.when(userService.checkAuthToken("max.mustermann-ghgkf")).thenReturn(false);
+        Mockito.when(userService.findByCompany("MyNoCompany")).thenReturn(List.of(generateValidUser()));
+        Mockito.when(userService.findByCompany("MyEmptyCompany")).thenReturn(List.of());
+        Mockito.when(userService.getHoursForDate(any(), any())).thenReturn(8);
+        Mockito.when(userService.addUserHistoryEntry(any(), any(), any(), any())).thenReturn(true);
+        //Perform tests
+        ResponseEntity<Void> responseEntity = usersController.paidUsers(PaidUserRequest.builder()
+                .company("MyNoCompany")
+                .employeePayTable(Map.of("max.mustermann", 400.0))
+                .startDate("01-01-2020")
+                .endDate("01-01-2020")
+                .token("max.mustermann-ghgkg")
+                .build());
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
+        //Perform test with invalid token.
+        ResponseEntity<Void> responseEntity2 = usersController.paidUsers(PaidUserRequest.builder()
+                .company("MyNoCompany")
+                .employeePayTable(Map.of("max.mustermann", 400.0))
+                .startDate("01-01-2020")
+                .endDate("01-01-2020")
+                .token("max.mustermann-ghgkf")
+                .build());
+        assertTrue(responseEntity2.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
+        //Perform test with missing company.
+        ResponseEntity<Void> responseEntity3 = usersController.paidUsers(PaidUserRequest.builder()
+                .employeePayTable(Map.of("max.mustermann", 400.0))
+                .startDate("01-01-2020")
+                .endDate("01-01-2020")
+                .token("max.mustermann-ghgkg")
+                .build());
+        assertTrue(responseEntity3.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
+    }
+
+    /**
+     * Test case: mark users as paid for a company when database is down.
+     * Expected Result: 500.
+     */
+    @Test
+    public void testInvalidPaidUsers() {
+        //Mock the important methods in user service.
+        Mockito.when(userService.checkAuthToken("max.mustermann-ghgkg")).thenReturn(true);
+        Mockito.when(userService.findByCompany("MyNoCompany")).thenReturn(List.of(generateValidUser()));
+        Mockito.when(userService.getHoursForDate(any(), any())).thenReturn(8);
+        Mockito.when(userService.addUserHistoryEntry(any(), any(), any(), any())).thenReturn(false);
+        //Perform tests
+        ResponseEntity<Void> responseEntity = usersController.paidUsers(PaidUserRequest.builder()
+                .company("MyNoCompany")
+                .employeePayTable(Map.of("max.mustermann", 400.0))
+                .startDate("01-01-2020")
+                .endDate("01-01-2020")
+                .token("max.mustermann-ghgkg")
+                .build());
+        System.out.println(responseEntity.getStatusCodeValue());
+        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
     /**

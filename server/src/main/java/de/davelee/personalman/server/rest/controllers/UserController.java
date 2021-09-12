@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
@@ -168,7 +169,7 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         //Now update salary information and return 200 or 500 depending on DB success.
-        return userService.updateSalaryInformation(user, updateSalaryRequest.getHourlyWage(), updateSalaryRequest.getContractedHoursPerWeek() ) ?
+        return userService.updateSalaryInformation(user, new BigDecimal(updateSalaryRequest.getHourlyWage()), updateSalaryRequest.getContractedHoursPerWeek() ) ?
             ResponseEntity.status(200).build() : ResponseEntity.status(500).build();
     }
 

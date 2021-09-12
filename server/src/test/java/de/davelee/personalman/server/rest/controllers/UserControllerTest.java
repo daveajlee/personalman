@@ -343,7 +343,7 @@ public class UserControllerTest {
         //Perform tests - valid request
         UpdateSalaryRequest updateSalaryRequest = UpdateSalaryRequest.builder()
                 .contractedHoursPerWeek(40)
-                .hourlyWage(new BigDecimal(13))
+                .hourlyWage(13.0)
                 .username("max.mustermann")
                 .token("max.mustermann-ghgkg")
                 .company("Example Company")
@@ -353,7 +353,7 @@ public class UserControllerTest {
         //Perform tests - invalid token
         UpdateSalaryRequest updateSalaryRequest2 = UpdateSalaryRequest.builder()
                 .contractedHoursPerWeek(40)
-                .hourlyWage(new BigDecimal(13))
+                .hourlyWage(13.0)
                 .username("max.mustermann")
                 .token("max.mustermann-ghgkf")
                 .company("Example Company")
@@ -363,7 +363,7 @@ public class UserControllerTest {
         //Perform tests - no user
         UpdateSalaryRequest updateSalaryRequest3 = UpdateSalaryRequest.builder()
                 .contractedHoursPerWeek(40)
-                .hourlyWage(new BigDecimal(13))
+                .hourlyWage(13.0)
                 .username("max.a.mustermann")
                 .token("max.mustermann-ghgkg")
                 .company("Example Company")
