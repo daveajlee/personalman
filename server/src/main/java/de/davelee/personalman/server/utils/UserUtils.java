@@ -61,7 +61,7 @@ public class UserUtils {
                 .workingDays(convertFromDayOfWeek(user.getWorkingDays()))
                 .role(user.getRole())
                 .dateOfBirth(DateUtils.convertLocalDateToDate(user.getDateOfBirth()))
-                .hourlyWage(user.getHourlyWage().doubleValue())
+                .hourlyWage(user.getHourlyWage() != null ? user.getHourlyWage().doubleValue() : 0.0)
                 .contractedHoursPerWeek(user.getContractedHoursPerWeek())
                 .trainings(user.getTrainingsList())
                 .userHistory(convertToUserHistoryResponse(user.getUserHistoryEntryList()))

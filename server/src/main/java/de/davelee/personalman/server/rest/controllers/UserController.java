@@ -326,7 +326,7 @@ public class UserController {
      * @return a <code>ResponseEntity</code> object with status 200 if password changed or 404 if user not found.
      */
     @ApiOperation(value="resetUser", notes="Reset password for a user")
-    @PostMapping(value="/reset")
+    @PutMapping(value="/reset")
     @ApiResponses(@ApiResponse(code=200,message="Successfully processed reset user request"))
     public ResponseEntity<Void> resetUser (@RequestBody final ResetUserRequest resetUserRequest) {
         //Verify that user is logged in.
