@@ -169,7 +169,6 @@ public class UsersControllerTest {
                 .endDate("01-01-2020")
                 .token("max.mustermann-ghgkg")
                 .build());
-        System.out.println(responseEntity.getStatusCodeValue());
         assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
