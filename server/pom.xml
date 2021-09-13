@@ -3,7 +3,7 @@
 
 	<groupId>de.davelee.personalman</groupId>
 	<artifactId>personalman_server</artifactId>
-	<version>1.4.0-SNAPSHOT</version>
+	<version>1.5.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>PersonalMan - REST Server</name>
