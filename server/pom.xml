@@ -41,7 +41,7 @@
 		<dependency>
 			<groupId>de.davelee.personalman</groupId>
 			<artifactId>personalman-java-api</artifactId>
-			<version>1.4.0-SNAPSHOT</version>
+			<version>1.4.0</version>
 		</dependency>
 
 		<!-- Use Lombok for code generation -->
