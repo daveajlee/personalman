@@ -1,9 +1,6 @@
 package de.davelee.personalman.server.services;
 
-import de.davelee.personalman.server.model.User;
-import de.davelee.personalman.server.model.UserAccountStatus;
-import de.davelee.personalman.server.model.UserHistoryEntry;
-import de.davelee.personalman.server.model.UserHistoryReason;
+import de.davelee.personalman.server.model.*;
 import de.davelee.personalman.server.repository.UserRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.tomcat.jni.Local;
@@ -72,6 +69,15 @@ public class UserService {
      */
     public void delete ( final User user ) {
         userRepository.delete(user);
+    }
+
+    /**
+     * Delete all users for a particular company.
+     * @param company a <code>String</code> with the company to delete users for.
+     */
+    public void delete ( final String company ) {
+        List<User> usersToDelete = userRepository.findByCompany(company);
+        usersToDelete.forEach(userRepository::delete);
     }
 
     /**

@@ -3,6 +3,7 @@ package de.davelee.personalman.server.rest.controllers;
 import de.davelee.personalman.api.CompanyResponse;
 import de.davelee.personalman.api.RegisterCompanyRequest;
 import de.davelee.personalman.server.model.Company;
+import de.davelee.personalman.server.services.AbsenceService;
 import de.davelee.personalman.server.services.CompanyService;
 import de.davelee.personalman.server.services.UserService;
 import io.swagger.annotations.Api;
@@ -30,6 +31,9 @@ public class CompanyController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AbsenceService absenceService;
 
     /**
      * Add an absence to the database based on the supplied register company request.
@@ -95,6 +99,9 @@ public class CompanyController {
         if ( status != null ) {
             return new ResponseEntity<>(status);
         }
+        //First of all, delete all users and absences belonging to this company.
+        absenceService.delete(name);
+        userService.delete(name);
         //Now delete the company.
         if ( companyService.delete(name) ) {
             //Return 200 if successful delete.

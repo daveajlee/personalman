@@ -138,6 +138,25 @@ public class AbsenceServiceTest {
     }
 
     /**
+     * Test case: delete one or more absences.
+     */
+    @Test
+    public void testDeleteAbsences() {
+        //Mock important method.
+        Mockito.when(absenceRepository.findByCompany("Example Company")).thenReturn(
+                List.of(Absence.builder()
+                        .category(AbsenceCategory.ILLNESS)
+                        .startDate(LocalDate.of(2015, 12,30))
+                        .endDate(LocalDate.of(2015,12,31))
+                        .company("Example Company")
+                        .username("max.mustermann")
+                        .build()));
+        Mockito.doNothing().when(absenceRepository).delete(any());
+        //Call delete method and make sure no exceptions happen as void method.
+        absenceService.delete("Example Company");
+    }
+
+    /**
      * Private helper method to generate a valid user.
      * @return a <code>User</code> object containing valid test data.
      */
