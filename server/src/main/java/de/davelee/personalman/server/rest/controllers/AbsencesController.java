@@ -27,8 +27,8 @@ import java.util.List;
  * @author Dave Lee
  */
 @RestController
-@Api(value="/personalman/absences")
-@RequestMapping(value="/personalman/absences")
+@Api(value="/api/absences")
+@RequestMapping(value="/api/absences")
 public class AbsencesController {
 
     @Autowired

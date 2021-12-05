@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.*;
  * @author Dave Lee
  */
 @RestController
-@Api(value="/personalman/company")
-@RequestMapping(value="/personalman/company")
+@Api(value="/api/company")
+@RequestMapping(value="/api/company")
 public class CompanyController {
 
     @Autowired

@@ -31,8 +31,8 @@ import java.util.Set;
  * @author Dave Lee
  */
 @RestController
-@Api(value="/personalman/users")
-@RequestMapping(value="/personalman/users")
+@Api(value="/api/users")
+@RequestMapping(value="/api/users")
 public class UsersController {
 
     @Autowired

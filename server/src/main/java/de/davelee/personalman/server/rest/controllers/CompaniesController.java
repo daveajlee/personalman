@@ -19,8 +19,8 @@ import java.util.List;
  * @author Dave Lee
  */
 @RestController
-@Api(value="/personalman/companies")
-@RequestMapping(value="/personalman/companies")
+@Api(value="/api/companies")
+@RequestMapping(value="/api/companies")
 public class CompaniesController {
 
     @Autowired
