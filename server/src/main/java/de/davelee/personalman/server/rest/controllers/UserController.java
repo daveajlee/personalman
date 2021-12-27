@@ -7,10 +7,10 @@ import de.davelee.personalman.server.model.UserHistoryReason;
 import de.davelee.personalman.server.services.UserService;
 import de.davelee.personalman.server.utils.DateUtils;
 import de.davelee.personalman.server.utils.UserUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ import java.time.LocalDate;
  * @author Dave Lee
  */
 @RestController
-@Api(value="/api/user")
+@Tag(name="/api/user")
 @RequestMapping(value="/api/user")
 public class UserController {
 
@@ -37,9 +37,9 @@ public class UserController {
      * @param userRequest a <code>UserRequest</code> object representing the user to add.
      * @return a <code>ResponseEntity</code> containing the result of the action.
      */
-    @ApiOperation(value = "Add a user", notes="Add a user to the system.")
+    @Operation(summary = "Add a user", description="Add a user to the system.")
     @PostMapping(value="/")
-    @ApiResponses(value = {@ApiResponse(code=201,message="Successfully created user")})
+    @ApiResponses(value = {@ApiResponse(responseCode="201",description="Successfully created user")})
     public ResponseEntity<Void> addUser (@RequestBody final UserRequest userRequest ) {
         //First of all, check if any of the fields are empty or null, then return bad request.
         if (StringUtils.isBlank(userRequest.getFirstName()) || StringUtils.isBlank(userRequest.getSurname())
@@ -66,9 +66,9 @@ public class UserController {
      * @param token a <code>String</code> containing the token to verify that the user is logged in.
      * @return a <code>ResponseEntity</code> containing the user found.
      */
-    @ApiOperation(value = "Find a user", notes="Find a user to the system.")
+    @Operation(summary = "Find a user", description="Find a user to the system.")
     @GetMapping(value="/")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully found user"), @ApiResponse(code=204,message="Successful but no user found")})
+    @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully found user"), @ApiResponse(responseCode="204",description="Successful but no user found")})
     public ResponseEntity<UserResponse> getUser (@RequestParam("company") final String company, @RequestParam("username") final String username,
                                                  @RequestParam("token") final String token) {
         //Check valid request including authentication
@@ -95,9 +95,9 @@ public class UserController {
      * @param token a <code>String</code> containing the token to verify that the user is logged in.
      * @return a <code>ResponseEntity</code> containing the results of the action.
      */
-    @ApiOperation(value = "Delete a user", notes="Delete a user from the system.")
+    @Operation(summary = "Delete a user", description="Delete a user from the system.")
     @DeleteMapping(value="/")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully delete user"), @ApiResponse(code=204,message="Successful but no user found")})
+    @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully delete user"), @ApiResponse(responseCode="204",description="Successful but no user found")})
     public ResponseEntity<Void> deleteUser (@RequestParam("company") final String company, @RequestParam("username") final String username,
                                             @RequestParam("token") final String token) {
         //Check valid request including authentication
@@ -123,9 +123,9 @@ public class UserController {
      * @param deactivateUserRequest a <code>DeactivateUserRequest</code> object which contains the information on leaving.
      * @return a <code>ResponseEntity</code> containing the results of the action.
      */
-    @ApiOperation(value = "Deactivate a user", notes="Deactivate a user from the system.")
+    @Operation(summary = "Deactivate a user", description="Deactivate a user from the system.")
     @PatchMapping(value="/deactivate")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully deactivated user"), @ApiResponse(code=204,message="Successful but no user found")})
+    @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully deactivated user"), @ApiResponse(responseCode="204",description="Successful but no user found")})
     public ResponseEntity<DeactivateUserResponse> deactivateUser (@RequestBody final DeactivateUserRequest deactivateUserRequest) {
         //Check valid request including authentication
         HttpStatus status = validateAndAuthenticateRequest(deactivateUserRequest.getCompany(), deactivateUserRequest.getUsername(), deactivateUserRequest.getToken());
@@ -152,9 +152,9 @@ public class UserController {
      * @param updateSalaryRequest a <code>UpdateSalaryRequest</code> object containing the information to update.
      * @return a <code>ResponseEntity</code> containing the results of the action.
      */
-    @ApiOperation(value = "Update salary information", notes="Update salary information for a particular user.")
+    @Operation(summary = "Update salary information", description="Update salary information for a particular user.")
     @PatchMapping(value="/salary")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully updated salary information"), @ApiResponse(code=204,message="No user found")})
+    @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully updated salary information"), @ApiResponse(responseCode="204",description="No user found")})
     public ResponseEntity<Void> updateSalaryInformation (@RequestBody UpdateSalaryRequest updateSalaryRequest) {
         //Check valid request including authentication
         HttpStatus status = validateAndAuthenticateRequest(updateSalaryRequest.getCompany(), updateSalaryRequest.getUsername(), updateSalaryRequest.getToken());
@@ -179,9 +179,9 @@ public class UserController {
      * @param addTrainingRequest a <code>AddTrainingRequest</code> object containing the information to update.
      * @return a <code>ResponseEntity</code> containing the results of the action.
      */
-    @ApiOperation(value = "Add a training course", notes="Add a training course for a particular user.")
+    @Operation(summary = "Add a training course", description="Add a training course for a particular user.")
     @PatchMapping(value="/training")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully added training course"), @ApiResponse(code=204,message="No user found")})
+    @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully added training course"), @ApiResponse(responseCode="204",description="No user found")})
     public ResponseEntity<Void> addTraining (@RequestBody AddTrainingRequest addTrainingRequest) {
         //Check valid request including authentication
         HttpStatus status = validateAndAuthenticateRequest(addTrainingRequest.getCompany(), addTrainingRequest.getUsername(), addTrainingRequest.getToken());
@@ -206,9 +206,9 @@ public class UserController {
      * @param addTimeSheetHoursRequest a <code>AddTimeSheetHoursRequest</code> object containing the information to update.
      * @return a <code>ResponseEntity</code> containing the results of the action.
      */
-    @ApiOperation(value = "Add a number of hours to the user's timesheet", notes="Add a number of hours to a specified date for a specified user.")
+    @Operation(summary = "Add a number of hours to the user's timesheet", description="Add a number of hours to a specified date for a specified user.")
     @PatchMapping(value="/timesheet")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully added hours"), @ApiResponse(code=204,message="No user found")})
+    @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully added hours"), @ApiResponse(responseCode="204",description="No user found")})
     public ResponseEntity<Void> addHoursForDate (@RequestBody AddTimeSheetHoursRequest addTimeSheetHoursRequest) {
         //Check valid request including authentication
         HttpStatus status = validateAndAuthenticateRequest(addTimeSheetHoursRequest.getCompany(), addTimeSheetHoursRequest.getUsername(), addTimeSheetHoursRequest.getToken());
@@ -236,9 +236,9 @@ public class UserController {
      * @param endDate a <code>String</code> containing the end date to retrieve hours for in format dd-MM-yyyy.
      * @return a <code>ResponseEntity</code> containing the results of the action.
      */
-    @ApiOperation(value = "Retrieve the user's timesheet", notes="Retrieve number of hours for a specified date (range) for a specified user.")
+    @Operation(summary = "Retrieve the user's timesheet", description="Retrieve number of hours for a specified date (range) for a specified user.")
     @GetMapping(value="/timesheet")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully retrieved hours"), @ApiResponse(code=204,message="No user found")})
+    @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully retrieved hours"), @ApiResponse(responseCode="204",description="No user found")})
     public ResponseEntity<Integer> getHoursForDate (@RequestParam("company") final String company, @RequestParam("username") final String username,
                                                     @RequestParam("token") final String token, @RequestParam("startDate") final String startDate,
                                                     @RequestParam("endDate") final String endDate ) {
@@ -271,9 +271,9 @@ public class UserController {
      * @param changePasswordRequest a <code>ChangePasswordRequest</code> object containing the company, username, old password and new password.
      * @return a <code>ResponseEntity</code> object with status 200 if password changed or 404 if user not found.
      */
-    @ApiOperation(value="changePassword", notes="Change password for a user")
+    @Operation(summary="changePassword", description="Change password for a user")
     @PatchMapping(value="/password")
-    @ApiResponses(@ApiResponse(code=200,message="Successfully processed change password request"))
+    @ApiResponses(@ApiResponse(responseCode="200",description="Successfully processed change password request"))
     public ResponseEntity<Void> changePassword (@RequestBody final ChangePasswordRequest changePasswordRequest) {
         //Check valid request including authentication
         HttpStatus status = validateAndAuthenticateRequest(changePasswordRequest.getCompany(), changePasswordRequest.getUsername(), changePasswordRequest.getToken());
@@ -292,9 +292,9 @@ public class UserController {
      * @param loginRequest a <code>LoginRequest</code> containing the company, username and password information for this request.
      * @return a <code>ResponseEntity</code> with response status 200 indicating that it was successful.
      */
-    @ApiOperation(value="Login", notes="Login to the system")
+    @Operation(summary="Login", description="Login to the system")
     @PostMapping(value="/login")
-    @ApiResponses(@ApiResponse(code=200,message="Successfully processed login request"))
+    @ApiResponses(@ApiResponse(responseCode="200",description="Successfully processed login request"))
     public ResponseEntity<LoginResponse> login (@RequestBody final LoginRequest loginRequest) {
         User user = userService.findByCompanyAndUserName(loginRequest.getCompany(), loginRequest.getUsername());
         if ( user != null && user.getAccountStatus()== UserAccountStatus.ACTIVE && user.getPassword().contentEquals(loginRequest.getPassword()) ) {
@@ -310,9 +310,9 @@ public class UserController {
      * @param logoutRequest a <code>LogoutRequest</code> containing the token to remove.
      * @return a <code>LoginResponse</code> object which contains a token and response code 200 if login was successful or an error message and response code 403 if login was not successful.
      */
-    @ApiOperation(value="Logout", notes="Logout from the system")
+    @Operation(summary="Logout", description="Logout from the system")
     @PostMapping(value="/logout")
-    @ApiResponses(@ApiResponse(code=200,message="Successfully processed logout request"))
+    @ApiResponses(@ApiResponse(responseCode = "200",description="Successfully processed logout request"))
     public ResponseEntity<Void> logout (@RequestBody final LogoutRequest logoutRequest) {
         //Remove the token from the authenticated tokens.
         userService.removeAuthToken(logoutRequest.getToken());
@@ -325,9 +325,9 @@ public class UserController {
      * @param resetUserRequest a <code>ResetUserRequest</code> object containing the company, username and new password.
      * @return a <code>ResponseEntity</code> object with status 200 if password changed or 404 if user not found.
      */
-    @ApiOperation(value="resetUser", notes="Reset password for a user")
+    @Operation(summary="resetUser", description="Reset password for a user")
     @PatchMapping(value="/reset")
-    @ApiResponses(@ApiResponse(code=200,message="Successfully processed reset user request"))
+    @ApiResponses(@ApiResponse(responseCode="200",description="Successfully processed reset user request"))
     public ResponseEntity<Void> resetUser (@RequestBody final ResetUserRequest resetUserRequest) {
         //Verify that user is logged in.
         if ( resetUserRequest.getToken() == null || !userService.checkAuthToken(resetUserRequest.getToken()) ) {
@@ -343,9 +343,9 @@ public class UserController {
      * @param addHistoryEntryRequest a <code>AddHistoryEntryRequest</code> object containing the information to update.
      * @return a <code>ResponseEntity</code> containing the results of the action.
      */
-    @ApiOperation(value = "Add a new history entry", notes="Add a new history entry for a particular user.")
+    @Operation(summary = "Add a new history entry", description="Add a new history entry for a particular user.")
     @PatchMapping(value="/history")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully added history entry"), @ApiResponse(code=204,message="No user found")})
+    @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully added history entry"), @ApiResponse(responseCode = "204",description="No user found")})
     public ResponseEntity<Void> addHistoryEntry (@RequestBody AddHistoryEntryRequest addHistoryEntryRequest) {
         //Check valid request including authentication
         HttpStatus status = validateAndAuthenticateRequest(addHistoryEntryRequest.getCompany(), addHistoryEntryRequest.getUsername(), addHistoryEntryRequest.getToken());
