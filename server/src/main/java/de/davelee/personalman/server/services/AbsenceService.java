@@ -1,6 +1,5 @@
 package de.davelee.personalman.server.services;
 
-import de.davelee.personalman.api.AbsencesResponse;
 import de.davelee.personalman.server.model.Absence;
 import de.davelee.personalman.server.model.AbsenceCategory;
 import de.davelee.personalman.server.model.User;
@@ -185,6 +184,15 @@ public class AbsenceService {
     public void delete ( final String company, final String username, final LocalDate startDate,
                          final LocalDate endDate ) {
         List<Absence> absencesToDelete = findAbsences(company, username, startDate, endDate);
+        absencesToDelete.forEach(absenceRepository::delete);
+    }
+
+    /**
+     * Delete all absences for a particular company.
+     * @param company a <code>String</code> with the company to delete absences for.
+     */
+    public void delete ( final String company ) {
+        List<Absence> absencesToDelete = absenceRepository.findByCompany(company);
         absencesToDelete.forEach(absenceRepository::delete);
     }
 

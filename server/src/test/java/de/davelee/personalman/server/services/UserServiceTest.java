@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 /**
  * Test cases for the UserService class - the UserRepository is mocked.
@@ -230,6 +231,18 @@ public class UserServiceTest {
         //do actual test.
         assertEquals(13, userService.deactivate(user, LocalDate.of(2020, 6, 30), true, "Found new job."));
         assertEquals(13, userService.deactivate(user, LocalDate.of(2020, 6, 30), false, "Unprofessional behaviour."));
+    }
+
+    /**
+     * Test case: delete one or more users.
+     */
+    @Test
+    public void testDeleteAllUsersForCompany() {
+        //Mock important method in repository.
+        Mockito.when(userRepository.findByCompany("Example Company")).thenReturn(List.of(generateValidUser()));
+        Mockito.doNothing().when(userRepository).delete(any());
+        //Call delete method and make sure no exceptions happen as void method.
+        userService.delete("Example Company");
     }
 
     /**

@@ -3,12 +3,13 @@ package de.davelee.personalman.server.rest.controllers;
 import de.davelee.personalman.api.CompanyResponse;
 import de.davelee.personalman.api.RegisterCompanyRequest;
 import de.davelee.personalman.server.model.Company;
+import de.davelee.personalman.server.services.AbsenceService;
 import de.davelee.personalman.server.services.CompanyService;
 import de.davelee.personalman.server.services.UserService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,8 @@ import org.springframework.web.bind.annotation.*;
  * @author Dave Lee
  */
 @RestController
-@Api(value="/personalman/company")
-@RequestMapping(value="/personalman/company")
+@Tag(name="/api/company")
+@RequestMapping(value="/api/company")
 public class CompanyController {
 
     @Autowired
@@ -31,14 +32,17 @@ public class CompanyController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AbsenceService absenceService;
+
     /**
      * Add an absence to the database based on the supplied register company request.
      * @param registerCompanyRequest a <code>RegisterCompanyRequest</code> object representing the company to add.
      * @return a <code>ResponseEntity</code> containing the result of the action.
      */
-    @ApiOperation(value = "Add a company", notes="Add a company to the system.")
+    @Operation(summary = "Add a company", description="Add a company to the system.")
     @PostMapping(value="/")
-    @ApiResponses(value = {@ApiResponse(code=201,message="Successfully created company")})
+    @ApiResponses(value = {@ApiResponse(responseCode="201",description="Successfully created company")})
     public ResponseEntity<Void> addCompany (@RequestBody final RegisterCompanyRequest registerCompanyRequest ) {
         companyService.save(Company.builder()
                 .id(new ObjectId())
@@ -56,9 +60,9 @@ public class CompanyController {
      * @param token a <code>String</code> to verify if the user is logged in.
      * @return a <code>ResponseEntity</code> containing the results of the action.
      */
-    @ApiOperation(value = "Retrieve a company", notes="Retrieve a company from the system.")
+    @Operation(summary = "Retrieve a company", description="Retrieve a company from the system.")
     @GetMapping(value="/")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully retrieved company"), @ApiResponse(code=404,message="Company not found")})
+    @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully retrieved company"), @ApiResponse(responseCode="404",description="Company not found")})
     @ResponseBody
     public ResponseEntity<CompanyResponse> getCompany (@RequestParam("name") final String name, @RequestParam("token") final String token ) {
         //Check valid request including authentication
@@ -85,9 +89,9 @@ public class CompanyController {
      * @param token a <code>String</code> to verify if the user is logged in.
      * @return a <code>ResponseEntity</code> containing the results of the action.
      */
-    @ApiOperation(value = "Delete a company", notes="Delete a company from the system.")
+    @Operation(summary = "Delete a company", description="Delete a company from the system.")
     @DeleteMapping(value="/")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully delete company"), @ApiResponse(code=404,message="Company not found")})
+    @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully delete company"), @ApiResponse(responseCode="404",description="Company not found")})
     public ResponseEntity<Void> deleteCompany (@RequestParam("name") final String name, @RequestParam("token") final String token ) {
         //Check valid request including authentication
         HttpStatus status = validateAndAuthenticateRequest(name, token);
@@ -95,6 +99,9 @@ public class CompanyController {
         if ( status != null ) {
             return new ResponseEntity<>(status);
         }
+        //First of all, delete all users and absences belonging to this company.
+        absenceService.delete(name);
+        userService.delete(name);
         //Now delete the company.
         if ( companyService.delete(name) ) {
             //Return 200 if successful delete.

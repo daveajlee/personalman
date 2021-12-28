@@ -1,10 +1,10 @@
 package de.davelee.personalman.server.rest.controllers;
 
 import de.davelee.personalman.server.services.CompanyService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +19,8 @@ import java.util.List;
  * @author Dave Lee
  */
 @RestController
-@Api(value="/personalman/companies")
-@RequestMapping(value="/personalman/companies")
+@Tag(name="/api/companies")
+@RequestMapping(value="/api/companies")
 public class CompaniesController {
 
     @Autowired
@@ -30,9 +30,9 @@ public class CompaniesController {
      * Find all companies stored in PersonalMan.
      * @return a <code>ResponseEntity</code> containing the names of all companies stored in PersonalMan.
      */
-    @ApiOperation(value = "Find all companies", notes="Find all companies stored in PersonalMan.")
+    @Operation(summary = "Find all companies", description="Find all companies stored in PersonalMan.")
     @GetMapping(value="/")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully found companies"), @ApiResponse(code=204,message="Successful but no companies in database")})
+    @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully found companies"), @ApiResponse(responseCode="204",description="Successful but no companies in database")})
     public ResponseEntity<List<String>> getCompanies () {
         //Retrieve the list of companies.
         List<String> companyNames = companyService.getAllCompanies();

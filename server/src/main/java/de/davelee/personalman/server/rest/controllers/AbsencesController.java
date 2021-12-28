@@ -8,10 +8,10 @@ import de.davelee.personalman.server.services.AbsenceService;
 import de.davelee.personalman.server.services.UserService;
 import de.davelee.personalman.server.utils.AbsenceUtils;
 import de.davelee.personalman.server.utils.DateUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,8 +27,8 @@ import java.util.List;
  * @author Dave Lee
  */
 @RestController
-@Api(value="/personalman/absences")
-@RequestMapping(value="/personalman/absences")
+@Tag(name="/api/absences")
+@RequestMapping(value="/api/absences")
 public class AbsencesController {
 
     @Autowired
@@ -42,9 +42,9 @@ public class AbsencesController {
      * @param absenceRequest a <code>AbsenceRequest</code> object representing the absence to add.
      * @return a <code>ResponseEntity</code> containing the result of the action.
      */
-    @ApiOperation(value = "Add an absence", notes="Add an absence to the system.")
+    @Operation(summary = "Add an absence", description="Add an absence to the system.")
     @PostMapping(value="/")
-    @ApiResponses(value = {@ApiResponse(code=201,message="Successfully created absence")})
+    @ApiResponses(value = {@ApiResponse(responseCode="201",description="Successfully created absence")})
     public ResponseEntity<Void> addAbsence (@RequestBody final AbsenceRequest absenceRequest ) {
         //Verify request was valid and authenticated.
         HttpStatus status = validateAndAuthenticateRequest(absenceRequest.getStartDate(), absenceRequest.getEndDate(), absenceRequest.getToken());
@@ -75,9 +75,9 @@ public class AbsencesController {
      * @param token a <code>String</code> to verify that the user is logged in.
      * @return a <code>ResponseEntity</code> containing the absences found.
      */
-    @ApiOperation(value = "Find or count absences", notes="Find or count absences in the system according to the specified criteria.")
+    @Operation(summary = "Find or count absences", description="Find or count absences in the system according to the specified criteria.")
     @GetMapping(value="/")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully completed the search for absences")})
+    @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully completed the search for absences")})
     public ResponseEntity<AbsencesResponse> findAbsence (@RequestParam("company") final String company,
                                                          @RequestParam(value = "username", required=false) final String username,
                                                          @RequestParam("startDate") final String startDate,
@@ -128,9 +128,9 @@ public class AbsencesController {
      * @param token a <code>String</code> to verify if the user is logged in.
      * @return a <code>ResponseEntity</code> containing the result of the action.
      */
-    @ApiOperation(value = "Delete absences", notes="Delete absences in the system according to the specified criteria.")
+    @Operation(summary = "Delete absences", description="Delete absences in the system according to the specified criteria.")
     @DeleteMapping(value="/")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully deleted absences")})
+    @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully deleted absences")})
     public ResponseEntity<Void> deleteAbsences (@RequestParam("company") final String company,
                                                 @RequestParam(value = "username", required=false) final String username,
                                                 @RequestParam("startDate") final String startDate,

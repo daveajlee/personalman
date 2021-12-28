@@ -9,10 +9,10 @@ import de.davelee.personalman.server.model.UserHistoryReason;
 import de.davelee.personalman.server.services.UserService;
 import de.davelee.personalman.server.utils.DateUtils;
 import de.davelee.personalman.server.utils.UserUtils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,8 +31,8 @@ import java.util.Set;
  * @author Dave Lee
  */
 @RestController
-@Api(value="/personalman/users")
-@RequestMapping(value="/personalman/users")
+@Tag(name="/api/users")
+@RequestMapping(value="/api/users")
 public class UsersController {
 
     @Autowired
@@ -44,9 +44,9 @@ public class UsersController {
      * @param token a <code>String</code> containing the token to verify that the user is logged in.
      * @return a <code>ResponseEntity</code> containing the users for this company.
      */
-    @ApiOperation(value = "Find all users for a company", notes="Find all users for a company to the system.")
+    @Operation(summary = "Find all users for a company", description="Find all users for a company to the system.")
     @GetMapping(value="/")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully found user(s)"), @ApiResponse(code=204,message="Successful but no users found")})
+    @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully found user(s)"), @ApiResponse(responseCode = "204",description = "Successful but no users found")})
     public ResponseEntity<UsersResponse> getUsers (@RequestParam("company") final String company,
                                                    @RequestParam("token") final String token) {
         //Verify that user is logged in.
@@ -82,9 +82,9 @@ public class UsersController {
      * @param endDate a <code>String</code> containing the end date (inclusive) of the date range in format dd-MM-yyyy.
      * @return a <code>ResponseEntity</code> containing the users for this company.
      */
-    @ApiOperation(value = "Pay all users for a company", notes="Pay all users for a company within a specific date range.")
+    @Operation(summary = "Pay all users for a company", description="Pay all users for a company within a specific date range.")
     @GetMapping(value="/pay")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully found user(s) and their pay"), @ApiResponse(code=204,message="Successful but no users found")})
+    @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully found user(s) and their pay"), @ApiResponse(responseCode = "204",description="Successful but no users found")})
     public ResponseEntity<PayUsersResponse> payUsers (@RequestParam("company") final String company,
                                                       @RequestParam("token") final String token,
                                                       @RequestParam("startDate") final String startDate,
@@ -128,9 +128,9 @@ public class UsersController {
      * @param paidUserRequest a <code>PaidUserRequest</code> object containing the information to save.
      * @return a <code>ResponseEntity</code> confirming operation was successful.
      */
-    @ApiOperation(value = "Mark users as paid for a company", notes="Mark users as paid for a company within a specific date range.")
+    @Operation(summary = "Mark users as paid for a company", description="Mark users as paid for a company within a specific date range.")
     @GetMapping(value="/paid")
-    @ApiResponses(value = {@ApiResponse(code=200,message="Successfully found user(s) and their pay"), @ApiResponse(code=204,message="Successful but no users found")})
+    @ApiResponses(value = {@ApiResponse(responseCode = "200",description="Successfully found user(s) and their pay"), @ApiResponse(responseCode = "204",description="Successful but no users found")})
     public ResponseEntity<Void> paidUsers (@RequestBody final PaidUserRequest paidUserRequest) {
         //Verify that user is logged in.
         if ( paidUserRequest.getToken() == null || !userService.checkAuthToken(paidUserRequest.getToken()) ) {

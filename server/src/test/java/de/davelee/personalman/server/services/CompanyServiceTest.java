@@ -1,13 +1,12 @@
 package de.davelee.personalman.server.services;
 
-import de.davelee.personalman.server.model.Company;
+import de.davelee.personalman.server.model.*;
 import de.davelee.personalman.server.repository.CompanyRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

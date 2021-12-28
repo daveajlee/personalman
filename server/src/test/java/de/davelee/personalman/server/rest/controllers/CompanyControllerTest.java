@@ -1,8 +1,10 @@
 package de.davelee.personalman.server.rest.controllers;
 
+import de.davelee.personalman.api.AbsenceRequest;
 import de.davelee.personalman.api.CompanyResponse;
 import de.davelee.personalman.api.RegisterCompanyRequest;
-import de.davelee.personalman.server.model.Company;
+import de.davelee.personalman.server.model.*;
+import de.davelee.personalman.server.services.AbsenceService;
 import de.davelee.personalman.server.services.CompanyService;
 import de.davelee.personalman.server.services.UserService;
 import org.junit.jupiter.api.Test;
@@ -13,9 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -33,6 +32,9 @@ public class CompanyControllerTest {
 
     @Mock
     private UserService userService;
+
+    @Mock
+    private AbsenceService absenceService;
 
     /**
      * Test case: add a new company
