@@ -1,0 +1,24 @@
+mongo:
+  databaseName: personalman
+  url: ${MONGODB_URI:mongodb://personalman:myPMpassword@localhost:27017/personalman}
+spring:
+  application:
+    name: personalman
+  profiles:
+    active:
+      dev-test
+server:
+  port: 8150
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+  instance:
+    preferIpAddress: true
+#Length of authentification tokens
+token:
+  length: 10
+
+#Auto-logout after how many minutes
+logout:
+  minutes: 30
