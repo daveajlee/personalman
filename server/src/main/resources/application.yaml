@@ -5,8 +5,7 @@ spring:
   application:
     name: personalman
   profiles:
-    active:
-      dev-test
+    active: dev-test
 server:
   port: 8150
 eureka:
