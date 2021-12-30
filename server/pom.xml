@@ -90,19 +90,6 @@
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>1.6.3</version>
 		</dependency>
-		
-		<!-- JAXB, ensure compatibility with JDK 11 and above -->
-		<dependency>
-    		<groupId>jakarta.xml.bind</groupId>
-    		<artifactId>jakarta.xml.bind-api</artifactId>
-    		<version>3.0.1</version>
-		</dependency>
-		
-		<dependency>
-    		<groupId>org.glassfish.jaxb</groupId>
-    		<artifactId>jaxb-runtime</artifactId>
-    		<version>3.0.2</version>
-		</dependency>
 
 		<!-- Test Frameworks -->
 		<dependency>
