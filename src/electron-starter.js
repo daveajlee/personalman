@@ -1,8 +1,12 @@
 const electron = require('electron');
 // Module to control application life.
 const app = electron.app;
+//Module to control dialog.
+const dialog = electron.dialog
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
+//Module to load native images
+const nativeImage = electron.nativeImage
 
 const path = require('path');
 const url = require('url');
@@ -13,7 +17,12 @@ let mainWindow;
 
 function createWindow() {
     // Create the browser window.
-    mainWindow = new BrowserWindow({width: 800, height: 600});
+    mainWindow = new BrowserWindow({width: 800, height: 600, title: 'PersonalMan', icon:path.join(__dirname, '/../src/assets/personalmanlogo-icon.png')})
+
+    //mac os x logo file
+    if (process.platform === 'darwin') {
+        app.dock.setIcon(path.join(__dirname, '/../src/assets/personalmanlogo-icon.png'))
+    }
 
     // and load the index.html of the app.
     const startUrl = process.env.ELECTRON_START_URL || url.format({
@@ -25,6 +34,26 @@ function createWindow() {
 
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
+
+    //Emitted when the user clicks on the X to attempt to close the application
+    mainWindow.on('close', e => {
+        e.preventDefault()
+        const dialogIcon = nativeImage.createFromPath(path.join(__dirname, '/../src/assets/personalmanlogo-icon.png'));
+        dialog.showMessageBox({
+            type: 'info',
+            buttons: ['No', 'Yes'],
+            cancelId: 1,
+            defaultId: 0,
+            icon: dialogIcon,
+            title: 'Please Confirm Exit',
+            detail: 'Are you sure you wish to exit PersonalMan?'
+        }).then(({ response, checkboxChecked }) => {
+            if (response) {
+                mainWindow.destroy()
+                app.quit()
+            }
+        })
+    })
 
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
