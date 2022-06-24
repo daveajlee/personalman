@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/personalman/static/css/main.9cb6ac3b.css",
+    "main.js": "/personalman/static/js/main.e1845cb0.js",
+    "static/js/787.a6cdfd04.chunk.js": "/personalman/static/js/787.a6cdfd04.chunk.js",
+    "static/media/douglas-lopes-ehyV_XOZ4iA-unsplash.jpg": "/personalman/static/media/douglas-lopes-ehyV_XOZ4iA-unsplash.0e2a85740846a7afab97.jpg",
+    "static/media/joshua-earle-Dwheufds6kQ-unsplash.jpg": "/personalman/static/media/joshua-earle-Dwheufds6kQ-unsplash.be55339bb11e89ccbc40.jpg",
+    "static/media/arpad-czapp-wS250FJl5Uw-unsplash.jpg": "/personalman/static/media/arpad-czapp-wS250FJl5Uw-unsplash.255b3133dab77d12131b.jpg",
+    "static/media/jess-bailey-mexeVPlTB6k-unsplash.jpg": "/personalman/static/media/jess-bailey-mexeVPlTB6k-unsplash.16af6c0b7456ae17902d.jpg",
+    "static/media/architecture.png": "/personalman/static/media/architecture.cfa7e1ff732d151a87f4.png",
+    "static/media/personalman-logo.png": "/personalman/static/media/personalman-logo.1cd87a52f01d5f44d735.png",
+    "static/media/architecture-mobile.png": "/personalman/static/media/architecture-mobile.3b18dfa343a1d5d1f1d7.png",
+    "index.html": "/personalman/index.html",
+    "main.9cb6ac3b.css.map": "/personalman/static/css/main.9cb6ac3b.css.map",
+    "main.e1845cb0.js.map": "/personalman/static/js/main.e1845cb0.js.map",
+    "787.a6cdfd04.chunk.js.map": "/personalman/static/js/787.a6cdfd04.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9cb6ac3b.css",
+    "static/js/main.e1845cb0.js"
+  ]
+}
