@@ -31,3 +31,7 @@ server/personalman_server.iml
 
 #Build files
 server/target/
+/target/
+
+docs/build/
+docs/node_modules/
