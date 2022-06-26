@@ -18,9 +18,9 @@ const Home = () => (
         </Row>
         <Row>
             <Col className="text-left mt-3"><p>PersonalMan is a open source employee management software for small mainly non-profit organisations.
-                The software helps these organisations to record employee information and provide absence management functionality thereby
-                lowering the administration overhead. This website provides information about the vision and roadmap
-                PersonalMan into their own systems through the flexible client server API architecture.</p></Col>
+                The software helps these organisations to record employee information and provides absence management functionality thereby
+                lowering the administration overhead for the organisation. This website provides information about the vision and roadmap of
+                PersonalMan as well the opportunity to integrate into other systems through the flexible client server API architecture.</p></Col>
         </Row>
         <Row>
             <Col className="text-left mt-3"><p>If you simply want to try out PersonalMan without reading the complete documentation first
