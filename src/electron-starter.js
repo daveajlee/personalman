@@ -17,7 +17,7 @@ let mainWindow;
 
 function createWindow() {
     // Create the browser window.
-    mainWindow = new BrowserWindow({width: 800, height: 600, title: 'PersonalMan', icon:path.join(__dirname, '/../src/assets/personalmanlogo-icon.png')})
+    mainWindow = new BrowserWindow({width: 1366, height: 768, title: 'PersonalMan', icon:path.join(__dirname, '/../src/assets/personalmanlogo-icon.png')})
 
     //mac os x logo file
     if (process.platform === 'darwin') {
