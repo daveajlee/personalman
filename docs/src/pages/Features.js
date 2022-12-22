@@ -6,9 +6,9 @@ const Features = () => (
     <Container fluid>
         <Row>
             <Col>
-                <Card>
+                <Card className="border-0">
                     <Card.Img variant="top" className="img-responsive w-25 rounded mx-auto d-block mt-3" src={roadmapImage} />
-                    <Card.Title className="mt-5 text-center">Features</Card.Title>
+                    <Card.Title as="h3" className="mt-5 text-center">Features</Card.Title>
                     <Card.Body className="text-center mb-5">This page contains information about features that are already
                     implemented in PersonalMan. <br/> Please visit the Roadmap page if you would like to find out more
                     about new features that are planned.</Card.Body>

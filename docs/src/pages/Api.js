@@ -8,9 +8,9 @@ const Api = () => (
     <Container fluid>
         <Row>
             <Col>
-                <Card>
+                <Card className="border-0">
                     <Card.Img variant="top" className="img-responsive w-25 rounded mx-auto d-block mt-3" src={apiImage} />
-                    <Card.Title className="mt-5 text-center">API</Card.Title>
+                    <Card.Title as="h3" className="mt-5 text-center">API</Card.Title>
                     <Card.Body className="text-center mb-5">The current API of PersonalMan is displayed below. Please
                     note that this API should only be used as reference documentation. The functionality to
                     try out the API is not available on this page. If you would like to test the API or test a

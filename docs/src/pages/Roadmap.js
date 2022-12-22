@@ -6,9 +6,9 @@ const Roadmap = () => (
     <Container fluid>
         <Row>
             <Col>
-                <Card>
+                <Card className="border-0">
                     <Card.Img variant="top" className="img-responsive w-25 rounded mx-auto d-block mt-3" src={roadmapImage} />
-                    <Card.Title className="mt-5 text-center">Roadmap</Card.Title>
+                    <Card.Title as="h3" className="mt-5 text-center">Roadmap</Card.Title>
                     <Card.Body className="text-center mb-5">This page contains a list of features that I plan to add
                         to PersonalMan in the future. It is sorted like a product backlog with the features at the top
                         having more chance of being implemented before the features near the bottom. Since I work on
