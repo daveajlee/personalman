@@ -2,3 +2,12 @@
 .img-max-height {
   max-height:50px;
 }
+
+.color-nav {
+  background-color: rgb(21,94,111);
+}
+
+.color-footer {
+  background-color: white;
+  margin-top: 10px;
+}
