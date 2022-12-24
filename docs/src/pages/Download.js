@@ -9,8 +9,8 @@ const Download = () => (
             </Col>
         </Row>
         <Row className="mt-5">
-            <Col>
-                <Card className="text-center" style={{ width: '24rem' }}>
+            <Col xs={12} sm={12} md={6} lg={3}>
+                <Card className="text-center nav-card">
                     <Card.Body>
                         <Card.Title>Server</Card.Title>
                         <Card.Text>
@@ -23,8 +23,8 @@ const Download = () => (
                     </Card.Body>
                 </Card>
             </Col>
-            <Col>
-                <Card className="text-center" style={{ width: '24rem' }}>
+            <Col xs={12} sm={12} md={6} lg={3}>
+                <Card className="text-center nav-card">
                     <Card.Body>
                         <Card.Title>Desktop Client</Card.Title>
                         <Card.Text>
@@ -36,8 +36,8 @@ const Download = () => (
                     </Card.Body>
                 </Card>
             </Col>
-            <Col>
-                <Card className="text-center" style={{ width: '24rem' }}>
+            <Col xs={12} sm={12} md={6} lg={3}>
+                <Card className="text-center nav-card">
                     <Card.Body>
                         <Card.Title>Java API Implementation</Card.Title>
                         <Card.Text>
