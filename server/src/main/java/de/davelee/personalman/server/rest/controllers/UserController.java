@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class defines the endpoints for the REST API which manipulate users and delegates the actions to the UserService class.
@@ -87,6 +89,37 @@ public class UserController {
         return ResponseEntity.ok(UserUtils.convertUserToUserResponse(user));
     }
 
+    /**
+     * Find a user by name, date of birth and company.
+     * @param name a <code>String</code> containing the name of the user to find.
+     * @param dateOfBirth a <code>String</code> containing the date of the birth for the user to find.
+     * @param company a <code>String</code> containing the company of the user to find.
+     * @return a <code>ResponseEntity</code> object which contains the user found or bad request if the parameters are
+     * invalid or an internal server error if the database is not available.
+     */
+    @Operation(summary = "Get user", description="Method to get a user's details by name and date of birth.")
+    @GetMapping("/getUser")
+    @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully retrieved user details"), @ApiResponse(responseCode="500",description="Database not available")})
+    public ResponseEntity<UserResponse> getUser( @RequestParam("name") final String name, @RequestParam("dateOfBirth") final String dateOfBirth,
+                                                 @RequestParam("company") final String company, @RequestParam("token") final String token ) {
+        //Check valid request including authentication
+        if ( token == null || !userService.checkAuthToken(token) ) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        //If name or date of birth is null then bad request.
+        if ( name == null || dateOfBirth == null || StringUtils.isBlank(company) ) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else {
+            //Now retrieve the user based on the information provided.
+            User user = userService.findUserByDateOfBirthAndNameAndCompany(LocalDate.parse(dateOfBirth), name.split(" ")[0], name.split(" ")[1], company);
+            //If user is null then return 204.
+            if ( user == null ) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            //Convert to UserResponse object and return 200.
+            return ResponseEntity.ok(UserUtils.convertUserToUserResponse(user));
+        }
+    }
 
     /**
      * Delete a specific user from the database based on their username and company.

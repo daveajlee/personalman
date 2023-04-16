@@ -55,6 +55,19 @@ public class UserService {
     }
 
     /**
+     * Find a user based on their date of birth, name and company.
+     * @param dateOfBirth a <code>LocalDate</code> object containing the date of birth of the user to retrieve.
+     * @param firstName a <code>String</code> containing the first name of the user to retrieve.
+     * @param lastName a <code>String</code> containing the surname of the user to retrieve.
+     * @param company a <code>String</code> containing the company of the user to retrieve.
+     * @return a <code>User</code> object representing the user matching the criteria or null if none can be found.
+     */
+    public User findUserByDateOfBirthAndNameAndCompany ( final LocalDate dateOfBirth, final String firstName, final String lastName, final String company ) {
+        return userRepository.findByDateOfBirthAndFirstNameAndLastNameAndCompany(dateOfBirth, firstName, lastName, company);
+    }
+
+
+    /**
      * Find all users belonging to a company.
      * @param company a <code>String</code> with the company to retrieve users for.
      * @return a <code>List</code> of <code>User</code> objects representing the users belonging to this company. Returns null if no matching users.
