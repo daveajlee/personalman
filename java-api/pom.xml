@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
 
 	<name>PersonalMan - Java API</name>
-	<version>1.5.0-SNAPSHOT</version>
+	<version>1.5.0</version>
 	<description>This module provides a Java Implementation for the PersonalMan REST API.</description>
 	<url>https://www.davelee.de</url>
 	<developers>
@@ -32,7 +32,7 @@
 	<scm>
 		<connection>scm:git:https://github.com/daveajlee/personalman-java-api</connection>
 		<url>https://github.com/daveajlee/personalman-java-api</url>
-	  <tag>HEAD</tag>
+	  <tag>personalman-java-api-1.5.0</tag>
   </scm>
 
 	<!-- GitHub Packages -->
