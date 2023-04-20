@@ -25,8 +25,8 @@ public class SwaggerConfiguration {
                         .version("v1.2.1")
                         .license(new License().name("Apache 2.0").url("https://www.davelee.de")))
                 .externalDocs(new ExternalDocumentation()
-                        .description("TraMS Documentation")
-                        .url("https://www.davelee.de/trams/"));
+                        .description("PersonalMan Documentation")
+                        .url("https://www.davelee.de/personalman/"));
     }
 
     /**
