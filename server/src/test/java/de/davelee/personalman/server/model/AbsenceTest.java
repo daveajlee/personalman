@@ -1,6 +1,5 @@
 package de.davelee.personalman.server.model;
 
-import org.apache.tomcat.jni.Local;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 
