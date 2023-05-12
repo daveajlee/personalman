@@ -35,3 +35,6 @@ server/target/
 
 docs/build/
 docs/node_modules/
+
+desktop/build/
+desktop/node_modules/
