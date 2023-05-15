@@ -30,34 +30,30 @@ function Login() {
                 </Container>
 
                 <Container className="d-flex flex-column">
-                    <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
-                        <Form.Label column sm="2">
-                            Company:
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Select aria-label="Company Name">
-                                {companies.map(company => ( <option key={company}>{company}</option>))}
-                            </Form.Select>
-                        </Col>
-                    </Form.Group>
+                    <Form>
+                        <Form.Group as={Row} className="mb-3" controlId="formPlaintextCompany">
+                            <Form.Label column sm="2">Company:</Form.Label>
+                            <Col sm="10">
+                                <Form.Select aria-label="Company Name">
+                                    {companies.map(company => ( <option key={company}>{company}</option>))}
+                                </Form.Select>
+                            </Col>
+                        </Form.Group>
 
-                    <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
-                        <Form.Label column sm="2">
-                            Email:
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Control type="text" placeholder="Email Address"/>
-                        </Col>
-                    </Form.Group>
+                        <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
+                            <Form.Label column sm="2">Email:</Form.Label>
+                            <Col sm="10">
+                                <Form.Control type="text" placeholder="Email Address" autoComplete="email"/>
+                            </Col>
+                        </Form.Group>
 
-                    <Form.Group as={Row} className="mb-3" controlId="formPlaintextPassword">
-                        <Form.Label column sm="2">
-                            Password:
-                        </Form.Label>
-                        <Col sm="10">
-                            <Form.Control type="password" placeholder="Password"/>
-                        </Col>
-                    </Form.Group>
+                        <Form.Group as={Row} className="mb-3" controlId="formPlaintextPassword">
+                            <Form.Label column sm="2">Password:</Form.Label>
+                            <Col sm="10">
+                                <Form.Control type="password" placeholder="Password" autoComplete="current-password"/>
+                            </Col>
+                        </Form.Group>
+                    </Form>
                 </Container>
 
                 <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>
