@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,6 +33,7 @@ public class CompaniesController {
      */
     @Operation(summary = "Find all companies", description="Find all companies stored in PersonalMan.")
     @GetMapping(value="/")
+    @CrossOrigin()
     @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully found companies"), @ApiResponse(responseCode="204",description="Successful but no companies in database")})
     public ResponseEntity<List<String>> getCompanies () {
         //Retrieve the list of companies.
