@@ -41,6 +41,7 @@ public class CompanyController {
      * @return a <code>ResponseEntity</code> containing the result of the action.
      */
     @Operation(summary = "Add a company", description="Add a company to the system.")
+    @CrossOrigin()
     @PostMapping(value="/")
     @ApiResponses(value = {@ApiResponse(responseCode="201",description="Successfully created company")})
     public ResponseEntity<Void> addCompany (@RequestBody final RegisterCompanyRequest registerCompanyRequest ) {

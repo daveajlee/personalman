@@ -7,7 +7,7 @@ import {
 import './index.css';
 import App from './App';
 import ErrorPage from "./pages/ErrorPage";
-import Register from "./pages/Register";
+import RegisterCompany from "./pages/RegisterCompany";
 import reportWebVitals from './reportWebVitals';
 
 const router = createBrowserRouter([
@@ -17,8 +17,8 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
     },
     {
-        path: "/register",
-        element: <Register/>
+        path: "/registerCompany",
+        element: <RegisterCompany/>
     }
 ]);
 

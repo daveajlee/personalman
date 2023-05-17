@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/App.css'
 import Login from "./pages/Login";
-import Register from "./pages/Register";
+import RegisterCompany from "./pages/RegisterCompany";
 import {useEffect, useState} from "react";
 import axios from "axios";
 
@@ -22,7 +22,7 @@ function App() {
 
   return (
       <div>
-        {!loading && companies && companies.length > 0 ? <Login /> : <Register />
+        {!loading && companies && companies.length > 0 ? <Login /> : <RegisterCompany />
         }
       </div>
   );
