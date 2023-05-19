@@ -60,8 +60,11 @@ function Login() {
                     <Row>
                         <Col className="text-center">
                             <Button className="mb-0 px-5" size='lg'>Login</Button>
-                            <p className="small fw-bold mt-2 pt-1 mb-2">Not yet registered for PersonalMan? <a href="register"
+                            <p className="small fw-bold mt-2 pt-1 mb-2">Not yet registered for PersonalMan? <a href="registerUser"
                                                                                                   className="link-danger">Register</a>
+                            </p>
+                            <p className="small fw-bold mt-2 pt-1 mb-2">Your company does not yet exist in PersonalMan? <a href="registerCompany"
+                                                                                                               className="link-danger">Register Company</a>
                             </p>
                         </Col>
                     </Row>

@@ -4,6 +4,7 @@ import de.davelee.personalman.api.*;
 import de.davelee.personalman.server.model.User;
 import de.davelee.personalman.server.model.UserAccountStatus;
 import de.davelee.personalman.server.model.UserHistoryReason;
+import de.davelee.personalman.server.services.CompanyService;
 import de.davelee.personalman.server.services.UserService;
 import de.davelee.personalman.server.utils.DateUtils;
 import de.davelee.personalman.server.utils.UserUtils;
@@ -19,8 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class defines the endpoints for the REST API which manipulate users and delegates the actions to the UserService class.
@@ -34,6 +33,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private CompanyService companyService;
+
     /**
      * Add a user to the system.
      * @param userRequest a <code>UserRequest</code> object representing the user to add.
@@ -41,14 +43,19 @@ public class UserController {
      */
     @Operation(summary = "Add a user", description="Add a user to the system.")
     @PostMapping(value="/")
+    @CrossOrigin()
     @ApiResponses(value = {@ApiResponse(responseCode="201",description="Successfully created user")})
     public ResponseEntity<Void> addUser (@RequestBody final UserRequest userRequest ) {
         //First of all, check if any of the fields are empty or null, then return bad request.
         if (StringUtils.isBlank(userRequest.getFirstName()) || StringUtils.isBlank(userRequest.getSurname())
                 || StringUtils.isBlank(userRequest.getPosition()) || StringUtils.isBlank(userRequest.getStartDate())
                 || StringUtils.isBlank(userRequest.getUsername()) || StringUtils.isBlank(userRequest.getWorkingDays())
-                || userRequest.getLeaveEntitlementPerYear() <= 0 || StringUtils.isBlank(userRequest.getCompany())) {
+                || StringUtils.isBlank(userRequest.getCompany())) {
             return ResponseEntity.badRequest().build();
+        }
+        // If the leave entitlement is 0 then set it to company default.
+        if ( userRequest.getLeaveEntitlementPerYear() == 0 ) {
+            userRequest.setLeaveEntitlementPerYear(companyService.getCompany(userRequest.getCompany()).getDefaultAnnualLeaveInDays());
         }
         //Now convert the dates to LocalDate. If end date is before start date then return bad request.
         LocalDate startLocalDate = DateUtils.convertDateToLocalDate(userRequest.getStartDate());

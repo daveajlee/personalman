@@ -8,6 +8,7 @@ import './index.css';
 import App from './App';
 import ErrorPage from "./pages/ErrorPage";
 import RegisterCompany from "./pages/RegisterCompany";
+import RegisterUser from "./pages/RegisterUser";
 import reportWebVitals from './reportWebVitals';
 
 const router = createBrowserRouter([
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
     {
         path: "/registerCompany",
         element: <RegisterCompany/>
+    },
+    {
+        path: "/registerUser",
+        element: <RegisterUser/>
     }
 ]);
 

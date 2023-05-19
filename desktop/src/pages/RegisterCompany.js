@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 function RegisterCompany () {
 
     const [name, setName] = useState("");
-    const [annualLeave, setAnnualLeave] = useState(0);
+    const [annualLeave, setAnnualLeave] = useState(20);
     const [country, setCountry] = useState("Germany");
     const navigate = useNavigate();
 
@@ -32,6 +32,15 @@ function RegisterCompany () {
      */
     function countryChangeHandler(event) {
         setCountry(event.target.value)
+    }
+
+    /**
+     * Method to reset form to initial values.
+     */
+    function resetForm () {
+        setName("");
+        setAnnualLeave(20);
+        setCountry("Germany")
     }
 
     /**
@@ -73,21 +82,21 @@ function RegisterCompany () {
                         <Form.Group as={Row} className="mb-3" controlId="formPlaintextName">
                             <Form.Label column sm="2">Name:</Form.Label>
                             <Col sm="10">
-                                <Form.Control type="text" placeholder="Name" onChange={nameChangeHandler}/>
+                                <Form.Control value={name} type="text" placeholder="Name" onChange={nameChangeHandler}/>
                             </Col>
                         </Form.Group>
 
                         <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
                             <Form.Label column sm="2">Default Annual Leave:</Form.Label>
                             <Col sm="10">
-                                <Form.Control type="number" placeholder="A number between 1 and 365" min="1" max="365" onChange={annualLeaveChangeHandler}/>
+                                <Form.Control type="number" value={annualLeave} placeholder="A number between 20 and 40" min="20" max="40" onChange={annualLeaveChangeHandler}/>
                             </Col>
                         </Form.Group>
 
                         <Form.Group as={Row} className="mb-3" controlId="formPlaintextCompany">
                             <Form.Label column sm="2">Base Country:</Form.Label>
                             <Col sm="10">
-                                <Form.Select aria-label="Company Name" onChange={countryChangeHandler}>
+                                <Form.Select value={country} aria-label="Company Name" onChange={countryChangeHandler}>
                                     <option key="de">Germany</option>
                                     <option key="gb-eng">England</option>
                                     <option key="gb-sct">Scotland</option>
@@ -101,7 +110,8 @@ function RegisterCompany () {
                 <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>
                     <Row>
                         <Col className="text-center">
-                            <Button className="mb-0 px-5" size='lg' onClick={registerCompany}>Register</Button>
+                            <Button className="mb-0 px-5 me-2" size='lg' onClick={registerCompany}>Register</Button>
+                            <Button className="mb-0 px-5 me-2" size='lg' onClick={resetForm}>Reset</Button>
                         </Col>
                     </Row>
                 </Container>
