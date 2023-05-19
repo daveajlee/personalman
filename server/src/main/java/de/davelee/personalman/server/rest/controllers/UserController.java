@@ -50,11 +50,11 @@ public class UserController {
         if (StringUtils.isBlank(userRequest.getFirstName()) || StringUtils.isBlank(userRequest.getSurname())
                 || StringUtils.isBlank(userRequest.getPosition()) || StringUtils.isBlank(userRequest.getStartDate())
                 || StringUtils.isBlank(userRequest.getUsername()) || StringUtils.isBlank(userRequest.getWorkingDays())
-                || StringUtils.isBlank(userRequest.getCompany())) {
+                || StringUtils.isBlank(userRequest.getCompany()) ) {
             return ResponseEntity.badRequest().build();
         }
         // If the leave entitlement is 0 then set it to company default.
-        if ( userRequest.getLeaveEntitlementPerYear() == 0 ) {
+        if ( userRequest.getLeaveEntitlementPerYear() <= 0 ) {
             userRequest.setLeaveEntitlementPerYear(companyService.getCompany(userRequest.getCompany()).getDefaultAnnualLeaveInDays());
         }
         //Now convert the dates to LocalDate. If end date is before start date then return bad request.
@@ -209,7 +209,7 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         //Now update salary information and return 200 or 500 depending on DB success.
-        return userService.updateSalaryInformation(user, new BigDecimal(updateSalaryRequest.getHourlyWage()), updateSalaryRequest.getContractedHoursPerWeek() ) ?
+        return userService.updateSalaryInformation(user, BigDecimal.valueOf(updateSalaryRequest.getHourlyWage()), updateSalaryRequest.getContractedHoursPerWeek() ) ?
             ResponseEntity.status(200).build() : ResponseEntity.status(500).build();
     }
 
@@ -298,7 +298,7 @@ public class UserController {
         LocalDate localStartDate = DateUtils.convertDateToLocalDate(startDate);
         LocalDate localEndDate = DateUtils.convertDateToLocalDate(endDate);
         //Perform either date range or single date.
-        if ( localStartDate.isEqual(localEndDate) ) {
+        if ( localStartDate != null && localEndDate != null && localStartDate.isEqual(localEndDate) ) {
             return ResponseEntity.ok(userService.getHoursForDate(user, localStartDate));
         } else {
             return ResponseEntity.ok(userService.getHoursForDateRange(user, localStartDate, localEndDate));

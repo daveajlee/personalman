@@ -1,19 +1,15 @@
 package de.davelee.personalman.server.rest.controllers;
 
 import de.davelee.personalman.api.*;
-import de.davelee.personalman.server.model.User;
-import de.davelee.personalman.server.model.UserAccountStatus;
-import de.davelee.personalman.server.model.UserHistoryEntry;
-import de.davelee.personalman.server.model.UserHistoryReason;
+import de.davelee.personalman.server.model.*;
+import de.davelee.personalman.server.services.CompanyService;
 import de.davelee.personalman.server.services.UserService;
-import de.davelee.personalman.server.utils.UserUtils;
-import lombok.extern.java.Log;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
@@ -37,6 +33,9 @@ public class UserControllerTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private CompanyService companyService;
+
     /**
      * Test case: add a user to the system based on a valid user request.
      * Expected Result: user added successfully.
@@ -49,15 +48,19 @@ public class UserControllerTest {
         UserRequest validUserRequest = generateValidUserRequest();
         assertEquals("Max", validUserRequest.getFirstName());
         ResponseEntity<Void> responseEntity = userController.addUser(validUserRequest);
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.CREATED.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(201));
     }
 
     /**
      * Test case: Attempt to add a user to the system with a negative amount of annual leave.
-     * Expected Result: bad request.
+     * Expected Result: default leave will be used so created status.
      */
     @Test
     public void testUserInvalidLeave() {
+        // Mock important method in company service and user service.
+        Mockito.when(companyService.getCompany("MyCompany")).thenReturn(Company.builder().defaultAnnualLeaveInDays(24).build());
+        Mockito.when(userService.save(any())).thenReturn(true);
+        // Do the actual request and test.
         UserRequest validUserRequest = UserRequest.builder()
                 .firstName("David")
                 .surname("Lee")
@@ -65,12 +68,13 @@ public class UserControllerTest {
                 .company("MyCompany")
                 .leaveEntitlementPerYear(-1)
                 .position("Tester")
+                .dateOfBirth("01-01-1990")
                 .startDate("01-12-2016")
                 .workingDays("Monday,Tuesday,Wednesday")
                 .build();
         assertEquals(-1, validUserRequest.getLeaveEntitlementPerYear());
         ResponseEntity<Void> responseEntity = userController.addUser(validUserRequest);
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(201));
     }
 
     /**
@@ -91,7 +95,7 @@ public class UserControllerTest {
                 .build();
         assertEquals("2016-11-2016", validUserRequest.getStartDate());
         ResponseEntity<Void> responseEntity = userController.addUser(validUserRequest);
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(400));
     }
 
     /**
@@ -111,16 +115,20 @@ public class UserControllerTest {
                 .build();
         assertNull(validUserRequest.getFirstName());
         ResponseEntity<Void> responseEntity = userController.addUser(validUserRequest);
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(400));
     }
 
 
     /**
      * Test case: attempt to add a user to the system without leave entitlement.
-     * Expected Result: bad request.
+     * Expected Result: created since default leave entitlement will be used.
      */
     @Test
     public void testUserMissingLeaveEntitlement() {
+        // Mock important method in company service and user service.
+        Mockito.when(companyService.getCompany("MyCompany")).thenReturn(Company.builder().defaultAnnualLeaveInDays(24).build());
+        Mockito.when(userService.save(any())).thenReturn(true);
+        // Do the actual request and test.
         UserRequest validUserRequest = UserRequest.builder()
                 .firstName("David")
                 .surname("Lee")
@@ -128,11 +136,13 @@ public class UserControllerTest {
                 .company("MyCompany")
                 .position("Tester")
                 .startDate("01-12-2016")
+                .dateOfBirth("01-01-1990")
                 .workingDays("Monday,Tuesday,Wednesday")
                 .build();
         assertEquals(0, validUserRequest.getLeaveEntitlementPerYear());
+
         ResponseEntity<Void> responseEntity = userController.addUser(validUserRequest);
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(201));
     }
 
     /**
@@ -152,7 +162,7 @@ public class UserControllerTest {
                 .build();
         assertNull(validUserRequest.getPosition());
         ResponseEntity<Void> responseEntity = userController.addUser(validUserRequest);
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
+        assertEquals(responseEntity.getStatusCode(),HttpStatusCode.valueOf(400));
     }
 
     /**
@@ -172,7 +182,7 @@ public class UserControllerTest {
                 .build();
         assertNull(validUserRequest.getStartDate());
         ResponseEntity<Void> responseEntity = userController.addUser(validUserRequest);
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(400));
     }
 
     /**
@@ -192,7 +202,7 @@ public class UserControllerTest {
                 .build();
         assertNull(validUserRequest.getSurname());
         ResponseEntity<Void> responseEntity = userController.addUser(validUserRequest);
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(400));
     }
 
     /**
@@ -212,7 +222,7 @@ public class UserControllerTest {
                 .build();
         assertNull(validUserRequest.getUsername());
         ResponseEntity<Void> responseEntity = userController.addUser(validUserRequest);
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(400));
     }
 
     /**
@@ -232,7 +242,7 @@ public class UserControllerTest {
                 .build();
         assertNull(validUserRequest.getCompany());
         ResponseEntity<Void> responseEntity = userController.addUser(validUserRequest);
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(400));
     }
 
     /**
@@ -252,7 +262,7 @@ public class UserControllerTest {
                 .build();
         assertNull(validUserRequest.getWorkingDays());
         ResponseEntity<Void> responseEntity = userController.addUser(validUserRequest);
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(400));
     }
 
 
@@ -268,9 +278,9 @@ public class UserControllerTest {
         Mockito.doNothing().when(userService).delete(generateValidUser());
         //Perform tests
         ResponseEntity<UserResponse> responseEntity = userController.getUser("Example Company", "max.mustermann", "max.mustermann-fjgkg");
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(200));
         ResponseEntity<Void> responseEntity2 = userController.deleteUser("Example Company", "max.mustermann", "max.mustermann-gkgkgkgll");
-        assertTrue(responseEntity2.getStatusCodeValue() == HttpStatus.OK.value());
+        assertEquals(responseEntity2.getStatusCode(), HttpStatusCode.valueOf(200));
     }
 
     /**
@@ -283,7 +293,7 @@ public class UserControllerTest {
         Mockito.when(userService.checkAuthToken(anyString())).thenReturn(true);
         //Perform tests
         ResponseEntity<UserResponse> responseEntity = userController.getUser("MyCompany", "mlee", "dlee-glglglggl");
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.NO_CONTENT.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(204));
     }
 
     /**
@@ -293,7 +303,7 @@ public class UserControllerTest {
     @Test
     public void testInvalidFindUser() {
         ResponseEntity<UserResponse> responseEntity = userController.getUser(null, null, null);
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(400));
     }
 
     /**
@@ -303,7 +313,7 @@ public class UserControllerTest {
     @Test
     public void testInvalidFindUserWithOnlyCompany() {
         ResponseEntity<UserResponse> responseEntity = userController.getUser("MyCompany", null, null);
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(400));
     }
 
     /**
@@ -316,7 +326,7 @@ public class UserControllerTest {
         Mockito.when(userService.checkAuthToken(anyString())).thenReturn(true);
         //Perform tests
         ResponseEntity<Void> responseEntity = userController.deleteUser("MyCompany", "mlee", "dlee-fgtgogg");
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.NO_CONTENT.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(204));
     }
 
     /**
@@ -326,7 +336,7 @@ public class UserControllerTest {
     @Test
     public void testInvalidDeleteUser() {
         ResponseEntity<Void> responseEntity = userController.deleteUser(null, null, null);
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.BAD_REQUEST.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(400));
     }
 
     /**
@@ -349,7 +359,7 @@ public class UserControllerTest {
                 .company("Example Company")
                 .build();
         ResponseEntity<Void> responseEntity = userController.updateSalaryInformation(updateSalaryRequest);
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(200));
         //Perform tests - invalid token
         UpdateSalaryRequest updateSalaryRequest2 = UpdateSalaryRequest.builder()
                 .contractedHoursPerWeek(40)
@@ -359,7 +369,7 @@ public class UserControllerTest {
                 .company("Example Company")
                 .build();
         ResponseEntity<Void> responseEntity2 = userController.updateSalaryInformation(updateSalaryRequest2);
-        assertTrue(responseEntity2.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
+        assertEquals(responseEntity2.getStatusCode(), HttpStatusCode.valueOf(403));
         //Perform tests - no user
         UpdateSalaryRequest updateSalaryRequest3 = UpdateSalaryRequest.builder()
                 .contractedHoursPerWeek(40)
@@ -369,7 +379,7 @@ public class UserControllerTest {
                 .company("Example Company")
                 .build();
         ResponseEntity<Void> responseEntity3 = userController.updateSalaryInformation(updateSalaryRequest3);
-        assertTrue(responseEntity3.getStatusCodeValue() == HttpStatus.NO_CONTENT.value());
+        assertEquals(responseEntity3.getStatusCode(), HttpStatusCode.valueOf(204));
     }
 
     /**
@@ -391,7 +401,7 @@ public class UserControllerTest {
                 .trainingCourse("Certified Tester")
                 .build();
         ResponseEntity<Void> responseEntity = userController.addTraining(addTrainingRequest);
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(200));
         //Perform tests - invalid token
         AddTrainingRequest addTrainingRequest2 = AddTrainingRequest.builder()
                 .username("max.mustermann")
@@ -400,7 +410,7 @@ public class UserControllerTest {
                 .trainingCourse("Certified Tester")
                 .build();
         ResponseEntity<Void> responseEntity2 = userController.addTraining(addTrainingRequest2);
-        assertTrue(responseEntity2.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
+        assertEquals(responseEntity2.getStatusCode(), HttpStatusCode.valueOf(403));
         //Perform tests - no user
         AddTrainingRequest addTrainingRequest3 = AddTrainingRequest.builder()
                 .username("max.a.mustermann")
@@ -409,7 +419,7 @@ public class UserControllerTest {
                 .trainingCourse("Certified Tester")
                 .build();
         ResponseEntity<Void> responseEntity3 = userController.addTraining(addTrainingRequest3);
-        assertTrue(responseEntity3.getStatusCodeValue() == HttpStatus.NO_CONTENT.value());
+        assertEquals(responseEntity3.getStatusCode(), HttpStatusCode.valueOf(204));
     }
 
     /**
@@ -433,7 +443,7 @@ public class UserControllerTest {
                 .comment("Welcome to the company!")
                 .build();
         ResponseEntity<Void> responseEntity = userController.addHistoryEntry(addHistoryEntryRequest);
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(200));
         //Perform tests - invalid token
         AddHistoryEntryRequest addHistoryEntryRequest2 = AddHistoryEntryRequest.builder()
                 .username("max.mustermann")
@@ -444,7 +454,7 @@ public class UserControllerTest {
                 .comment("Welcome to the company!")
                 .build();
         ResponseEntity<Void> responseEntity2 = userController.addHistoryEntry(addHistoryEntryRequest2);
-        assertTrue(responseEntity2.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
+        assertEquals(responseEntity2.getStatusCode(), HttpStatusCode.valueOf(403));
         //Perform tests - no user
         AddHistoryEntryRequest addHistoryEntryRequest3 = AddHistoryEntryRequest.builder()
                 .username("max.a.mustermann")
@@ -455,7 +465,7 @@ public class UserControllerTest {
                 .comment("Welcome to the company!")
                 .build();
         ResponseEntity<Void> responseEntity3 = userController.addHistoryEntry(addHistoryEntryRequest3);
-        assertTrue(responseEntity3.getStatusCodeValue() == HttpStatus.NO_CONTENT.value());
+        assertEquals(responseEntity3.getStatusCode(), HttpStatusCode.valueOf(204));
     }
 
     /**
@@ -478,7 +488,7 @@ public class UserControllerTest {
                 .date("01-03-2020")
                 .build();
         ResponseEntity<Void> responseEntity = userController.addHoursForDate(addTimeSheetHoursRequest);
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(200));
         //Perform tests - invalid token
         AddTimeSheetHoursRequest addTimeSheetHoursRequest2 = AddTimeSheetHoursRequest.builder()
                 .username("max.mustermann")
@@ -488,7 +498,7 @@ public class UserControllerTest {
                 .date("01-03-2020")
                 .build();
         ResponseEntity<Void> responseEntity2 = userController.addHoursForDate(addTimeSheetHoursRequest2);
-        assertTrue(responseEntity2.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
+        assertEquals(responseEntity2.getStatusCode(), HttpStatusCode.valueOf(403));
         //Perform tests - no user
         AddTimeSheetHoursRequest addTimeSheetHoursRequest3 = AddTimeSheetHoursRequest.builder()
                 .username("max.a.mustermann")
@@ -498,7 +508,7 @@ public class UserControllerTest {
                 .date("01-03-2020")
                 .build();
         ResponseEntity<Void> responseEntity3 = userController.addHoursForDate(addTimeSheetHoursRequest3);
-        assertTrue(responseEntity3.getStatusCodeValue() == HttpStatus.NO_CONTENT.value());
+        assertEquals(responseEntity3.getStatusCode(), HttpStatusCode.valueOf(204));
     }
 
     /**
@@ -513,16 +523,16 @@ public class UserControllerTest {
         Mockito.when(userService.findByCompanyAndUserName("Example Company", "max.mustermann")).thenReturn(generateValidUser());
         //Perform tests - valid request
         ResponseEntity<Integer> responseEntity = userController.getHoursForDate("Example Company", "max.mustermann", "max.mustermann-ghgkg", "01-03-2020", "02-03-2020");
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(200));
         //Perform tests - valid request with single date
         ResponseEntity<Integer> responseEntity1 = userController.getHoursForDate("Example Company", "max.mustermann", "max.mustermann-ghgkg", "01-03-2020", "01-03-2020");
-        assertTrue(responseEntity1.getStatusCodeValue() == HttpStatus.OK.value());
+        assertEquals(responseEntity1.getStatusCode(), HttpStatusCode.valueOf(200));
         //Perform tests - invalid token
         ResponseEntity<Integer> responseEntity2 = userController.getHoursForDate("Example Company", "max.mustermann", "max.mustermann-ghgkf", "01-03-2020", "02-03-2020");
-        assertTrue(responseEntity2.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
+        assertEquals(responseEntity2.getStatusCode(), HttpStatusCode.valueOf(403));
         //Perform tests - no user
         ResponseEntity<Integer> responseEntity3 = userController.getHoursForDate("Example Company", "max.a.mustermann", "max.mustermann-ghgkg", "01-03-2020", "02-03-2020");
-        assertTrue(responseEntity3.getStatusCodeValue() == HttpStatus.NO_CONTENT.value());
+        assertEquals(responseEntity3.getStatusCode(), HttpStatusCode.valueOf(204));
     }
 
     /**
@@ -544,7 +554,7 @@ public class UserControllerTest {
                         .newPassword("123test")
                         .token("max.mustermann-ghgkg")
                         .build());
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(200));
         //Perform tests - invalid token
         ResponseEntity<Void> responseEntity2 = userController.changePassword(ChangePasswordRequest.builder()
                 .company("Example Company")
@@ -553,7 +563,7 @@ public class UserControllerTest {
                 .newPassword("123test")
                 .token("max.mustermann-ghgkf")
                 .build());
-        assertTrue(responseEntity2.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
+        assertEquals(responseEntity2.getStatusCode(),  HttpStatusCode.valueOf(403));
         //Perform tests - no user
         ResponseEntity<Void> responseEntity3 = userController.changePassword(ChangePasswordRequest.builder()
                 .company("Example Company")
@@ -562,7 +572,7 @@ public class UserControllerTest {
                 .newPassword("123test")
                 .token("max.mustermann-ghgkg")
                 .build());
-        assertTrue(responseEntity3.getStatusCodeValue() == HttpStatus.NOT_FOUND.value());
+        assertEquals(responseEntity3.getStatusCode(), HttpStatusCode.valueOf(404));
     }
 
     /**
@@ -586,7 +596,8 @@ public class UserControllerTest {
                 .reason("Unprofessional behaviour")
                 .resigned(false)
                 .build());
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(200));
+        assertNotNull(responseEntity.getBody());
         assertEquals(13, responseEntity.getBody().getLeaveEntitlementForThisYear());
         //Perform tests - invalid token
         ResponseEntity<DeactivateUserResponse> responseEntity2 = userController.deactivateUser(DeactivateUserRequest.builder()
@@ -597,7 +608,7 @@ public class UserControllerTest {
                 .reason("Unprofessional behaviour")
                 .resigned(false)
                 .build());
-        assertTrue(responseEntity2.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
+        assertEquals(responseEntity2.getStatusCode(), HttpStatusCode.valueOf(403));
         //Perform tests - no user
         ResponseEntity<DeactivateUserResponse> responseEntity3 = userController.deactivateUser(DeactivateUserRequest.builder()
                 .company("Example Company")
@@ -607,7 +618,7 @@ public class UserControllerTest {
                 .reason("Unprofessional behaviour")
                 .resigned(false)
                 .build());
-        assertTrue(responseEntity3.getStatusCodeValue() == HttpStatus.NO_CONTENT.value());
+        assertEquals(responseEntity3.getStatusCode(), HttpStatusCode.valueOf(204));
     }
 
     /**
@@ -625,7 +636,7 @@ public class UserControllerTest {
                 .password("test")
                 .build();
         ResponseEntity<LoginResponse> responseEntity = userController.login(validLoginRequest);
-        assertTrue( responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
+        assertEquals( responseEntity.getStatusCode(), HttpStatusCode.valueOf(200));
         //Test with incorrect password
         LoginRequest invalidLoginRequest = LoginRequest.builder()
                 .company("Example Company")
@@ -633,7 +644,7 @@ public class UserControllerTest {
                 .password("123test")
                 .build();
         ResponseEntity<LoginResponse> responseEntity2 = userController.login(invalidLoginRequest);
-        assertTrue( responseEntity2.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
+        assertEquals( responseEntity2.getStatusCode(), HttpStatusCode.valueOf(403));
         //Test with invalid username
         LoginRequest invalidLoginRequest2 = LoginRequest.builder()
                 .company("Example Company")
@@ -641,7 +652,7 @@ public class UserControllerTest {
                 .password("123test")
                 .build();
         ResponseEntity<LoginResponse> responseEntity3 = userController.login(invalidLoginRequest2);
-        assertTrue( responseEntity3.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
+        assertEquals( responseEntity3.getStatusCode(), HttpStatusCode.valueOf(403));
     }
 
     /**
@@ -654,7 +665,7 @@ public class UserControllerTest {
         ResponseEntity<Void> responseEntity = userController.logout(LogoutRequest.builder()
                 .token("max.mustermann-ghgkg")
                 .build());
-        assertTrue(responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
+        assertEquals(responseEntity.getStatusCode(), HttpStatusCode.valueOf(200));
     }
 
 
@@ -677,7 +688,7 @@ public class UserControllerTest {
                 .token("max.mustermann-ghgkg")
                 .build();
         ResponseEntity<Void> responseEntity = userController.resetUser(resetUserRequest);
-        assertTrue( responseEntity.getStatusCodeValue() == HttpStatus.OK.value());
+        assertEquals( responseEntity.getStatusCode(), HttpStatusCode.valueOf(200));
         //Test with invalid username
         ResetUserRequest resetUserRequest2 = ResetUserRequest.builder()
                 .company("Example Company")
@@ -686,7 +697,7 @@ public class UserControllerTest {
                 .token("max.mustermann-ghgkg")
                 .build();
         ResponseEntity<Void> responseEntity2 = userController.resetUser(resetUserRequest2);
-        assertTrue( responseEntity2.getStatusCodeValue() == HttpStatus.NOT_FOUND.value());
+        assertEquals( responseEntity2.getStatusCode(), HttpStatusCode.valueOf(404));
         //Test with invalid token
         ResetUserRequest resetUserRequest3 = ResetUserRequest.builder()
                 .company("Example Company")
@@ -695,7 +706,7 @@ public class UserControllerTest {
                 .token("max.mustermann-ghgkf")
                 .build();
         ResponseEntity<Void> responseEntity3 = userController.resetUser(resetUserRequest3);
-        assertTrue( responseEntity3.getStatusCodeValue() == HttpStatus.FORBIDDEN.value());
+        assertEquals( responseEntity3.getStatusCode(), HttpStatusCode.valueOf(403));
     }
 
     /**
