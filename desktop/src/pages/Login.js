@@ -61,7 +61,7 @@ function Login() {
             password: password,
         }).then(function (response) {
             if ( response.status === 200 ) {
-                navigate("/absenceManagement", {state:{token: response.data.token}})
+                navigate("/absences", {state:{token: response.data.token}})
             }
         }).catch(function (error) {
             alert('Please verify that the username, password and company are correct and try again.');

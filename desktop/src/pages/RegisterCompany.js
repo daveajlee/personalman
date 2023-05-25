@@ -54,7 +54,7 @@ function RegisterCompany () {
         }).then(function (response) {
             if ( response.status === 201 ) {
                 alert('Thank you for registering for PersonalMan. You can now create users on the login page.')
-                navigate("/")
+                navigate("/registerUser")
             }
         }).catch(function (error) {
             console.log(error);

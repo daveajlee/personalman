@@ -27,7 +27,7 @@ const router = createBrowserRouter([
         element: <RegisterUser/>
     },
     {
-        path: "/absenceManagement",
+        path: "/absences",
         element: <AbsenceManagement/>
     }
 ]);
