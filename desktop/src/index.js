@@ -10,6 +10,7 @@ import ErrorPage from "./pages/ErrorPage";
 import RegisterCompany from "./pages/RegisterCompany";
 import RegisterUser from "./pages/RegisterUser";
 import reportWebVitals from './reportWebVitals';
+import AbsenceManagement from "./pages/AbsenceManagement";
 
 const router = createBrowserRouter([
     {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
     {
         path: "/registerUser",
         element: <RegisterUser/>
+    },
+    {
+        path: "/absenceManagement",
+        element: <AbsenceManagement/>
     }
 ]);
 

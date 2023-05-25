@@ -334,6 +334,7 @@ public class UserController {
      */
     @Operation(summary="Login", description="Login to the system")
     @PostMapping(value="/login")
+    @CrossOrigin()
     @ApiResponses(@ApiResponse(responseCode="200",description="Successfully processed login request"))
     public ResponseEntity<LoginResponse> login (@RequestBody final LoginRequest loginRequest) {
         User user = userService.findByCompanyAndUserName(loginRequest.getCompany(), loginRequest.getUsername());

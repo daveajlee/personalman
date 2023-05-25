@@ -1,18 +1,83 @@
 import React, {useEffect, useState} from "react";
 import {Container, Col, Row, Form, Button, Image} from "react-bootstrap";
 import axios from 'axios';
+import {useNavigate} from "react-router-dom";
 
+/**
+ * This component represents the login screen to allow users to login to PersonalMan.
+ */
 function Login() {
 
     const [companies, setCompanies] = useState([]);
+    const [company, setCompany] = useState("");
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
+    /**
+     * Load the list of available companies via the REST API.
+     */
     useEffect(() => {
         axios.get(`http://localhost:8150/api/companies/`)
             .then(res => {
                 const companies = res.data;
                 setCompanies(companies);
+                setCompany(companies[0]);
             })
     }, []);
+
+    /**
+     * Set the company that the user entered to the state for later.
+     * @param event the event triggered by the user.
+     */
+    function handleCompanyChange(event) {
+        setCompany(event.target.value);
+    }
+
+    /**
+     * Set the username that the user entered to the state for later.
+     * @param event the event triggered by the user.
+     */
+    function handleUsernameChange(event) {
+        setUsername(event.target.value);
+    }
+
+    /**
+     * Set the password that the user entered to the state for later.
+     * @param event the event triggered by the user.
+     */
+    function handlePasswordChange(event) {
+        setPassword(event.target.value)
+    }
+
+    /**
+     * Attempt to sign in the user with the supplied data. If it works, move to the absence management page. Otherwise,
+     * display a simple alert.
+     */
+    function login() {
+        axios.post('http://localhost:8150/api/user/login', {
+            company: company,
+            username: username,
+            password: password,
+        }).then(function (response) {
+            if ( response.status === 200 ) {
+                navigate("/absenceManagement", {state:{token: response.data.token}})
+            }
+        }).catch(function (error) {
+            alert('Please verify that the username, password and company are correct and try again.');
+            console.log(error);
+        });
+        console.log('I want to login for ' + company + ' with username ' + username + ' and password ' + password);
+    }
+
+    /**
+     * Method to reset form to initial values.
+     */
+    function resetForm () {
+        setCompany(companies[0]);
+        setUsername("");
+        setPassword("");
+    }
 
     return (<Container fluid className="p-3 my-5 h-custom">
         <Row className="d-flex flex-row align-items-center justify-content-center">
@@ -34,23 +99,23 @@ function Login() {
                         <Form.Group as={Row} className="mb-3" controlId="formPlaintextCompany">
                             <Form.Label column sm="2">Company:</Form.Label>
                             <Col sm="10">
-                                <Form.Select aria-label="Company Name">
+                                <Form.Select value={company} aria-label="Company Name" onChange={handleCompanyChange}>
                                     {companies.map(company => ( <option key={company}>{company}</option>))}
                                 </Form.Select>
                             </Col>
                         </Form.Group>
 
-                        <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
-                            <Form.Label column sm="2">Email:</Form.Label>
+                        <Form.Group as={Row} className="mb-3" controlId="formPlaintextUsername">
+                            <Form.Label column sm="2">Username:</Form.Label>
                             <Col sm="10">
-                                <Form.Control type="text" placeholder="Email Address" autoComplete="email"/>
+                                <Form.Control type="text" value={username} placeholder="Username" autoComplete="username" onChange={handleUsernameChange}/>
                             </Col>
                         </Form.Group>
 
                         <Form.Group as={Row} className="mb-3" controlId="formPlaintextPassword">
                             <Form.Label column sm="2">Password:</Form.Label>
                             <Col sm="10">
-                                <Form.Control type="password" placeholder="Password" autoComplete="current-password"/>
+                                <Form.Control type="password" value={password} placeholder="Password" autoComplete="current-password" onChange={handlePasswordChange}/>
                             </Col>
                         </Form.Group>
                     </Form>
@@ -59,7 +124,8 @@ function Login() {
                 <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>
                     <Row>
                         <Col className="text-center">
-                            <Button className="mb-0 px-5" size='lg'>Login</Button>
+                            <Button className="mb-0 px-5 me-2" size='lg' onClick={login}>Login</Button>
+                            <Button className="mb-0 px-5 me-2" size='lg' onClick={resetForm}>Reset</Button>
                             <p className="small fw-bold mt-2 pt-1 mb-2">Not yet registered for PersonalMan? <a href="registerUser"
                                                                                                   className="link-danger">Register</a>
                             </p>
