@@ -1,13 +1,24 @@
 import React from "react";
 import {useLocation, useNavigate} from "react-router-dom";
-import {Container, Row, Col, Button} from "react-bootstrap";
+import {Container, Row, Col, Button, Modal, Form} from "react-bootstrap";
 import Header from "../components/Header";
+import {useState} from "react";
+import axios from "axios";
 
 function AbsenceManagement() {
 
     const location = useLocation();
     const months    = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     const navigate = useNavigate();
+
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showStatisticsModal, setShowStatisticsModal] = useState(false);
+    const handleAddClose = () => setShowAddModal(false);
+    const handleStatisticsClose = () => setShowStatisticsModal(false);
+
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+    const [reason, setReason] = useState("Illness");
 
     /**
      * Get the username of the currently logged in user who we will display absences for.
@@ -45,14 +56,41 @@ function AbsenceManagement() {
      * Calculate the statistics of the user such as holidays etc.
      */
     function viewStatistics() {
-        alert('Statistics is not available');
+        setShowStatisticsModal(true);
     }
 
     /**
-     * Add an absence.
+     * Show the input modal to add an absence.
+     */
+    function addAbsenceInput() {
+        setShowAddModal(true);
+    }
+
+    /**
+     * Add the actual absence.
      */
     function addAbsence() {
-        alert('Add absence is not available');
+        let startDateSplit = startDate.split("-");
+        let endDateSplit = endDate.split("-");
+        if ( endDateSplit[2] < startDateSplit[2] && endDateSplit[1] <= startDateSplit[1] && endDateSplit[0] <= startDateSplit[0] ) {
+            alert('Not possible to add date since end date is before start date');
+            return;
+        }
+        axios.post('http://localhost:8150/api/absences/', {
+            company: location.state.company,
+            username: getUsername(),
+            startDate: startDateSplit[2] + '-' + startDateSplit[1] + '-' + startDateSplit[0],
+            endDate: endDateSplit[2] + '-' + endDateSplit[1] + '-' + endDateSplit[0],
+            category: reason,
+            token: location.state.token,
+        }).then(function (response) {
+            if ( response.status === 201 ) {
+                alert('Absence was added successfully!');
+                setShowAddModal(false);
+            }
+        }).catch(function (error) {
+            console.log(error);
+        });
     }
 
     /**
@@ -69,9 +107,9 @@ function AbsenceManagement() {
                 location.state.month -= 1;
             }
             if ( location.state.year ) {
-                navigate("/absences", {state:{token: location.state.token, month: location.state.month, year: location.state.year }})
+                navigate("/absences", {state:{token: location.state.token, month: location.state.month, year: location.state.year, company: location.state.company }})
             } else {
-                navigate("/absences", {state:{token: location.state.token, month: location.state.month, year: new Date().getFullYear() }})
+                navigate("/absences", {state:{token: location.state.token, month: location.state.month, year: new Date().getFullYear(), company: location.state.company }})
             }
         } else {
             let month = new Date().getMonth() + 1;
@@ -113,6 +151,30 @@ function AbsenceManagement() {
         }
     }
 
+    /**
+     * Set the start date that the user entered to the state for later.
+     * @param event the event triggered by the user.
+     */
+    function startDateChangeHandler(event) {
+        setStartDate(event.target.value);
+    }
+
+    /**
+     * Set the end date that the user entered to the state for later.
+     * @param event the event triggered by the user.
+     */
+    function endDateChangeHandler(event) {
+        setEndDate(event.target.value);
+    }
+
+    /**
+     * Set the reason that the user entered to the state for later.
+     * @param event the event triggered by the user.
+     */
+    function reasonChangeHandler(event) {
+        setReason(event.target.value);
+    }
+
     return (
         <Container>
             <Header token={location.state.token}/>
@@ -133,7 +195,7 @@ function AbsenceManagement() {
             <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>
                 <Row>
                     <Col className="text-center">
-                        <Button className="mb-0 px-5 me-2" size='lg' onClick={addAbsence}>Add Absence</Button>
+                        <Button className="mb-0 px-5 me-2" size='lg' onClick={addAbsenceInput}>Add Absence</Button>
                         <Button className="mb-0 px-5 me-2" size='lg' onClick={viewStatistics}>View Statistics</Button>
                     </Col>
                 </Row>
@@ -144,6 +206,62 @@ function AbsenceManagement() {
                     </Col>
                 </Row>
             </Container>
+
+            <Modal show={showAddModal} onHide={handleAddClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Add an Absence</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form.Group as={Row} className="mb-3" controlId="formPlaintextStartDate">
+                        <Form.Label column sm="2">Start Date:</Form.Label>
+                        <Col sm="10">
+                            <Form.Control type="date" value={startDate} placeholder="yyyy-MM-dd" onChange={startDateChangeHandler}/>
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row} className="mb-3" controlId="formPlaintextEndDate">
+                        <Form.Label column sm="2">End Date:</Form.Label>
+                        <Col sm="10">
+                            <Form.Control type="date" value={endDate} placeholder="yyyy-MM-dd" onChange={endDateChangeHandler}/>
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row} className="mb-3" controlId="formPlaintextReason">
+                        <Form.Label column sm="2">Reason:</Form.Label>
+                        <Col sm="10">
+                            <Form.Select aria-label="Role" value={reason} onChange={reasonChangeHandler}>
+                                <option key="illness">Illness</option>
+                                <option key="holiday">Holiday</option>
+                                <option key="trip">Trip</option>
+                                <option key="conference">Conference</option>
+                                <option key="dayinlieu">Day in Lieu</option>
+                                <option key="federalholiday">Federal Holiday</option>
+                            </Form.Select>
+                        </Col>
+                    </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleAddClose}>
+                        Cancel
+                    </Button>
+                    <Button variant="primary" onClick={addAbsence}>
+                        Add Absence
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={showStatisticsModal} onHide={handleStatisticsClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>View Statistics</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleStatisticsClose}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={handleStatisticsClose}>
+                        Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Modal>
 
         </Container>
     )

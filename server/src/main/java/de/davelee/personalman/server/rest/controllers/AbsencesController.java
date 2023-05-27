@@ -44,6 +44,7 @@ public class AbsencesController {
      */
     @Operation(summary = "Add an absence", description="Add an absence to the system.")
     @PostMapping(value="/")
+    @CrossOrigin
     @ApiResponses(value = {@ApiResponse(responseCode="201",description="Successfully created absence")})
     public ResponseEntity<Void> addAbsence (@RequestBody final AbsenceRequest absenceRequest ) {
         //Verify request was valid and authenticated.
