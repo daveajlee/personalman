@@ -78,6 +78,7 @@ public class AbsencesController {
      */
     @Operation(summary = "Find or count absences", description="Find or count absences in the system according to the specified criteria.")
     @GetMapping(value="/")
+    @CrossOrigin
     @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully completed the search for absences")})
     public ResponseEntity<AbsencesResponse> findAbsence (@RequestParam("company") final String company,
                                                          @RequestParam(value = "username", required=false) final String username,

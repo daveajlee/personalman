@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
 import {Container, Row, Col, Button, Modal, Form} from "react-bootstrap";
 import Header from "../components/Header";
@@ -19,6 +19,40 @@ function AbsenceManagement() {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [reason, setReason] = useState("Illness");
+
+    const [absences, setAbsences] = useState([]);
+
+    useEffect(() => {
+        let startDate, endDate;
+        if ( !location.state.month ) {
+            startDate= '01-' + ((new Date().getMonth()) +1).toLocaleString('en-US', {
+                minimumIntegerDigits: 2,
+                useGrouping: false
+            }) + '-' + new Date().getFullYear();
+            endDate = daysInMonth(((new Date().getMonth()) +1), new Date().getFullYear()) + '-' + ((new Date().getMonth()) +1).toLocaleString('en-US', {
+                minimumIntegerDigits: 2,
+                useGrouping: false
+            }) + '-' + new Date().getFullYear();
+        } else {
+            startDate= '01-' + (location.state.month).toLocaleString('en-US', {
+                minimumIntegerDigits: 2,
+                useGrouping: false
+            }) + '-' + location.state.year;
+            endDate = daysInMonth(location.state.month, location.state.year) + '-' + (location.state.month).toLocaleString('en-US', {
+                minimumIntegerDigits: 2,
+                useGrouping: false
+            }) + '-' + location.state.year;
+        }
+        axios.get('http://localhost:8150/api/absences/?company=' + location.state.company + '&username=' + location.state.token.split("-")[0] + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + location.state.token)
+            .then(res => {
+                const result = res.data;
+                setAbsences(result['absenceResponseList']);
+            })
+    }, [location.state.token, location.state.month, location.state.year, location.state.company]);
+
+    function daysInMonth (month, year) {
+        return new Date(year, month, 0).getDate();
+    }
 
     /**
      * Get the username of the currently logged in user who we will display absences for.
@@ -118,7 +152,7 @@ function AbsenceManagement() {
             } else {
                 month -= 1;
             }
-            navigate("/absences", {state:{token: location.state.token, month: month, year: new Date().getFullYear() }})
+            navigate("/absences", {state:{token: location.state.token, month: month, year: new Date().getFullYear(), company: location.state.company }})
         }
     }
 
@@ -136,9 +170,9 @@ function AbsenceManagement() {
                 location.state.month += 1;
             }
             if ( location.state.year ) {
-                navigate("/absences", {state:{token: location.state.token, month: location.state.month, year: location.state.year }})
+                navigate("/absences", {state:{token: location.state.token, month: location.state.month, year: location.state.year, company: location.state.company }})
             } else {
-                navigate("/absences", {state:{token: location.state.token, month: location.state.month, year: new Date().getFullYear() }})
+                navigate("/absences", {state:{token: location.state.token, month: location.state.month, year: new Date().getFullYear(), company: location.state.company }})
             }
         } else {
             let month = new Date().getMonth() + 1;
@@ -147,7 +181,7 @@ function AbsenceManagement() {
             } else {
                 month += 1;
             }
-            navigate("/absences", {state:{token: location.state.token, month: month, year: new Date().getFullYear() }})
+            navigate("/absences", {state:{token: location.state.token, month: month, year: new Date().getFullYear(), company: location.state.company }})
         }
     }
 
@@ -185,11 +219,16 @@ function AbsenceManagement() {
                         <h1 className="text-center">Absences for user: {getUsername()}</h1>
                     </Col>
                 </Row>
-                <Row className="d-flex flex-row align-items-center justify-content-center">
+                <Row className="d-flex flex-row align-items-center justify-content-center mb-5">
                     <Col>
                         <h1 className="text-center">{getMonthName()} {getYear()}</h1>
                     </Col>
                 </Row>
+                {absences.map(d => (<Row className="d-flex flex-row align-items-center justify-content-center" key={d.startDate + '-' + d.endDate}>
+                    <Col>
+                        <h3 className="text-center">{d.startDate} to {d.endDate} with {d.category} </h3>
+                    </Col>
+                </Row>))}
             </Container>
 
             <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>

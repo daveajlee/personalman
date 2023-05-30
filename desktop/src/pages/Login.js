@@ -67,7 +67,6 @@ function Login() {
             alert('Please verify that the username, password and company are correct and try again.');
             console.log(error);
         });
-        console.log('I want to login for ' + company + ' with username ' + username + ' and password ' + password);
     }
 
     /**
