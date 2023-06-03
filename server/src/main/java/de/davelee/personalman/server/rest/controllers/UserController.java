@@ -77,6 +77,7 @@ public class UserController {
      */
     @Operation(summary = "Find a user", description="Find a user to the system.")
     @GetMapping(value="/")
+    @CrossOrigin
     @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully found user"), @ApiResponse(responseCode="204",description="Successful but no user found")})
     public ResponseEntity<UserResponse> getUser (@RequestParam("company") final String company, @RequestParam("username") final String username,
                                                  @RequestParam("token") final String token) {

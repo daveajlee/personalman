@@ -21,8 +21,11 @@ function AbsenceManagement() {
     const [reason, setReason] = useState("Illness");
 
     const [absences, setAbsences] = useState([]);
+    const [statisticsMap, setStatisticsMap] = useState([]);
+    const [leaveEntitlement, setLeaveEntitlement] = useState(0);
 
     useEffect(() => {
+        // Load the actual month of absences.
         let startDate, endDate;
         if ( !location.state.month ) {
             startDate= '01-' + ((new Date().getMonth()) +1).toLocaleString('en-US', {
@@ -47,6 +50,26 @@ function AbsenceManagement() {
             .then(res => {
                 const result = res.data;
                 setAbsences(result['absenceResponseList']);
+            })
+        // Load the statistics for the current year.
+        let startYearDate, endYearDate;
+        if ( !location.state.year ) {
+            startYearDate = '01-01-' + new Date().getFullYear();
+            endYearDate = '31-12-' + new Date().getFullYear();
+        } else {
+            startYearDate = '01-01-' + location.state.year;
+            endYearDate = '31-12-' + location.state.year;
+        }
+        axios.get('http://localhost:8150/api/absences/?company=' + location.state.company + '&username=' + location.state.token.split("-")[0] + '&startDate=' + startYearDate + '&endDate=' + endYearDate + '&onlyCount=false&token=' + location.state.token)
+            .then(res => {
+                const result = res.data;
+                setStatisticsMap(result['statisticsMap']);
+            })
+        // Get the leave entitlement for this user.
+        axios.get('http://localhost:8150/api/user/?company=' + location.state.company + '&username=' + location.state.token.split("-")[0] + '&token=' + location.state.token)
+            .then(res => {
+                const result = res.data;
+                setLeaveEntitlement(result['leaveEntitlementPerYear']);
             })
     }, [location.state.token, location.state.month, location.state.year, location.state.company]);
 
@@ -289,15 +312,14 @@ function AbsenceManagement() {
 
             <Modal show={showStatisticsModal} onHide={handleStatisticsClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>View Statistics</Modal.Title>
+                    <Modal.Title>View Statistics - {getUsername()} - {location.state.year ? location.state.year : new Date().getFullYear()}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+                <Modal.Body>Illness: {statisticsMap['Illness']} days <br/> Holiday: {statisticsMap['Holiday']} days (Remaining: {leaveEntitlement} days) <br/>
+                Trip: {statisticsMap['Trip']} days <br/> Conference: {statisticsMap['Conference']} days <br/> Day in Lieu: {statisticsMap['Day in Lieu']} days (Remaining: {statisticsMap['Day in Lieu Request']} days) <br/>
+                Federal Holiday: {statisticsMap['Federal Holiday']} days</Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleStatisticsClose}>
-                        Close
-                    </Button>
                     <Button variant="primary" onClick={handleStatisticsClose}>
-                        Save Changes
+                        Close
                     </Button>
                 </Modal.Footer>
             </Modal>
