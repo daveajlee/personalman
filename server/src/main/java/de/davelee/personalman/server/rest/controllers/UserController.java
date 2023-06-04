@@ -314,6 +314,7 @@ public class UserController {
      */
     @Operation(summary="changePassword", description="Change password for a user")
     @PatchMapping(value="/password")
+    @CrossOrigin
     @ApiResponses(@ApiResponse(responseCode="200",description="Successfully processed change password request"))
     public ResponseEntity<Void> changePassword (@RequestBody final ChangePasswordRequest changePasswordRequest) {
         //Check valid request including authentication

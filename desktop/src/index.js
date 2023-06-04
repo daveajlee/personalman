@@ -11,6 +11,7 @@ import RegisterCompany from "./pages/RegisterCompany";
 import RegisterUser from "./pages/RegisterUser";
 import reportWebVitals from './reportWebVitals';
 import AbsenceManagement from "./pages/AbsenceManagement";
+import ChangePassword from "./pages/ChangePassword";
 
 const router = createBrowserRouter([
     {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
     {
         path: "/absences",
         element: <AbsenceManagement/>
+    },
+    {
+        path: "/changePassword",
+        element: <ChangePassword/>
     }
 ]);
 

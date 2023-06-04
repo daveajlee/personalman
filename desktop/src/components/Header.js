@@ -13,8 +13,8 @@ function Header(props) {
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link as={Link} to="/absences" state={{token: props.token}} id="absences-link">Absences</Nav.Link>
-                        <Nav.Link as={Link} to="/changePassword" id="password-link">Change Password</Nav.Link>
+                        <Nav.Link as={Link} to="/absences" state={{token: props.token, company: props.company}} id="absences-link">Absences</Nav.Link>
+                        <Nav.Link as={Link} to="/changePassword" state={{token: props.token, company: props.company}} id="password-link">Change Password</Nav.Link>
                         <Nav.Link as={Link} to="/logout" id="logout-link">Logout</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>

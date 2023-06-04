@@ -234,7 +234,7 @@ function AbsenceManagement() {
 
     return (
         <Container>
-            <Header token={location.state.token}/>
+            <Header token={location.state.token} company={location.state.company}/>
 
             <Container fluid className="p-3 my-5 h-custom">
                 <Row className="d-flex flex-row align-items-center justify-content-center">
