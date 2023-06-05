@@ -144,6 +144,7 @@ function AbsenceManagement() {
             if ( response.status === 201 ) {
                 alert('Absence was added successfully!');
                 setShowAddModal(false);
+                window.location.reload();
             }
         }).catch(function (error) {
             console.log(error);
@@ -232,6 +233,23 @@ function AbsenceManagement() {
         setReason(event.target.value);
     }
 
+    /**
+     * Delete the supplied absence.
+     * @param absence the absence to delete
+     */
+    function deleteAbsence(absence) {
+        axios.delete('http://localhost:8150/api/absences/?company=' + location.state.company + '&username=' + absence.username
+            + '&startDate=' + absence.startDate + '&endDate=' + absence.endDate + '&token=' + location.state.token)
+        .then(function (response) {
+            if ( response.status === 200 ) {
+                alert('Absence was deleted successfully!');
+                window.location.reload();
+            }
+        }).catch(function (error) {
+            console.log(error);
+        });
+    }
+
     return (
         <Container>
             <Header token={location.state.token} company={location.state.company}/>
@@ -247,9 +265,12 @@ function AbsenceManagement() {
                         <h1 className="text-center">{getMonthName()} {getYear()}</h1>
                     </Col>
                 </Row>
-                {absences.map(d => (<Row className="d-flex flex-row align-items-center justify-content-center" key={d.startDate + '-' + d.endDate}>
-                    <Col>
-                        <h3 className="text-center">{d.startDate} to {d.endDate} with {d.category} </h3>
+                {absences.map(d => (<Row className="align-items-center justify-content-center" key={d.startDate + '-' + d.endDate}>
+                    <Col xs lg="10">
+                        <h4 className="text-center">{d.startDate} to {d.endDate} with {d.category} </h4>
+                    </Col>
+                    <Col >
+                        <Button variant="danger" size='sm' onClick={deleteAbsence.bind(this, d)}>Delete</Button>
                     </Col>
                 </Row>))}
             </Container>

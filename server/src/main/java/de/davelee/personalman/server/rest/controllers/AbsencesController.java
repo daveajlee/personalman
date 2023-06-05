@@ -132,6 +132,7 @@ public class AbsencesController {
      */
     @Operation(summary = "Delete absences", description="Delete absences in the system according to the specified criteria.")
     @DeleteMapping(value="/")
+    @CrossOrigin
     @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully deleted absences")})
     public ResponseEntity<Void> deleteAbsences (@RequestParam("company") final String company,
                                                 @RequestParam(value = "username", required=false) final String username,
