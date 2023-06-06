@@ -251,7 +251,7 @@ function AbsenceManagement() {
     }
 
     return (
-        <Container>
+        <Container fluid>
             <Header token={location.state.token} company={location.state.company}/>
 
             <Container fluid className="p-3 my-5 h-custom">
