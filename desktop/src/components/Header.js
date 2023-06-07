@@ -30,7 +30,7 @@ function Header(props) {
                         <Nav.Link as={Link} to="/absences" state={{token: props.token, company: props.company}} id="absences-link">Absences</Nav.Link>
                         <Nav.Link as={Link} to="/changePassword" state={{token: props.token, company: props.company}} id="password-link">Change Password</Nav.Link>
                         {role === 'Admin' &&
-                            <Nav.Link as={Link} to="/users" id="users-link">Users</Nav.Link>
+                            <Nav.Link as={Link} to="/users" state={{token: props.token, company: props.company}} id="users-link">Users</Nav.Link>
                         }
                     </Nav>
                 </Navbar.Collapse>

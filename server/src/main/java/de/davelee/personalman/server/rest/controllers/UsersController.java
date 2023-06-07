@@ -45,6 +45,7 @@ public class UsersController {
      * @return a <code>ResponseEntity</code> containing the users for this company.
      */
     @Operation(summary = "Find all users for a company", description="Find all users for a company to the system.")
+    @CrossOrigin()
     @GetMapping(value="/")
     @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully found user(s)"), @ApiResponse(responseCode = "204",description = "Successful but no users found")})
     public ResponseEntity<UsersResponse> getUsers (@RequestParam("company") final String company,
