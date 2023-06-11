@@ -138,6 +138,7 @@ public class UserController {
      */
     @Operation(summary = "Delete a user", description="Delete a user from the system.")
     @DeleteMapping(value="/")
+    @CrossOrigin()
     @ApiResponses(value = {@ApiResponse(responseCode="200",description="Successfully delete user"), @ApiResponse(responseCode="204",description="Successful but no user found")})
     public ResponseEntity<Void> deleteUser (@RequestParam("company") final String company, @RequestParam("username") final String username,
                                             @RequestParam("token") final String token) {

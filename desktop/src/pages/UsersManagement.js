@@ -9,6 +9,10 @@ function UsersManagement() {
     const location = useLocation();
     const [users, setUsers] = useState([]);
 
+    /**
+     * This function retrieves the current list of users which exists for the specified company assuming the access
+     * token is valid.
+     */
     useEffect(() => {
         axios.get('http://localhost:8150/api/users/?company=' + location.state.company + '&token=' + location.state.token)
             .then(res => {
@@ -17,6 +21,24 @@ function UsersManagement() {
                 setUsers(result['userResponses']);
             })
     }, [location.state.token, location.state.company]);
+
+    /**
+     * This function deletes the user with the specified username assuming the user confirms that this is what they want to do.
+     * @param username the username of the user to delete
+     */
+    function deleteUser(username) {
+        if(window.confirm('Do you really want to delete the user - ' + username + '?')) {
+            axios.delete('http://localhost:8150/api/user/?company=' + location.state.company + '&username=' + username +
+                '&token=' + location.state.token)
+                .then(function (response) {
+                    if ( response.status === 200 ) {
+                        alert('User was deleted successfully!');
+                        window.location.reload();
+                    }
+                }).catch(function (error) {
+                    console.log(error); });
+        }
+    }
 
     return (
         <Container fluid>
@@ -36,7 +58,7 @@ function UsersManagement() {
                 <Col xs={12} sm={12} md={6} lg={4} className="align-items-center justify-content-center mt-3">
                     <Button className="me-2 align-items-center justify-content-center" variant="info" size='lg'>Absences</Button>
                     <Button className="me-2 align-items-center justify-content-center" variant="warning" size='lg'>Reset</Button>
-                    <Button className="me-2 align-items-center justify-content-center" variant="danger" size='lg'>Delete</Button>
+                    <Button className="me-2 align-items-center justify-content-center" variant="danger" size='lg' onClick={deleteUser.bind(this, d.username)}>Delete</Button>
                 </Col>
             </Row>))}
             </Container>
@@ -50,6 +72,7 @@ function UsersManagement() {
             </Container>
 
         </Container>
+
     );
 
 }
