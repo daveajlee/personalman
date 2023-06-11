@@ -38,7 +38,7 @@ function Header(props) {
                     <Navbar.Text>
                         Signed in as: {name} ({role})
                     </Navbar.Text>
-                    <Nav.Link as={Link} to="/logout" id="logout-link" className="p-1">Logout</Nav.Link>
+                    <Nav.Link as={Link} to="/logout" state={{token: props.token}} id="logout-link" className="p-1">Logout</Nav.Link>
                 </Navbar.Collapse>
             </Container>
         </Navbar>

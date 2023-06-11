@@ -13,6 +13,7 @@ import reportWebVitals from './reportWebVitals';
 import AbsenceManagement from "./pages/AbsenceManagement";
 import ChangePassword from "./pages/ChangePassword";
 import UsersManagement from "./pages/UsersManagement";
+import Logout from "./pages/Logout";
 
 const router = createBrowserRouter([
     {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
     {
         path: "/users",
         element: <UsersManagement/>
+    },
+    {
+        path: "/logout",
+        element: <Logout/>
     }
 ]);
 

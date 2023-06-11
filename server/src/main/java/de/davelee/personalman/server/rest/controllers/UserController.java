@@ -355,6 +355,7 @@ public class UserController {
      */
     @Operation(summary="Logout", description="Logout from the system")
     @PostMapping(value="/logout")
+    @CrossOrigin()
     @ApiResponses(@ApiResponse(responseCode = "200",description="Successfully processed logout request"))
     public ResponseEntity<Void> logout (@RequestBody final LogoutRequest logoutRequest) {
         //Remove the token from the authenticated tokens.
