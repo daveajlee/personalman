@@ -372,6 +372,7 @@ public class UserController {
      */
     @Operation(summary="resetUser", description="Reset password for a user")
     @PatchMapping(value="/reset")
+    @CrossOrigin()
     @ApiResponses(@ApiResponse(responseCode="200",description="Successfully processed reset user request"))
     public ResponseEntity<Void> resetUser (@RequestBody final ResetUserRequest resetUserRequest) {
         //Verify that user is logged in.

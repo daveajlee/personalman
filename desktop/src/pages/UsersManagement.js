@@ -4,6 +4,7 @@ import Header from "../components/Header";
 import {Button, Col, Container, Row} from "react-bootstrap";
 import axios from "axios";
 import StatisticsModal from "../components/StatisticsModal";
+import ResetModal from "../components/ResetModal";
 
 function UsersManagement() {
 
@@ -12,6 +13,7 @@ function UsersManagement() {
 
     const [selectedUsername, setSelectedUsername] = useState('');
     const [showStatisticsModal, setShowStatisticsModal] = useState(false);
+    const [showResetModal, setShowResetModal] = useState(false);
 
     /**
      * This function retrieves the current list of users which exists for the specified company assuming the access
@@ -53,6 +55,15 @@ function UsersManagement() {
         setShowStatisticsModal(true);
     }
 
+    /**
+     * This function enables a new password to be set for the user with the specified username.
+     * @param username the username that the user wants to reset the password for.
+     */
+    function resetUser(username) {
+        setSelectedUsername(username);
+        setShowResetModal(true);
+    }
+
     return (
         <Container fluid>
             <Header token={location.state.token} company={location.state.company}/>
@@ -70,7 +81,7 @@ function UsersManagement() {
                 </Col>
                 <Col xs={12} sm={12} md={6} lg={4} className="align-items-center justify-content-center mt-3">
                     <Button className="me-2 align-items-center justify-content-center" variant="info" size='lg' onClick={statisticsUser.bind(this, d.username)}>Statistics</Button>
-                    <Button className="me-2 align-items-center justify-content-center" variant="warning" size='lg'>Reset</Button>
+                    <Button className="me-2 align-items-center justify-content-center" variant="warning" size='lg' onClick={resetUser.bind(this, d.username)}>Reset</Button>
                     <Button className="me-2 align-items-center justify-content-center" variant="danger" size='lg' onClick={deleteUser.bind(this, d.username)}>Delete</Button>
                 </Col>
             </Row>))}
@@ -89,6 +100,10 @@ function UsersManagement() {
                              token={location.state.token} showStatisticsModal={showStatisticsModal} setShowStatisticsModal={setShowStatisticsModal}
                              username={selectedUsername}>
             </StatisticsModal>
+
+            <ResetModal company={location.state.company} token={location.state.token} showResetModal={showResetModal}
+                        setShowResetModal={setShowResetModal} username={selectedUsername}>
+            </ResetModal>
 
         </Container>
 

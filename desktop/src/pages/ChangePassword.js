@@ -52,6 +52,7 @@ function ChangePassword () {
     function changePassword() {
         if ( newPassword !== confirmedPassword ) {
             alert('The two new passwords were not identical! Password could not be changed');
+            return;
         }
         axios.patch('http://localhost:8150/api/user/password', {
             company: location.state.company,
