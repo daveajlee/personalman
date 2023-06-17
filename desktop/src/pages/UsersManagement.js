@@ -5,6 +5,7 @@ import {Button, Col, Container, Row} from "react-bootstrap";
 import axios from "axios";
 import StatisticsModal from "../components/StatisticsModal";
 import ResetModal from "../components/ResetModal";
+import AddUserModal from "../components/AddUserModal";
 
 function UsersManagement() {
 
@@ -14,6 +15,7 @@ function UsersManagement() {
     const [selectedUsername, setSelectedUsername] = useState('');
     const [showStatisticsModal, setShowStatisticsModal] = useState(false);
     const [showResetModal, setShowResetModal] = useState(false);
+    const [showAddUserModal, setShowAddUserModal] = useState(false);
 
     /**
      * This function retrieves the current list of users which exists for the specified company assuming the access
@@ -23,7 +25,6 @@ function UsersManagement() {
         axios.get('http://localhost:8150/api/users/?company=' + location.state.company + '&token=' + location.state.token)
             .then(res => {
                 const result = res.data;
-                console.log(result['userResponses']);
                 setUsers(result['userResponses']);
             })
     }, [location.state.token, location.state.company]);
@@ -64,6 +65,13 @@ function UsersManagement() {
         setShowResetModal(true);
     }
 
+    /**
+     * This function enables a new user to be added.
+     */
+    function addUser() {
+        setShowAddUserModal(true);
+    }
+
     return (
         <Container fluid>
             <Header token={location.state.token} company={location.state.company}/>
@@ -90,7 +98,7 @@ function UsersManagement() {
             <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>
                 <Row>
                     <Col className="text-center">
-                        <Button className="mb-0 px-5 me-2" size='lg'>Add User</Button>
+                        <Button className="mb-0 px-5 me-2" size='lg' onClick={addUser}>Add User</Button>
                         <Button className="mb-0 px-5 me-2" size='lg'>All Absences</Button>
                     </Col>
                 </Row>
@@ -104,6 +112,10 @@ function UsersManagement() {
             <ResetModal company={location.state.company} token={location.state.token} showResetModal={showResetModal}
                         setShowResetModal={setShowResetModal} username={selectedUsername}>
             </ResetModal>
+
+            <AddUserModal company={location.state.company} token={location.state.token} showAddUserModal={showAddUserModal}
+                        setShowAddUserModal={setShowAddUserModal}>
+            </AddUserModal>
 
         </Container>
 

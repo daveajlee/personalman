@@ -13,18 +13,24 @@ function StatisticsModal (props) {
         // Load the statistics for the current year.
         let startYearDate = '01-01-' + props.year;
         let endYearDate = '31-12-' + props.year;
-        axios.get('http://localhost:8150/api/absences/?company=' + props.company + '&username=' + props.token.split("-")[0] + '&startDate=' + startYearDate + '&endDate=' + endYearDate + '&onlyCount=false&token=' + props.token)
+        let username;
+        if ( props.username === '') {
+            username = props.token.split("-")[0];
+        } else {
+            username = props.username;
+        }
+        axios.get('http://localhost:8150/api/absences/?company=' + props.company + '&username=' + username + '&startDate=' + startYearDate + '&endDate=' + endYearDate + '&onlyCount=false&token=' + props.token)
             .then(res => {
                 const result = res.data;
                 setStatisticsMap(result['statisticsMap']);
             })
         // Get the leave entitlement for this user.
-        axios.get('http://localhost:8150/api/user/?company=' + props.company + '&username=' + props.token.split("-")[0] + '&token=' + props.token)
+        axios.get('http://localhost:8150/api/user/?company=' + props.company + '&username=' + username + '&token=' + props.token)
             .then(res => {
                 const result = res.data;
                 setLeaveEntitlement(result['leaveEntitlementPerYear']);
             })
-    }, [props.company, props.token, props.year]);
+    }, [props.company, props.token, props.year, props.username]);
 
     return (
         <Modal show={props.showStatisticsModal} onHide={props.handleStatisticsClose}>
