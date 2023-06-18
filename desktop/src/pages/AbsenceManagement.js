@@ -1,16 +1,15 @@
-import React, {useEffect} from "react";
-import {useLocation, useNavigate} from "react-router-dom";
+import React, {useLayoutEffect} from "react";
+import {useLocation} from "react-router-dom";
 import {Container, Row, Col, Button, Modal, Form} from "react-bootstrap";
 import Header from "../components/Header";
 import {useState} from "react";
 import axios from "axios";
 import StatisticsModal from "../components/StatisticsModal";
+import AbsenceList from "../components/AbsenceList";
 
 function AbsenceManagement() {
 
     const location = useLocation();
-    const months    = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-    const navigate = useNavigate();
 
     const [showAddModal, setShowAddModal] = useState(false);
     const [showStatisticsModal, setShowStatisticsModal] = useState(false);
@@ -20,35 +19,28 @@ function AbsenceManagement() {
     const [endDate, setEndDate] = useState("");
     const [reason, setReason] = useState("Illness");
 
-    const [absences, setAbsences] = useState([]);
-
-    useEffect(() => {
+    useLayoutEffect(() => {
         // Load the actual month of absences.
-        let startDate, endDate;
         if ( !location.state.month ) {
-            startDate= '01-' + ((new Date().getMonth()) +1).toLocaleString('en-US', {
+            setStartDate('01-' + ((new Date().getMonth()) +1).toLocaleString('en-US', {
                 minimumIntegerDigits: 2,
                 useGrouping: false
-            }) + '-' + new Date().getFullYear();
-            endDate = daysInMonth(((new Date().getMonth()) +1), new Date().getFullYear()) + '-' + ((new Date().getMonth()) +1).toLocaleString('en-US', {
+            }) + '-' + new Date().getFullYear());
+            setEndDate(daysInMonth(((new Date().getMonth()) +1), new Date().getFullYear()) + '-' + ((new Date().getMonth()) +1).toLocaleString('en-US', {
                 minimumIntegerDigits: 2,
                 useGrouping: false
-            }) + '-' + new Date().getFullYear();
+            }) + '-' + new Date().getFullYear());
         } else {
-            startDate= '01-' + (location.state.month).toLocaleString('en-US', {
+            setStartDate('01-' + (location.state.month).toLocaleString('en-US', {
                 minimumIntegerDigits: 2,
                 useGrouping: false
-            }) + '-' + location.state.year;
-            endDate = daysInMonth(location.state.month, location.state.year) + '-' + (location.state.month).toLocaleString('en-US', {
+            }) + '-' + location.state.year);
+            setEndDate(daysInMonth(location.state.month, location.state.year) + '-' + (location.state.month).toLocaleString('en-US', {
                 minimumIntegerDigits: 2,
                 useGrouping: false
-            }) + '-' + location.state.year;
+            }) + '-' + location.state.year);
         }
-        axios.get('http://localhost:8150/api/absences/?company=' + location.state.company + '&username=' + location.state.token.split("-")[0] + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + location.state.token)
-            .then(res => {
-                const result = res.data;
-                setAbsences(result['absenceResponseList']);
-            })
+
     }, [location.state.token, location.state.month, location.state.year, location.state.company]);
 
     function daysInMonth (month, year) {
@@ -61,30 +53,6 @@ function AbsenceManagement() {
      */
     function getUsername() {
         return location.state.token.split("-")[0];
-    }
-
-    /**
-     * Get the name of the current month that we are in.
-     * @returns the name of the month in English
-     */
-    function getMonthName() {
-        if ( location.state.month >= 1 ) {
-            return months[location.state.month-1];
-        } else {
-            return months[new Date().getMonth()];
-        }
-    }
-
-    /**
-     * Get the current year which can be influenced by the previous and next month buttons.
-     * @returns the current year to be displayed.
-     */
-    function getYear() {
-        if ( location.state.year ) {
-            return location.state.year;
-        } else {
-            return new Date().getFullYear();
-        }
     }
 
     /**
@@ -130,64 +98,6 @@ function AbsenceManagement() {
     }
 
     /**
-     * Move back to the previous month.
-     */
-    function previousMonth() {
-        if ( location.state.month ) {
-            if ( location.state.month <= 1 ) {
-                location.state.month = 12;
-                if ( location.state.year ) {
-                    location.state.year -= 1;
-                }
-            } else {
-                location.state.month -= 1;
-            }
-            if ( location.state.year ) {
-                navigate("/absences", {state:{token: location.state.token, month: location.state.month, year: location.state.year, company: location.state.company }})
-            } else {
-                navigate("/absences", {state:{token: location.state.token, month: location.state.month, year: new Date().getFullYear(), company: location.state.company }})
-            }
-        } else {
-            let month = new Date().getMonth() + 1;
-            if ( month < 1 ) {
-                month = 12;
-            } else {
-                month -= 1;
-            }
-            navigate("/absences", {state:{token: location.state.token, month: month, year: new Date().getFullYear(), company: location.state.company }})
-        }
-    }
-
-    /**
-     * Move forward to the next month.
-     */
-    function nextMonth() {
-        if ( location.state.month ) {
-            if ( location.state.month >= 12 ) {
-                location.state.month = 1;
-                if ( location.state.year ) {
-                    location.state.year += 1;
-                }
-            } else {
-                location.state.month += 1;
-            }
-            if ( location.state.year ) {
-                navigate("/absences", {state:{token: location.state.token, month: location.state.month, year: location.state.year, company: location.state.company }})
-            } else {
-                navigate("/absences", {state:{token: location.state.token, month: location.state.month, year: new Date().getFullYear(), company: location.state.company }})
-            }
-        } else {
-            let month = new Date().getMonth() + 1;
-            if ( month >= 12 ) {
-                month = 1;
-            } else {
-                month += 1;
-            }
-            navigate("/absences", {state:{token: location.state.token, month: month, year: new Date().getFullYear(), company: location.state.company }})
-        }
-    }
-
-    /**
      * Set the start date that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
@@ -211,59 +121,19 @@ function AbsenceManagement() {
         setReason(event.target.value);
     }
 
-    /**
-     * Delete the supplied absence.
-     * @param absence the absence to delete
-     */
-    function deleteAbsence(absence) {
-        axios.delete('http://localhost:8150/api/absences/?company=' + location.state.company + '&username=' + absence.username
-            + '&startDate=' + absence.startDate + '&endDate=' + absence.endDate + '&token=' + location.state.token)
-        .then(function (response) {
-            if ( response.status === 200 ) {
-                alert('Absence was deleted successfully!');
-                window.location.reload();
-            }
-        }).catch(function (error) {
-            console.log(error);
-        });
-    }
-
     return (
         <Container fluid>
             <Header token={location.state.token} company={location.state.company}/>
 
-            <Container fluid className="p-3 my-5 h-custom">
-                <Row className="d-flex flex-row align-items-center justify-content-center">
-                    <Col>
-                        <h1 className="text-center">Absences for user: {getUsername()}</h1>
-                    </Col>
-                </Row>
-                <Row className="d-flex flex-row align-items-center justify-content-center mb-5">
-                    <Col>
-                        <h1 className="text-center">{getMonthName()} {getYear()}</h1>
-                    </Col>
-                </Row>
-                {absences.map(d => (<Row className="align-items-center justify-content-center" key={d.startDate + '-' + d.endDate}>
-                    <Col xs lg="10">
-                        <h4 className="text-center">{d.startDate} to {d.endDate} with {d.category} </h4>
-                    </Col>
-                    <Col >
-                        <Button variant="danger" size='sm' onClick={deleteAbsence.bind(this, d)}>Delete</Button>
-                    </Col>
-                </Row>))}
-            </Container>
+            <AbsenceList company={location.state.company} token={location.state.token} startDate={startDate} endDate={endDate}
+            month={location.state.month ? location.state.month : ((new Date().getMonth()) +1)}
+            year={location.state.year ? location.state.year : new Date().getFullYear()}/>
 
             <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>
                 <Row>
                     <Col className="text-center">
                         <Button className="mb-0 px-5 me-2" size='lg' onClick={addAbsenceInput}>Add Absence</Button>
                         <Button className="mb-0 px-5 me-2" size='lg' onClick={viewStatistics}>View Statistics</Button>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col className="text-center">
-                        <Button className="mb-0 px-5 me-2 mt-2" size='lg' onClick={previousMonth}>Previous Month</Button>
-                        <Button className="mb-0 px-5 me-2 mt-2" size='lg' onClick={nextMonth}>Next Month</Button>
                     </Col>
                 </Row>
             </Container>
