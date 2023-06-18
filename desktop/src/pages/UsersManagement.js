@@ -1,4 +1,4 @@
-import {useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import Header from "../components/Header";
 import {Button, Col, Container, Row} from "react-bootstrap";
@@ -11,6 +11,7 @@ function UsersManagement() {
 
     const location = useLocation();
     const [users, setUsers] = useState([]);
+    const navigate = useNavigate();
 
     const [selectedUsername, setSelectedUsername] = useState('');
     const [showStatisticsModal, setShowStatisticsModal] = useState(false);
@@ -72,6 +73,13 @@ function UsersManagement() {
         setShowAddUserModal(true);
     }
 
+    /**
+     * This function shows all absences.
+     */
+    function allAbsences() {
+        navigate('/allAbsences', {state:{token: location.state.token, month: (new Date().getMonth()+1), year: new Date().getFullYear(), company: location.state.company }});
+    }
+
     return (
         <Container fluid>
             <Header token={location.state.token} company={location.state.company}/>
@@ -99,7 +107,7 @@ function UsersManagement() {
                 <Row>
                     <Col className="text-center">
                         <Button className="mb-0 px-5 me-2" size='lg' onClick={addUser}>Add User</Button>
-                        <Button className="mb-0 px-5 me-2" size='lg'>All Absences</Button>
+                        <Button className="mb-0 px-5 me-2" size='lg' onClick={allAbsences}>All Absences</Button>
                     </Col>
                 </Row>
             </Container>

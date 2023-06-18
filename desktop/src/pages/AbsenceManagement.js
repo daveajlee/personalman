@@ -127,7 +127,8 @@ function AbsenceManagement() {
 
             <AbsenceList company={location.state.company} token={location.state.token} startDate={startDate} endDate={endDate}
             month={location.state.month ? location.state.month : ((new Date().getMonth()) +1)}
-            year={location.state.year ? location.state.year : new Date().getFullYear()}/>
+            year={location.state.year ? location.state.year : new Date().getFullYear()}
+            username={getUsername()}/>
 
             <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>
                 <Row>

@@ -14,6 +14,7 @@ import AbsenceManagement from "./pages/AbsenceManagement";
 import ChangePassword from "./pages/ChangePassword";
 import UsersManagement from "./pages/UsersManagement";
 import Logout from "./pages/Logout";
+import AllAbsences from "./pages/AllAbsences";
 
 const router = createBrowserRouter([
     {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
     {
         path: "/users",
         element: <UsersManagement/>
+    },
+    {
+        path: "/allAbsences",
+        element: <AllAbsences/>
     },
     {
         path: "/logout",
