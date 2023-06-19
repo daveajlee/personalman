@@ -16,6 +16,10 @@ import UsersManagement from "./pages/UsersManagement";
 import Logout from "./pages/Logout";
 import AllAbsences from "./pages/AllAbsences";
 
+/**
+ * Define the browser router with the urls that the user may choose from. All other URLs will go to the error page.
+ * @type {Router} the router object controlling the various urls.
+ */
 const router = createBrowserRouter([
     {
         path: "/",
@@ -52,6 +56,10 @@ const router = createBrowserRouter([
     }
 ]);
 
+/**
+ * Use the defined router in the React application.
+ * @type {Root}
+ */
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

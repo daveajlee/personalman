@@ -78,6 +78,9 @@ function Login() {
         setPassword("");
     }
 
+    /**
+     * Display the relevant elements and data to the user.
+     */
     return (<Container fluid className="p-3 my-5 h-custom">
         <Row className="d-flex flex-row align-items-center justify-content-center">
             <Col>

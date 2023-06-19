@@ -7,18 +7,31 @@ import axios from "axios";
 import StatisticsModal from "../components/StatisticsModal";
 import AbsenceList from "../components/AbsenceList";
 
+/**
+ * This is the page which displays the list of absences for the current user and allows them to create new absences or
+ * view other months or add an absence.
+ * @returns {JSX.Element} to be displayed to the user.
+ */
 function AbsenceManagement() {
 
     const location = useLocation();
 
     const [showAddModal, setShowAddModal] = useState(false);
     const [showStatisticsModal, setShowStatisticsModal] = useState(false);
+
+    /**
+     * Function to manage the modal for adding absences.
+     */
     const handleAddClose = () => setShowAddModal(false);
 
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [reason, setReason] = useState("Illness");
 
+    /**
+     * Load the absences from the REST API either for a particular username within a specific time period
+     * (usually a month in a year).
+     */
     useLayoutEffect(() => {
         // Load the actual month of absences.
         if ( !location.state.month ) {
@@ -43,6 +56,12 @@ function AbsenceManagement() {
 
     }, [location.state.token, location.state.month, location.state.year, location.state.company]);
 
+    /**
+     * Return the number of days that a month has in a particular year.
+     * @param month the month to retrieve the number of days for.
+     * @param year the year that should be taken into account.
+     * @returns {number} the number of days that the month has in the supplied year.
+     */
     function daysInMonth (month, year) {
         return new Date(year, month, 0).getDate();
     }
@@ -121,6 +140,9 @@ function AbsenceManagement() {
         setReason(event.target.value);
     }
 
+    /**
+     * Display the relevant elements and data to the user.
+     */
     return (
         <Container fluid>
             <Header token={location.state.token} company={location.state.company}/>

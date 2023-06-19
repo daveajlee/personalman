@@ -2,9 +2,21 @@ import {Button, Col, Form, Modal, Row} from "react-bootstrap";
 import React, {useState} from "react";
 import axios from "axios";
 
+/**
+ * This is the modal window to show the reset password form. The modal is used for admin users who want to reset
+ * the password for a particular user.
+ * @param props setShowResetModal - function to determine whether modal should be shown or not,
+ * company - the company that the user belongs to, username - the username of the user that the password should be reset for,
+ * token - the current user access token of the admin user.
+ * @returns {JSX.Element} to be displayed to the user.
+ */
 function ResetModal (props) {
 
+    /**
+     * Function to handle the case that the user clicks on the close button in the modal.
+     */
     const handleResetClose = () => props.setShowResetModal(false);
+
     const [newPassword, setNewPassword] = useState("");
     const [confirmedPassword, setConfirmedPassword] = useState("");
 
@@ -48,6 +60,9 @@ function ResetModal (props) {
 
     }
 
+    /**
+     * Display the relevant elements and data to the user.
+     */
     return (
         <Modal show={props.showResetModal} onHide={handleResetClose}>
             <Modal.Header closeButton>

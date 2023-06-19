@@ -5,11 +5,19 @@ import { Link } from 'react-router-dom';
 import {useState} from "react";
 import axios from "axios";
 
+/**
+ * This is the component which shows the header and navigation bar including logout option.
+ * @param props company - the company that the user belongs to, token - the user access token for the currently logged in user.
+ * @returns {JSX.Element} to be displayed to the user.
+ */
 function Header(props) {
 
     const [name, setName] = useState("");
     const [role, setRole] = useState("");
 
+    /**
+     * Load the first name, surname and role of the currently logged in user to be displayed as part of the header bar.
+     */
     useEffect(() => {
         axios.get('http://localhost:8150/api/user/?company=' + props.company + '&username=' + props.token.split("-")[0] + '&token=' + props.token)
             .then(res => {
@@ -19,6 +27,9 @@ function Header(props) {
             })
     }, [props.company, props.token]);
 
+    /**
+     * Display the relevant elements and data to the user.
+     */
     return (
         <Navbar bg="light" expand="md">
             <Container fluid>

@@ -3,6 +3,10 @@ import {Button, Col, Container, Form, Image, Row} from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+/**
+ * This is the page which allows the user to register a new company in PersonalMan.
+ * @returns {JSX.Element} to be displayed to the user.
+ */
 function RegisterCompany () {
 
     const [name, setName] = useState("");
@@ -61,6 +65,9 @@ function RegisterCompany () {
         });
     }
 
+    /**
+     * Display the relevant elements and data to the user.
+     */
     return (<Container fluid className="p-3 my-5 h-custom">
         <Row className="d-flex flex-row align-items-center justify-content-center">
             <Col>

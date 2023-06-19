@@ -3,6 +3,11 @@ import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
+/**
+ * This is the form to display when the user wishes to create a new user for a particular company.
+ * @param props company - create a new user for this particular company name (optional).
+ * @returns {JSX.Element} to be displayed to the user.
+ */
 function AddUserForm (props) {
 
     const [firstName, setFirstName] = useState("");
@@ -20,6 +25,10 @@ function AddUserForm (props) {
 
     const [companies, setCompanies] = useState([]);
 
+    /**
+     * Load the list of companies that are currently available in PersonalMan if no company name was supplied
+     * in the parameters.
+     */
     useEffect(() => {
         if ( props.company === '' ) {
             axios.get(`http://localhost:8150/api/companies/`)
@@ -247,6 +256,9 @@ function AddUserForm (props) {
         }
     }
 
+    /**
+     * Display the relevant elements and data to the user.
+     */
     return (
         <>
         <Container className="d-flex flex-column">

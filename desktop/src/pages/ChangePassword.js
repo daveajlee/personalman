@@ -4,6 +4,11 @@ import axios from "axios";
 import {useLocation, useNavigate} from "react-router-dom";
 import Header from "../components/Header";
 
+/**
+ * This is the page which allows the user to change their password assuming they known their old password. Otherwise,
+ * they must request an admin user to reset their password.
+ * @returns {JSX.Element} to be displayed to the user.
+ */
 function ChangePassword () {
 
     const [currentPassword, setCurrentPassword] = useState("");
@@ -78,6 +83,9 @@ function ChangePassword () {
         return location.state.token.split("-")[0];
     }
 
+    /**
+     * Display the relevant elements and data to the user.
+     */
     return (
         <Container fluid>
             <Header token={location.state.token} company={location.state.company}/>

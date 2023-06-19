@@ -3,12 +3,25 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 
+/**
+ * This component displays the list of absences that have been saved in the system for either a particular username
+ * if supplied or all users if no username has been supplied.
+ * @param props company - name of company to display absences for (required), username - username to display absences for
+ * (optional), startDate - date in format dd-MM-yyyy to start displaying absences from, endDate - date in format dd-MM-yyyy
+ * which is the last date to display absences for, token - the current access token from the user wishing to view the absences,
+ * month - the month to display absences, year - the year to display absences.
+ * @returns {JSX.Element} to be displayed to the user.
+ */
 function AbsenceList (props) {
 
     const [absences, setAbsences] = useState([]);
     const months    = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     const navigate = useNavigate();
 
+    /**
+     * Load the absences from the REST API either for a particular username or all users within a specific time period
+     * (usually a month in a year).
+     */
     useEffect(() => {
         if ( props.startDate && props.endDate ) {
             if ( props.username ) {
@@ -205,6 +218,9 @@ function AbsenceList (props) {
         });
     }
 
+    /**
+     * Display the relevant elements and data to the user.
+     */
     return (
         <Container>
             <Container fluid className="p-3 my-5 h-custom">

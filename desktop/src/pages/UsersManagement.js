@@ -7,6 +7,10 @@ import StatisticsModal from "../components/StatisticsModal";
 import ResetModal from "../components/ResetModal";
 import AddUserModal from "../components/AddUserModal";
 
+/**
+ * This is the page which allows an admin user to manage users in their company.
+ * @returns {JSX.Element} to be displayed to the user.
+ */
 function UsersManagement() {
 
     const location = useLocation();
@@ -80,6 +84,9 @@ function UsersManagement() {
         navigate('/allAbsences', {state:{token: location.state.token, month: (new Date().getMonth()+1), year: new Date().getFullYear(), company: location.state.company }});
     }
 
+    /**
+     * Display the relevant elements and data to the user.
+     */
     return (
         <Container fluid>
             <Header token={location.state.token} company={location.state.company}/>

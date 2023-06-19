@@ -5,12 +5,19 @@ import RegisterCompany from "./pages/RegisterCompany";
 import {useEffect, useState} from "react";
 import axios from "axios";
 
-
+/**
+ * This is the first page that the user visits when starting PersonalMan - either show the login screen or the register
+ * a company screen if no companies have been defined so far.
+ * @returns {JSX.Element} to be displayed to the user.
+ */
 function App() {
 
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
 
+    /**
+     * Load the current list of companies that are available on the REST API server.
+     */
   useEffect(() => {
     axios.get(`http://localhost:8150/api/companies/`)
         .then(res => {
@@ -20,7 +27,10 @@ function App() {
         })
   }, []);
 
-  return (
+    /**
+     * Display the relevant elements and data to the user.
+     */
+    return (
       <div>
         {!loading && companies && companies.length > 0 ? <Login /> : <RegisterCompany />
         }
