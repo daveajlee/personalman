@@ -23,6 +23,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:nowatch": "react-scripts test --transformIgnorePatterns 'node_modules/(?!axios)/' --watchAll=false",
     "eject": "react-scripts eject",
     "electron": "electron .",
     "dev": "nf start -p 3000"
@@ -46,6 +47,11 @@
     ]
   },
   "devDependencies": {
-    "foreman": "^3.0.1"
+    "@babel/preset-env": "^7.22.5",
+    "@babel/preset-react": "^7.22.5",
+    "babel-jest": "^29.5.0",
+    "foreman": "^3.0.1",
+    "jest": "^27.5.1",
+    "react-test-renderer": "^18.2.0"
   }
 }
