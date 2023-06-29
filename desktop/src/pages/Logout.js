@@ -14,7 +14,7 @@ function Logout() {
      * Logout of the system via the REST API.
      */
     useEffect(() => {
-        axios.post(`http://localhost:8150/api/user/logout`, {
+        axios.post(process.env.REACT_APP_SERVER_URL + `/user/logout`, {
             token: location.state.token
         })
             .then(res => {

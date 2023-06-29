@@ -24,7 +24,7 @@ function AllAbsences() {
      */
     useEffect(() => {
         // Ensure that the user is actually admin, otherwise they cannot view the page.
-        axios.get('http://localhost:8150/api/user/?company=' + location.state.company + '&username=' + location.state.token.split("-")[0] + '&token=' + location.state.token)
+        axios.get(process.env.REACT_APP_SERVER_URL + '/user/?company=' + location.state.company + '&username=' + location.state.token.split("-")[0] + '&token=' + location.state.token)
                 .then(res => {
                     const result = res.data;
                     setRole(result['role']);

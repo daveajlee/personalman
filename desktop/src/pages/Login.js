@@ -18,7 +18,7 @@ function Login() {
      * Load the list of available companies via the REST API.
      */
     useEffect(() => {
-        axios.get(`http://localhost:8150/api/companies/`)
+        axios.get(process.env.REACT_APP_SERVER_URL + `/companies/`)
             .then(res => {
                 const companies = res.data;
                 setCompanies(companies);
@@ -55,7 +55,7 @@ function Login() {
      * display a simple alert.
      */
     function login() {
-        axios.post('http://localhost:8150/api/user/login', {
+        axios.post(process.env.REACT_APP_SERVER_URL + '/user/login', {
             company: company,
             username: username,
             password: password,

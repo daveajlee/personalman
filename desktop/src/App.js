@@ -19,7 +19,7 @@ function App() {
      * Load the current list of companies that are available on the REST API server.
      */
   useEffect(() => {
-    axios.get(`http://localhost:8150/api/companies/`)
+    axios.get(process.env.REACT_APP_SERVER_URL + `/companies/`)
         .then(res => {
           setLoading(false);
           const companies = res.data;

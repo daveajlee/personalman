@@ -59,7 +59,7 @@ function ChangePassword () {
             alert('The two new passwords were not identical! Password could not be changed');
             return;
         }
-        axios.patch('http://localhost:8150/api/user/password', {
+        axios.patch(process.env.REACT_APP_SERVER_URL + '/user/password', {
             company: location.state.company,
             username: getUsername(),
             token: location.state.token,

@@ -1,7 +1,10 @@
 module.exports = {
     presets: [
-        '@babel/preset-env',
+        ['@babel/preset-env',
+        {
+            useBuiltIns: 'entry',
+        }],
         ['@babel/preset-react', {runtime: 'automatic'}],
-        'axios'
     ],
+
 };

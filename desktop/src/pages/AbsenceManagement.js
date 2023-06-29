@@ -98,7 +98,7 @@ function AbsenceManagement() {
             alert('Not possible to add date since end date is before start date');
             return;
         }
-        axios.post('http://localhost:8150/api/absences/', {
+        axios.post(process.env.REACT_APP_SERVER_URL + '/absences/', {
             company: location.state.company,
             username: getUsername(),
             startDate: startDateSplit[2] + '-' + startDateSplit[1] + '-' + startDateSplit[0],
