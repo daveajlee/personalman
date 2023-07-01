@@ -44,7 +44,7 @@ function ResetModal (props) {
             alert('The two new passwords were not identical! Password could not be changed');
             return;
         }
-        axios.patch('http://localhost:8150/api/user/reset', {
+        axios.patch(process.env.REACT_APP_SERVER_URL + '/user/reset', {
             company: props.company,
             username: props.username,
             token: props.token,

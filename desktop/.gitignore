@@ -20,5 +20,5 @@ sketch
 
 # End of https://www.toptal.com/developers/gitignore/api/react
 
-# Add snapshots for jest tests
-*.snap
+# Add docs
+docs

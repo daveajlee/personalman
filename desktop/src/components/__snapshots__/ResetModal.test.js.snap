@@ -1,0 +1,155 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`checks that the ResetModal component can be rendered 1`] = `
+<div>
+  <div
+    className="p-3 my-5 h-custom container-fluid"
+  >
+    <div
+      className="d-flex flex-row align-items-center justify-content-center row"
+    >
+      <div
+        className="col"
+      >
+        <img
+          alt="PersonalMan Logo"
+          className="d-block mx-auto img-fluid w-50"
+          src="https://www.davelee.de/common/assets/img/portfolio/personalman-logo.png"
+        />
+      </div>
+      <div
+        className="col"
+      >
+        <div
+          className="d-flex flex-row align-items-center justify-content-center mb-3 container"
+        >
+          <div
+            className="row"
+          >
+            <div
+              className="col"
+            >
+              <h3>
+                Getting Started: Registering a new Company/Organisation
+              </h3>
+            </div>
+          </div>
+        </div>
+        <div
+          className="d-flex flex-column container"
+        >
+          <form
+            className=""
+          >
+            <div
+              className="mb-3 row"
+            >
+              <label
+                className="form-label col-form-label col-sm-2"
+                htmlFor="formPlaintextName"
+              >
+                Name:
+              </label>
+              <div
+                className="col-sm-10"
+              >
+                <input
+                  className="form-control"
+                  id="formPlaintextName"
+                  onChange={[Function]}
+                  placeholder="Name"
+                  type="text"
+                  value=""
+                />
+              </div>
+            </div>
+            <div
+              className="mb-3 row"
+            >
+              <label
+                className="form-label col-form-label col-sm-2"
+                htmlFor="formPlaintextEmail"
+              >
+                Default Annual Leave:
+              </label>
+              <div
+                className="col-sm-10"
+              >
+                <input
+                  className="form-control"
+                  id="formPlaintextEmail"
+                  max="40"
+                  min="20"
+                  onChange={[Function]}
+                  placeholder="A number between 20 and 40"
+                  type="number"
+                  value={20}
+                />
+              </div>
+            </div>
+            <div
+              className="mb-3 row"
+            >
+              <label
+                className="form-label col-form-label col-sm-2"
+                htmlFor="formPlaintextCompany"
+              >
+                Base Country:
+              </label>
+              <div
+                className="col-sm-10"
+              >
+                <select
+                  aria-label="Company Name"
+                  className="form-select"
+                  id="formPlaintextCompany"
+                  onChange={[Function]}
+                  value="Germany"
+                >
+                  <option>
+                    Germany
+                  </option>
+                  <option>
+                    England
+                  </option>
+                  <option>
+                    Scotland
+                  </option>
+                </select>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div
+          className="align-items-center justify-content-center text-md-start mt-4 pt-2 container"
+        >
+          <div
+            className="row"
+          >
+            <div
+              className="text-center col"
+            >
+              <button
+                className="mb-0 px-5 me-2 btn btn-primary btn-lg"
+                disabled={false}
+                onClick={[Function]}
+                type="button"
+              >
+                Register
+              </button>
+              <button
+                className="mb-0 px-5 me-2 btn btn-primary btn-lg"
+                disabled={false}
+                onClick={[Function]}
+                type="button"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

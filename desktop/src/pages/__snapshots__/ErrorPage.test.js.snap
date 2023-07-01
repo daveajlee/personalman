@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`checks that the ErrorPage page can be rendered 1`] = `
+<div
+  className="p-3 my-5 h-custom container-fluid"
+>
+  <div
+    className="d-flex flex-row align-items-center justify-content-center row"
+  >
+    <div
+      className="col"
+    >
+      <img
+        alt="PersonalMan Logo"
+        className="d-block mx-auto img-fluid w-50"
+        src="https://www.davelee.de/common/assets/img/portfolio/personalman-logo.png"
+      />
+    </div>
+    <div
+      className="col"
+    >
+      <div
+        className="d-flex flex-row align-items-center justify-content-center mb-3 container"
+      >
+        <div
+          className="row"
+        >
+          <div
+            className="col"
+          >
+            <h1>
+              Sorry this page could not be found!
+            </h1>
+            <h2>
+              <a
+                href="/"
+              >
+                Click here
+              </a>
+               to return to the home page.
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

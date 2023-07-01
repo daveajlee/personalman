@@ -26,7 +26,10 @@
     "test:nowatch": "react-scripts test --transformIgnorePatterns 'node_modules/(?!axios)/' --watchAll=false",
     "eject": "react-scripts eject",
     "electron": "electron .",
-    "dev": "nf start -p 3000"
+    "dev": "nf start -p 3000",
+    "docs": "jsdoc -c jsdoc.conf.json",
+    "styleguide": "styleguidist server",
+    "styleguide:build": "styleguidist build"
   },
   "eslintConfig": {
     "extends": [
@@ -56,6 +59,9 @@
     "babel-loader": "^9.1.2",
     "foreman": "^3.0.1",
     "jest": "^27.5.1",
-    "react-test-renderer": "^18.2.0"
+    "jsdoc": "^4.0.2",
+    "react-styleguidist": "^13.1.1",
+    "react-test-renderer": "^18.2.0",
+    "webpack": "^5.88.1"
   }
 }

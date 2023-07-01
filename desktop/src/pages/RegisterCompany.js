@@ -51,7 +51,7 @@ function RegisterCompany () {
      * Register the new company by sending the request to the API. Display an alert and then move back to the home page.
      */
     function registerCompany() {
-        axios.post('http://localhost:8150/api/company/', {
+        axios.post(process.env.REACT_APP_SERVER_URL  + '/company/', {
             name: name,
             defaultAnnualLeaveInDays: annualLeave,
             country: country
