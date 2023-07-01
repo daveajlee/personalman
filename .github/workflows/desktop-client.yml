@@ -6,10 +6,6 @@ on:
       - master
   workflow_dispatch:
 
-defaults:
-  run:
-    working-directory: ./desktop
-
 jobs:
     build:
       runs-on: ubuntu-latest
@@ -23,7 +19,7 @@ jobs:
             node-version: 18.x
             cache: 'npm'
         - run: |
-            npm ci
-            npm run build --if-present
-            npm run test:nowatch
+            cd desktop && npm ci
+            cd desktop && npm run build --if-present
+            cd desktop && npm run test:nowatch
           
