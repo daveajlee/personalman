@@ -18,7 +18,8 @@ jobs:
           with:
             node-version: 18.x
             cache: 'npm'
-        - run: npm ci
-        - run: npm run build --if-present
-        - run: npm run test:nowatch
+            cache-dependency-path: desktop/package-lock.json
+        - run: cd desktop && npm ci
+        - run: cd desktop && npm run build --if-present
+        - run: cd desktop && npm run test:nowatch
           
