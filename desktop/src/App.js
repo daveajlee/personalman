@@ -42,7 +42,7 @@ function App() {
     return (
         <Routes>
             <Route exact path="/" element={!loading && companies && companies.length > 0 ? <Login/> : <RegisterCompany/>}/>
-            <Route page='/login' element={<Login/>} />
+            <Route path='/login' element={<Login/>} />
             <Route path='/registerCompany' element={<RegisterCompany/>} />
             <Route path='/registerUser' element={<RegisterUser/>} />
             <Route path='/absences' element={<AbsenceManagement/>} />
