@@ -8,7 +8,7 @@
     "@testing-library/user-event": "^14.4.3",
     "axios": "^1.4.0",
     "bootstrap": "^5.2.3",
-    "electron": "^24.3.0",
+    "electron-squirrel-startup": "^1.0.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.4",
     "react-dom": "^18.2.0",
@@ -20,7 +20,7 @@
   "homepage": "./",
   "main": "src/electron-starter.js",
   "scripts": {
-    "start": "react-scripts start",
+    "start": "electron-forge start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test:nowatch": "react-scripts test --transformIgnorePatterns 'node_modules/(?!axios)/' --watchAll=false",
@@ -29,7 +29,9 @@
     "dev": "nf start -p 3000",
     "docs": "jsdoc -c jsdoc.conf.json",
     "styleguide": "styleguidist server",
-    "styleguide:build": "styleguidist build"
+    "styleguide:build": "styleguidist build",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
   },
   "eslintConfig": {
     "extends": [
@@ -55,8 +57,15 @@
     "@babel/plugin-transform-runtime": "^7.22.5",
     "@babel/preset-env": "^7.22.5",
     "@babel/preset-react": "^7.22.5",
+    "@electron-forge/cli": "^6.2.1",
+    "@electron-forge/maker-deb": "^6.2.1",
+    "@electron-forge/maker-rpm": "^6.2.1",
+    "@electron-forge/maker-squirrel": "^6.2.1",
+    "@electron-forge/maker-zip": "^6.2.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^6.2.1",
     "babel-jest": "^29.5.0",
     "babel-loader": "^9.1.2",
+    "electron": "^24.6.2",
     "foreman": "^3.0.1",
     "jest": "^27.5.1",
     "jsdoc": "^4.0.2",

@@ -32,9 +32,6 @@ function createWindow() {
     });
     mainWindow.loadURL(startUrl);
 
-    // Open the DevTools.
-    mainWindow.webContents.openDevTools();
-
     //Emitted when the user clicks on the X to attempt to close the application
     mainWindow.on('close', e => {
         e.preventDefault()
