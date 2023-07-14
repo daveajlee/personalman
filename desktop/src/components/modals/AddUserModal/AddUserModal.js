@@ -1,6 +1,7 @@
 import {Modal} from "react-bootstrap";
 import React from "react";
-import AddUserForm from "./AddUserForm";
+import AddUserForm from "../../forms/AddUserForm/AddUserForm";
+import PropTypes from "prop-types";
 
 /**
  * This is the modal window to show the add user form. The modal is used for admin users who want to create new users
@@ -31,3 +32,19 @@ function AddUserModal (props) {
 }
 
 export default AddUserModal;
+
+AddUserModal.propTypes = {
+    /**
+     * the company that users should be created for.
+     */
+    company: PropTypes.string,
+
+    /**
+     * function to determine whether modal should be shown or not
+     */
+    setShowAddUserModal: PropTypes.func
+}
+
+AddUserModal.defaultProps = {
+    company: 'Required'
+};

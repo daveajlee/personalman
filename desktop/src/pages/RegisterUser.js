@@ -1,6 +1,6 @@
 import React from "react";
 import {Col, Container, Image, Row} from "react-bootstrap";
-import AddUserForm from "../components/AddUserForm";
+import AddUserForm from "../components/forms/AddUserForm/AddUserForm";
 
 /**
  * This is the page which allows the user to register themselves for PersonalMan.

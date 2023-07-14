@@ -1,6 +1,7 @@
 import {Button, Modal} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import PropTypes from "prop-types";
 
 /**
  * This is the modal window to show the view statistics for a particular user. The modal is used for admin users who want
@@ -37,13 +38,17 @@ function StatisticsModal (props) {
             .then(res => {
                 const result = res.data;
                 setStatisticsMap(result['statisticsMap']);
-            })
+            }).catch(error => {
+                console.error(error);
+        })
         // Get the leave entitlement for this user.
         axios.get(process.env.REACT_APP_SERVER_URL  + '/user/?company=' + props.company + '&username=' + username + '&token=' + props.token)
             .then(res => {
                 const result = res.data;
                 setLeaveEntitlement(result['leaveEntitlementPerYear']);
-            })
+            }).catch(error => {
+                console.error(error);
+        })
     }, [props.company, props.token, props.year, props.username]);
 
     /**
@@ -68,3 +73,36 @@ function StatisticsModal (props) {
 }
 
 export default StatisticsModal;
+
+StatisticsModal.propTypes = {
+    /**
+     * the company that the user belongs to
+     */
+    company: PropTypes.string,
+
+    /**
+     * function to determine whether modal should be shown or not
+     */
+    setShowStatisticsModal: PropTypes.func,
+
+    /**
+     * the username of the user that the statistics should be displayed for
+     */
+    username: PropTypes.string,
+
+    /**
+     * the current user access token of the admin user
+     */
+    token: PropTypes.string,
+
+    /**
+     * the year that the statistics should be displayed for
+     */
+    year: PropTypes.number
+}
+
+    StatisticsModal.defaultProps = {
+    company: 'Required',
+    username: 'Required',
+    token: 'Required'
+};

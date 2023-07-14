@@ -2,6 +2,8 @@ import {Button, Col, Container, Form, Row} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
+import PropTypes from "prop-types";
+import Header from "../../layout/Header/Header";
 
 /**
  * This is the form to display when the user wishes to create a new user for a particular company.
@@ -421,3 +423,15 @@ function AddUserForm (props) {
 }
 
 export default AddUserForm;
+
+AddUserForm.propTypes = {
+    /**
+     * create a new user for this particular company name (optional).
+     */
+    company: PropTypes.string
+}
+
+Header.defaultProps = {
+    company: 'Optional'
+};
+

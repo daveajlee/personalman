@@ -1,6 +1,7 @@
 import {Button, Col, Form, Modal, Row} from "react-bootstrap";
 import React, {useState} from "react";
 import axios from "axios";
+import PropTypes from "prop-types";
 
 /**
  * This is the modal window to show the reset password form. The modal is used for admin users who want to reset
@@ -98,3 +99,31 @@ function ResetModal (props) {
 }
 
 export default ResetModal;
+
+ResetModal.propTypes = {
+    /**
+     * the company that the user belongs to
+     */
+    company: PropTypes.string,
+
+    /**
+     * function to determine whether modal should be shown or not
+     */
+    setShowResetModal: PropTypes.func,
+
+    /**
+     * the username of the user that the password should be reset for
+     */
+    username: PropTypes.string,
+
+    /**
+     * the current user access token of the admin user
+     */
+    token: PropTypes.string,
+}
+
+ResetModal.defaultProps = {
+    company: 'Required',
+    username: 'Required',
+    token: 'Required'
+};

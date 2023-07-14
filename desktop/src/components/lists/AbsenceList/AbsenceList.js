@@ -2,6 +2,7 @@ import {Button, Col, Container, Row} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import PropTypes from "prop-types";
 
 /**
  * This component displays the list of absences that have been saved in the system for either a particular username
@@ -29,13 +30,17 @@ function AbsenceList (props) {
                     .then(res => {
                         const result = res.data;
                         setAbsences(result['absenceResponseList']);
-                    })
+                    }).catch(error => {
+                        console.error(error);
+                })
             } else {
                 axios.get(process.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&startDate=' + props.startDate + '&endDate=' + props.endDate + '&onlyCount=false&token=' + props.token)
                     .then(res => {
                         const result = res.data;
                         setAbsences(result['absenceResponseList']);
-                    })
+                    }).catch(error => {
+                        console.error(error);
+                })
             }
         } else {
             let startDate = '01-'+ props.month.toLocaleString('en-US', {
@@ -258,3 +263,49 @@ function AbsenceList (props) {
 }
 
 export default AbsenceList;
+
+AbsenceList.propTypes = {
+    /**
+     * name of company to display absences for
+     */
+    company: PropTypes.string,
+
+    /**
+     * username to display absences for
+     */
+    username: PropTypes.string,
+
+    /**
+     * date in format dd-MM-yyyy to start displaying absences from
+     */
+    startDate: PropTypes.string,
+
+    /**
+     * date in format dd-MM-yyyy which is the last date to display absences for
+     */
+    endDate: PropTypes.string,
+
+    /**
+     * the current access token from the user wishing to view the absences
+     */
+    token: PropTypes.string,
+
+    /**
+     * the month to display absences
+     */
+    month: PropTypes.number,
+
+    /**
+     * the year to display absences
+     */
+    year: PropTypes.number,
+}
+
+AbsenceList.defaultProps = {
+    company: 'Required',
+    username: 'Optional',
+    token: 'Required',
+    startDate: 'Required',
+    endDate: 'Required',
+};
+

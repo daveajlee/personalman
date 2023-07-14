@@ -1,11 +1,11 @@
 import {useLocation, useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
-import Header from "../components/Header";
+import Header from "../components/layout/Header/Header";
 import {Button, Col, Container, Row} from "react-bootstrap";
 import axios from "axios";
-import StatisticsModal from "../components/StatisticsModal";
-import ResetModal from "../components/ResetModal";
-import AddUserModal from "../components/AddUserModal";
+import StatisticsModal from "../components/modals/StatisticsModal/StatisticsModal";
+import ResetModal from "../components/modals/ResetModal/ResetModal";
+import AddUserModal from "../components/modals/AddUserModal/AddUserModal";
 
 /**
  * This is the page which allows an admin user to manage users in their company.

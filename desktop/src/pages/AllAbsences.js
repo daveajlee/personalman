@@ -1,10 +1,10 @@
 import React, {useEffect} from "react";
 import {useLocation} from "react-router-dom";
 import {Container} from "react-bootstrap";
-import Header from "../components/Header";
+import Header from "../components/layout/Header/Header";
 import {useState} from "react";
 import axios from "axios";
-import AbsenceList from "../components/AbsenceList";
+import AbsenceList from "../components/lists/AbsenceList/AbsenceList";
 
 /**
  * This is the page which displays the list of absences for all users for an admin user within a particular company.

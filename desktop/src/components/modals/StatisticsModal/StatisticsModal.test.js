@@ -1,13 +1,13 @@
 import renderer from 'react-test-renderer';
-import AbsenceList from "./AbsenceList";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import React from "react";
-import AbsenceManagement from "../pages/AbsenceManagement";
-import AllAbsences from "../pages/AllAbsences";
-import App from "../App";
-import ErrorPage from "../pages/ErrorPage";
+import AbsenceManagement from "../../../pages/AbsenceManagement";
+import AllAbsences from "../../../pages/AllAbsences";
+import App from "../../../App";
+import ErrorPage from "../../../pages/ErrorPage";
+import StatisticsModal from "./StatisticsModal";
 
-it('checks that the AbsenceList component can be rendered', () => {
+it('checks that the StatisticsModal component can be rendered', () => {
 
     const component = renderer.create(
         <React.StrictMode>
@@ -22,8 +22,7 @@ it('checks that the AbsenceList component can be rendered', () => {
                 path: "/allAbsences",
                 element: <AllAbsences/>
             }])}>
-            <AbsenceList company="Mustermann GmbH" username="mmustermann" startDate="01-06-2023" endDate="30-06-2023"
-                token="mmustermann-ghgkg" month={6} year={2023}/>
+            <StatisticsModal company="Mustermann GmbH" setShowStatisticsModal={() => {}} username="mmustermann" token="mmustermann-ghgkg" year={2013}/>
             </RouterProvider>
         </React.StrictMode>
     );

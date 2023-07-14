@@ -1,13 +1,13 @@
 import renderer from 'react-test-renderer';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import React from "react";
-import AbsenceManagement from "../pages/AbsenceManagement";
-import AllAbsences from "../pages/AllAbsences";
-import App from "../App";
-import ErrorPage from "../pages/ErrorPage";
-import AddUserModal from "./AddUserModal";
+import AbsenceManagement from "../../../pages/AbsenceManagement";
+import AllAbsences from "../../../pages/AllAbsences";
+import App from "../../../App";
+import ErrorPage from "../../../pages/ErrorPage";
+import Header from "./Header";
 
-it('checks that the AddUserModal component can be rendered', () => {
+it('checks that the Header component can be rendered', () => {
 
     const component = renderer.create(
         <React.StrictMode>
@@ -22,7 +22,7 @@ it('checks that the AddUserModal component can be rendered', () => {
                 path: "/allAbsences",
                 element: <AllAbsences/>
             }])}>
-            <AddUserModal company="Mustermann GmbH" setShowAddUserModal={() => {}}/>
+            <Header company="Mustermann GmbH" token="mmustermann-ghgkg"/>
             </RouterProvider>
         </React.StrictMode>
     );

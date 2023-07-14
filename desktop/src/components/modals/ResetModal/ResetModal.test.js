@@ -1,13 +1,13 @@
 import renderer from 'react-test-renderer';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import React from "react";
-import AbsenceManagement from "../pages/AbsenceManagement";
-import AllAbsences from "../pages/AllAbsences";
-import App from "../App";
-import ErrorPage from "../pages/ErrorPage";
-import StatisticsModal from "./StatisticsModal";
+import AbsenceManagement from "../../../pages/AbsenceManagement";
+import AllAbsences from "../../../pages/AllAbsences";
+import App from "../../../App";
+import ErrorPage from "../../../pages/ErrorPage";
+import ResetModal from "./ResetModal";
 
-it('checks that the StatisticsModal component can be rendered', () => {
+it('checks that the ResetModal component can be rendered', () => {
 
     const component = renderer.create(
         <React.StrictMode>
@@ -22,7 +22,7 @@ it('checks that the StatisticsModal component can be rendered', () => {
                 path: "/allAbsences",
                 element: <AllAbsences/>
             }])}>
-            <StatisticsModal company="Mustermann GmbH" setShowStatisticsModal={() => {}} username="mmustermann" token="mmustermann-ghgkg" year={2013}/>
+            <ResetModal company="Mustermann GmbH" setShowResetModal={() => {}} username="mmustermann" token="mmustermann-ghgkg"/>
             </RouterProvider>
         </React.StrictMode>
     );

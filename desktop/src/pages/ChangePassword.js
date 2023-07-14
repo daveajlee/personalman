@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Button, Col, Container, Form, Image, Row} from "react-bootstrap";
 import axios from "axios";
 import {useLocation, useNavigate} from "react-router-dom";
-import Header from "../components/Header";
+import Header from "../components/layout/Header/Header";
 
 /**
  * This is the page which allows the user to change their password assuming they known their old password. Otherwise,

@@ -1,9 +1,10 @@
 import {Container, Nav, Navbar} from "react-bootstrap";
 import React, {useEffect} from "react";
-import logo from '../assets/personalmanlogo-icon.png';
+import logo from '../../../assets/personalmanlogo-icon.png';
 import { Link } from 'react-router-dom';
 import {useState} from "react";
 import axios from "axios";
+import PropTypes from 'prop-types';
 
 /**
  * This is the component which shows the header and navigation bar including logout option.
@@ -24,7 +25,9 @@ function Header(props) {
                 const result = res.data;
                 setName(result['firstName'] + ' ' + result['surname']);
                 setRole(result['role']);
-            })
+            }).catch(error => {
+                console.error(error);
+        })
     }, [props.company, props.token]);
 
     /**
@@ -57,3 +60,20 @@ function Header(props) {
 }
 
 export default Header;
+
+Header.propTypes = {
+    /**
+     * the company that the user belongs to
+     */
+    company: PropTypes.string,
+
+    /**
+     * the user access token for the currently logged in user
+     */
+    token: PropTypes.string
+}
+
+Header.defaultProps = {
+    company: 'Required',
+    token: 'Required'
+};
