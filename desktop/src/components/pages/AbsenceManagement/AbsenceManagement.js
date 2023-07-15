@@ -1,18 +1,18 @@
 import React, {useLayoutEffect} from "react";
 import {useLocation} from "react-router-dom";
 import {Container, Row, Col, Button, Modal, Form} from "react-bootstrap";
-import Header from "../components/layout/Header/Header";
+import Header from "../../layout/Header/Header";
 import {useState} from "react";
 import axios from "axios";
-import StatisticsModal from "../components/modals/StatisticsModal/StatisticsModal";
-import AbsenceList from "../components/lists/AbsenceList/AbsenceList";
+import StatisticsModal from "../../modals/StatisticsModal/StatisticsModal";
+import AbsenceList from "../../lists/AbsenceList/AbsenceList";
 
 /**
  * This is the page which displays the list of absences for the current user and allows them to create new absences or
  * view other months or add an absence.
  * @returns {JSX.Element} to be displayed to the user.
  */
-function AbsenceManagement() {
+function AbsenceManagement(props) {
 
     const location = useLocation();
 
@@ -29,12 +29,60 @@ function AbsenceManagement() {
     const [reason, setReason] = useState("Illness");
 
     /**
+     * Retrieve the current token either from the supplied state or empty if we are in doc mode.
+     * @returns the current token as a string.
+     */
+    function getToken() {
+        if ( props.docMode && props.docMode==='true') {
+            return "";
+        } else {
+            return location.state.token;
+        }
+    }
+
+    /**
+     * Retrieve the company either from the supplied state or empty if we are in doc mode.
+     * @returns the current company as a string.
+     */
+    function getCompany() {
+        if ( props.docMode && props.docMode==='true') {
+            return "";
+        } else {
+            return location.state.company;
+        }
+    }
+
+    /**
+     * Retrieve the year either from the supplied state or empty if we are in doc mode.
+     * @returns the current year as a number.
+     */
+    function getYear() {
+        if ( props.docMode && props.docMode==='true') {
+            return "";
+        } else {
+            return location.state.year ? location.state.year : new Date().getFullYear()
+        }
+    }
+
+    /**
+     * Retrieve the month either from the supplied state or empty if we are in doc mode.
+     * @returns the current month as a number.
+     */
+    function getMonth() {
+        if ( props.docMode && props.docMode==='true') {
+            return "";
+        } else {
+            return location.state.month ? location.state.month : ((new Date().getMonth()) +1)
+        }
+    }
+
+    /**
      * Load the absences from the REST API either for a particular username within a specific time period
      * (usually a month in a year).
      */
     useLayoutEffect(() => {
         // Load the actual month of absences.
-        if ( !location.state.month ) {
+        /*if ( !location.state.month ) {
             setStartDate('01-' + ((new Date().getMonth()) +1).toLocaleString('en-US', {
                 minimumIntegerDigits: 2,
                 useGrouping: false
@@ -43,18 +91,18 @@ function AbsenceManagement() {
                 minimumIntegerDigits: 2,
                 useGrouping: false
             }) + '-' + new Date().getFullYear());
-        } else {
-            setStartDate('01-' + (location.state.month).toLocaleString('en-US', {
+        } else {*/
+            setStartDate('01-' + (getMonth()).toLocaleString('en-US', {
                 minimumIntegerDigits: 2,
                 useGrouping: false
-            }) + '-' + location.state.year);
-            setEndDate(daysInMonth(location.state.month, location.state.year) + '-' + (location.state.month).toLocaleString('en-US', {
+            }) + '-' + getYear());
+            setEndDate(daysInMonth(getMonth(), getYear()) + '-' + (getMonth()).toLocaleString('en-US', {
                 minimumIntegerDigits: 2,
                 useGrouping: false
-            }) + '-' + location.state.year);
-        }
+            }) + '-' + getYear());
+        //}
 
-    }, [location.state.token, location.state.month, location.state.year, location.state.company]);
+    }, [getToken(), getMonth(), getYear(), getCompany()]);
 
     /**
      * Return the number of days that a month has in a particular year.
@@ -71,7 +119,7 @@ function AbsenceManagement() {
      * @returns the username
      */
     function getUsername() {
-        return location.state.token.split("-")[0];
+        return getToken().split("-")[0];
     }
 
     /**
@@ -99,12 +147,12 @@ function AbsenceManagement() {
             return;
         }
         axios.post(process.env.REACT_APP_SERVER_URL + '/absences/', {
-            company: location.state.company,
+            company: getCompany(),
             username: getUsername(),
             startDate: startDateSplit[2] + '-' + startDateSplit[1] + '-' + startDateSplit[0],
             endDate: endDateSplit[2] + '-' + endDateSplit[1] + '-' + endDateSplit[0],
             category: reason,
-            token: location.state.token,
+            token: getToken(),
         }).then(function (response) {
             if ( response.status === 201 ) {
                 alert('Absence was added successfully!');
@@ -145,11 +193,11 @@ function AbsenceManagement() {
      */
     return (
         <Container fluid>
-            <Header token={location.state.token} company={location.state.company}/>
+            <Header token={getToken()} company={getCompany()}/>
 
-            <AbsenceList company={location.state.company} token={location.state.token} startDate={startDate} endDate={endDate}
-            month={location.state.month ? location.state.month : ((new Date().getMonth()) +1)}
-            year={location.state.year ? location.state.year : new Date().getFullYear()}
+            <AbsenceList company={getCompany()} token={getToken()} startDate={startDate} endDate={endDate}
+            month={getMonth()}
+            year={getYear()}
             username={getUsername()}/>
 
             <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>
@@ -202,8 +250,8 @@ function AbsenceManagement() {
                 </Modal.Footer>
             </Modal>
 
-            <StatisticsModal year={ location.state.year ? location.state.year : new Date().getFullYear()} company={location.state.company}
-                             token={location.state.token} showStatisticsModal={showStatisticsModal} setShowStatisticsModal={setShowStatisticsModal}
+            <StatisticsModal year={ getYear()} company={getCompany()}
+                             token={getToken()} showStatisticsModal={showStatisticsModal} setShowStatisticsModal={setShowStatisticsModal}
                              username={getUsername()}>
             </StatisticsModal>
 

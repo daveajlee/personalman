@@ -1,10 +1,10 @@
 import renderer from 'react-test-renderer';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import React from "react";
-import AbsenceManagement from "../../../pages/AbsenceManagement";
-import AllAbsences from "../../../pages/AllAbsences";
+import AbsenceManagement from "../../pages/AbsenceManagement/AbsenceManagement";
+import AllAbsences from "../../pages/AllAbsences/AllAbsences";
 import App from "../../../App";
-import ErrorPage from "../../../pages/ErrorPage";
+import ErrorPage from "../../pages/ErrorPage/ErrorPage";
 import AddUserModal from "./AddUserModal";
 
 it('checks that the AddUserModal component can be rendered', () => {

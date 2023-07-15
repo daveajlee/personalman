@@ -2,7 +2,7 @@ import renderer from 'react-test-renderer';
 import React from "react";
 import App from "./App";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
-import ErrorPage from "./pages/ErrorPage";
+import ErrorPage from "./components/pages/ErrorPage/ErrorPage";
 
 it('checks that the App component can be rendered', () => {
 

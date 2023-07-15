@@ -38,7 +38,9 @@ function AddUserForm (props) {
                     const companies = res.data;
                     setCompanies(companies);
                     setCompany(companies[0]);
-                })
+                }).catch(error => {
+                    console.error(error);
+            })
         } else {
             setCompanies(new Array(props.company));
             setCompany(props.company);

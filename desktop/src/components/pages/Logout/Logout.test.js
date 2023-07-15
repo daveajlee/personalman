@@ -1,24 +1,20 @@
 import renderer from 'react-test-renderer';
 import React from "react";
-import Login from "../pages/Login"
+import Logout from "./Logout"
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
-import AbsenceManagement from "./AbsenceManagement";
-import App from "../App";
-import ErrorPage from "./ErrorPage";
+import App from "../../../App";
+import ErrorPage from "../ErrorPage/ErrorPage";
 
-it('checks that the Login page can be rendered', () => {
+it('checks that the Logout page can be rendered', () => {
 
     const component = renderer.create(
         <React.StrictMode>
             <RouterProvider router={createBrowserRouter([{
-                path: "/",
+                path: "/*",
                 element: <App/>,
                 errorElement: <ErrorPage />,
-            },{
-                path: "/absences",
-                element: <AbsenceManagement/>
             }])}>
-                <Login/>
+                <Logout/>
             </RouterProvider>
         </React.StrictMode>
     );

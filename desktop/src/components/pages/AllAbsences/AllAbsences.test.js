@@ -1,11 +1,12 @@
 import renderer from 'react-test-renderer';
-import React from "react";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
-import App from "../App";
-import ErrorPage from "./ErrorPage";
-import UsersManagement from "./UsersManagement";
+import React from "react";
+import AbsenceManagement from "../AbsenceManagement/AbsenceManagement";
+import AllAbsences from "./AllAbsences";
+import App from "../../../App";
+import ErrorPage from "../ErrorPage/ErrorPage";
 
-it('checks that the UsersManagement page can be rendered', () => {
+it('checks that the AllAbsences page can be rendered', () => {
 
     const component = renderer.create(
         <React.StrictMode>
@@ -13,8 +14,14 @@ it('checks that the UsersManagement page can be rendered', () => {
                 path: "/",
                 element: <App/>,
                 errorElement: <ErrorPage />,
+            },{
+                path: "/absences",
+                element: <AbsenceManagement/>
+            },{
+                path: "/allAbsences",
+                element: <AllAbsences/>
             }])}>
-                <UsersManagement/>
+            <AllAbsences/>
             </RouterProvider>
         </React.StrictMode>
     );

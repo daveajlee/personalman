@@ -1,16 +1,16 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/App.css'
-import Login from "./pages/Login";
-import RegisterCompany from "./pages/RegisterCompany";
+import Login from "./components/pages/Login/Login";
+import RegisterCompany from "./components/pages/RegisterCompany/RegisterCompany";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {Route, Routes} from "react-router-dom";
-import RegisterUser from "./pages/RegisterUser";
-import AbsenceManagement from "./pages/AbsenceManagement";
-import ChangePassword from "./pages/ChangePassword";
-import UsersManagement from "./pages/UsersManagement";
-import AllAbsences from "./pages/AllAbsences";
-import Logout from "./pages/Logout";
+import RegisterUser from "./components/pages/RegisterUser/RegisterUser";
+import AbsenceManagement from "./components/pages/AbsenceManagement/AbsenceManagement";
+import ChangePassword from "./components/pages/ChangePassword/ChangePassword";
+import UsersManagement from "./components/pages/UsersManagement/UsersManagement";
+import AllAbsences from "./components/pages/AllAbsences/AllAbsences";
+import Logout from "./components/pages/Logout/Logout";
 
 /**
  * This is the first page that the user visits when starting PersonalMan - either show the login screen or the register

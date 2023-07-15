@@ -23,7 +23,9 @@ function Login() {
                 const companies = res.data;
                 setCompanies(companies);
                 setCompany(companies[0]);
-            })
+            }).catch(error => {
+                console.error(error);
+        })
     }, []);
 
     /**

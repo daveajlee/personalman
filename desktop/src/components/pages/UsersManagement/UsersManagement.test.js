@@ -1,12 +1,11 @@
 import renderer from 'react-test-renderer';
 import React from "react";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
-import RegisterUser from "./RegisterUser";
-import RegisterCompany from "./RegisterCompany";
-import App from "../App";
-import ErrorPage from "./ErrorPage";
+import App from "../../../App";
+import ErrorPage from "../ErrorPage/ErrorPage";
+import UsersManagement from "./UsersManagement";
 
-it('checks that the RegisterCompany page can be rendered', () => {
+it('checks that the UsersManagement page can be rendered', () => {
 
     const component = renderer.create(
         <React.StrictMode>
@@ -14,11 +13,8 @@ it('checks that the RegisterCompany page can be rendered', () => {
                 path: "/",
                 element: <App/>,
                 errorElement: <ErrorPage />,
-            },{
-                path: "/registerUser",
-                element: <RegisterUser/>,
             }])}>
-                <RegisterCompany/>
+                <UsersManagement/>
             </RouterProvider>
         </React.StrictMode>
     );

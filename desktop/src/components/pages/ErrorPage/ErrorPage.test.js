@@ -1,6 +1,6 @@
 import renderer from 'react-test-renderer';
 import React from "react";
-import ErrorPage from "../pages/ErrorPage";
+import ErrorPage from "./ErrorPage";
 
 it('checks that the ErrorPage page can be rendered', () => {
 

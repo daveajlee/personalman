@@ -1,11 +1,12 @@
 import renderer from 'react-test-renderer';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import React from "react";
-import ChangePassword from "../pages/ChangePassword";
-import App from "../App";
-import ErrorPage from "../pages/ErrorPage";
+import AbsenceManagement from "./AbsenceManagement";
+import AllAbsences from "../AllAbsences/AllAbsences";
+import App from "../../../App";
+import ErrorPage from "../ErrorPage/ErrorPage";
 
-it('checks that the ChangePassword page can be rendered', () => {
+it('checks that the AbsenceManagement page can be rendered', () => {
 
     const component = renderer.create(
         <React.StrictMode>
@@ -13,8 +14,14 @@ it('checks that the ChangePassword page can be rendered', () => {
                 path: "/",
                 element: <App/>,
                 errorElement: <ErrorPage />,
+            },{
+                path: "/absences",
+                element: <AbsenceManagement/>
+            },{
+                path: "/allAbsences",
+                element: <AllAbsences/>
             }])}>
-            <ChangePassword/>
+            <AbsenceManagement/>
             </RouterProvider>
         </React.StrictMode>
     );

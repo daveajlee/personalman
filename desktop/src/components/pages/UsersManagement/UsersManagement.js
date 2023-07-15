@@ -1,17 +1,17 @@
 import {useLocation, useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
-import Header from "../components/layout/Header/Header";
+import Header from "../../layout/Header/Header";
 import {Button, Col, Container, Row} from "react-bootstrap";
 import axios from "axios";
-import StatisticsModal from "../components/modals/StatisticsModal/StatisticsModal";
-import ResetModal from "../components/modals/ResetModal/ResetModal";
-import AddUserModal from "../components/modals/AddUserModal/AddUserModal";
+import StatisticsModal from "../../modals/StatisticsModal/StatisticsModal";
+import ResetModal from "../../modals/ResetModal/ResetModal";
+import AddUserModal from "../../modals/AddUserModal/AddUserModal";
 
 /**
  * This is the page which allows an admin user to manage users in their company.
  * @returns {JSX.Element} to be displayed to the user.
  */
-function UsersManagement() {
+function UsersManagement(props) {
 
     const location = useLocation();
     const [users, setUsers] = useState([]);
@@ -23,16 +23,54 @@ function UsersManagement() {
     const [showAddUserModal, setShowAddUserModal] = useState(false);
 
     /**
+     * Retrieve the current token either from the supplied state or empty if we are in doc mode.
+     * @returns the current token as a string.
+     */
+    function getToken() {
+        if ( props.docMode && props.docMode==='true') {
+            return "";
+        } else {
+            return location.state.token;
+        }
+    }
+
+    /**
+     * Retrieve the company either from the supplied state or empty if we are in doc mode.
+     * @returns the current company as a string.
+     */
+    function getCompany() {
+        if ( props.docMode && props.docMode==='true') {
+            return "";
+        } else {
+            return location.state.company;
+        }
+    }
+
+    /**
+     * Retrieve the year either from the supplied state or empty if we are in doc mode.
+     * @returns the current year as a number.
+     */
+    function getYear() {
+        if ( props.docMode && props.docMode==='true') {
+            return "";
+        } else {
+            return location.state.year ? location.state.year : new Date().getFullYear()
+        }
+    }
+
+    /**
      * This function retrieves the current list of users which exists for the specified company assuming the access
      * token is valid.
      */
     useEffect(() => {
-        axios.get(process.env.REACT_APP_SERVER_URL + '/users/?company=' + location.state.company + '&token=' + location.state.token)
+        axios.get(process.env.REACT_APP_SERVER_URL + '/users/?company=' + getCompany() + '&token=' + getToken())
             .then(res => {
                 const result = res.data;
                 setUsers(result['userResponses']);
-            })
-    }, [location.state.token, location.state.company]);
+            }).catch(error => {
+                console.error(error);
+        })
+    }, [getToken(), getCompany()]);
 
     /**
      * This function deletes the user with the specified username assuming the user confirms that this is what they want to do.
@@ -40,8 +78,8 @@ function UsersManagement() {
      */
     function deleteUser(username) {
         if(window.confirm('Do you really want to delete the user - ' + username + '?')) {
-            axios.delete(process.env.REACT_APP_SERVER_URL + '/user/?company=' + location.state.company + '&username=' + username +
-                '&token=' + location.state.token)
+            axios.delete(process.env.REACT_APP_SERVER_URL + '/user/?company=' + getCompany() + '&username=' + username +
+                '&token=' + getToken())
                 .then(function (response) {
                     if ( response.status === 200 ) {
                         alert('User was deleted successfully!');
@@ -81,7 +119,7 @@ function UsersManagement() {
      * This function shows all absences.
      */
     function allAbsences() {
-        navigate('/allAbsences', {state:{token: location.state.token, month: (new Date().getMonth()+1), year: new Date().getFullYear(), company: location.state.company }});
+        navigate('/allAbsences', {state:{token: getToken(), month: (new Date().getMonth()+1), year: new Date().getFullYear(), company: getCompany() }});
     }
 
     /**
@@ -89,12 +127,12 @@ function UsersManagement() {
      */
     return (
         <Container fluid>
-            <Header token={location.state.token} company={location.state.company}/>
+            <Header token={getToken()} company={getCompany()}/>
 
             <Container fluid className="p-3 my-5 h-custom">
                 <Row className="d-flex flex-row align-items-center justify-content-center">
                     <Col>
-                        <h1 className="text-center">Users for company: {location.state.company}</h1>
+                        <h1 className="text-center">Users for company: {getCompany()}</h1>
                     </Col>
                 </Row>
             {users.map(d => (<Row className="align-items-center justify-content-center mt-3" key={d.username}>
@@ -119,16 +157,16 @@ function UsersManagement() {
                 </Row>
             </Container>
 
-            <StatisticsModal year={ location.state.year ? location.state.year : new Date().getFullYear()} company={location.state.company}
-                             token={location.state.token} showStatisticsModal={showStatisticsModal} setShowStatisticsModal={setShowStatisticsModal}
+            <StatisticsModal year={ getYear() } company={getCompany()}
+                             token={getToken()} showStatisticsModal={showStatisticsModal} setShowStatisticsModal={setShowStatisticsModal}
                              username={selectedUsername}>
             </StatisticsModal>
 
-            <ResetModal company={location.state.company} token={location.state.token} showResetModal={showResetModal}
+            <ResetModal company={getCompany()} token={getToken()} showResetModal={showResetModal}
                         setShowResetModal={setShowResetModal} username={selectedUsername}>
             </ResetModal>
 
-            <AddUserModal company={location.state.company} token={location.state.token} showAddUserModal={showAddUserModal}
+            <AddUserModal company={getCompany()} token={getToken()} showAddUserModal={showAddUserModal}
                         setShowAddUserModal={setShowAddUserModal}>
             </AddUserModal>
 

@@ -5,24 +5,38 @@ import {useLocation, useNavigate} from "react-router-dom";
 /**
  * This component shows the user that we are logging them out of the system. Afterwards it redirects to the start page.
  */
-function Logout() {
+function Logout(props) {
 
     const location = useLocation();
     const navigate = useNavigate();
+
+    /**
+     * Retrieve the current token either from the supplied state or empty if we are in doc mode.
+     * @returns the current token as a string.
+     */
+    function getToken() {
+        if ( props.docMode && props.docMode==='true') {
+            return "";
+        } else {
+            return location.state.token;
+        }
+    }
 
     /**
      * Logout of the system via the REST API.
      */
     useEffect(() => {
         axios.post(process.env.REACT_APP_SERVER_URL + `/user/logout`, {
-            token: location.state.token
+            token: getToken()
         })
             .then(res => {
                 if ( res.status === 200 ) {
                     navigate("/")
                 }
-            })
-    }, [location.state.token, navigate]);
+            }).catch(error => {
+                console.error(error);
+        })
+    }, [getToken(), navigate]);
 
     /**
      * Show the user that we are trying to log them out...

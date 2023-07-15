@@ -2,20 +2,44 @@ import React, {useState} from "react";
 import {Button, Col, Container, Form, Image, Row} from "react-bootstrap";
 import axios from "axios";
 import {useLocation, useNavigate} from "react-router-dom";
-import Header from "../components/layout/Header/Header";
+import Header from "../../layout/Header/Header";
 
 /**
  * This is the page which allows the user to change their password assuming they known their old password. Otherwise,
  * they must request an admin user to reset their password.
  * @returns {JSX.Element} to be displayed to the user.
  */
-function ChangePassword () {
+function ChangePassword (props) {
 
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmedPassword, setConfirmedPassword] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
+
+    /**
+     * Retrieve the current token either from the supplied state or empty if we are in doc mode.
+     * @returns the current token as a string.
+     */
+    function getToken() {
+        if ( props.docMode && props.docMode==='true') {
+            return " - ";
+        } else {
+            return location.state.token;
+        }
+    }
+
+    /**
+     * Retrieve the company either from the supplied state or empty if we are in doc mode.
+     * @returns the current company as a string.
+     */
+    function getCompany() {
+        if ( props.docMode && props.docMode==='true') {
+            return "";
+        } else {
+            return location.state.company;
+        }
+    }
 
     /**
      * Set the current password that the user entered to the state for later.
@@ -60,9 +84,9 @@ function ChangePassword () {
             return;
         }
         axios.patch(process.env.REACT_APP_SERVER_URL + '/user/password', {
-            company: location.state.company,
+            company: getCompany(),
             username: getUsername(),
-            token: location.state.token,
+            token: getToken(),
             currentPassword: currentPassword,
             newPassword: newPassword
         }).then(function (response) {
@@ -80,7 +104,7 @@ function ChangePassword () {
      * @returns the username
      */
     function getUsername() {
-        return location.state.token.split("-")[0];
+        return getToken().split("-")[0];
     }
 
     /**
@@ -88,7 +112,7 @@ function ChangePassword () {
      */
     return (
         <Container fluid>
-            <Header token={location.state.token} company={location.state.company}/>
+            <Header token={getToken()} company={getCompany()}/>
         <Container fluid className="p-3 my-5 h-custom">
         <Row className="d-flex flex-row align-items-center justify-content-center">
             <Col>
