@@ -21,6 +21,7 @@
   "main": "src/electron-starter.js",
   "scripts": {
     "start": "electron-forge start",
+    "start:react": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test:nowatch": "react-scripts test --transformIgnorePatterns 'node_modules/(?!axios)/' --watchAll=false",

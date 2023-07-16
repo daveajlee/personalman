@@ -24,27 +24,13 @@ function UsersManagement(props) {
 
     /**
      * Retrieve the current token either from the supplied state or empty if we are in doc mode.
-     * @returns the current token as a string.
      */
-    function getToken() {
-        if ( props.docMode && props.docMode==='true') {
-            return "";
-        } else {
-            return location.state.token;
-        }
-    }
+    const token = (props.docMode && props.docMode==='true') ? "" : location.state.token;
 
     /**
      * Retrieve the company either from the supplied state or empty if we are in doc mode.
-     * @returns the current company as a string.
      */
-    function getCompany() {
-        if ( props.docMode && props.docMode==='true') {
-            return "";
-        } else {
-            return location.state.company;
-        }
-    }
+    const company = ( props.docMode && props.docMode==='true') ? "" : location.state.company;
 
     /**
      * Retrieve the year either from the supplied state or empty if we are in doc mode.
@@ -63,14 +49,14 @@ function UsersManagement(props) {
      * token is valid.
      */
     useEffect(() => {
-        axios.get(process.env.REACT_APP_SERVER_URL + '/users/?company=' + getCompany() + '&token=' + getToken())
+        axios.get(process.env.REACT_APP_SERVER_URL + '/users/?company=' + company + '&token=' + token)
             .then(res => {
                 const result = res.data;
                 setUsers(result['userResponses']);
             }).catch(error => {
                 console.error(error);
         })
-    }, [getToken(), getCompany()]);
+    }, [token, company]);
 
     /**
      * This function deletes the user with the specified username assuming the user confirms that this is what they want to do.
@@ -78,8 +64,8 @@ function UsersManagement(props) {
      */
     function deleteUser(username) {
         if(window.confirm('Do you really want to delete the user - ' + username + '?')) {
-            axios.delete(process.env.REACT_APP_SERVER_URL + '/user/?company=' + getCompany() + '&username=' + username +
-                '&token=' + getToken())
+            axios.delete(process.env.REACT_APP_SERVER_URL + '/user/?company=' + company + '&username=' + username +
+                '&token=' + token)
                 .then(function (response) {
                     if ( response.status === 200 ) {
                         alert('User was deleted successfully!');
@@ -119,7 +105,7 @@ function UsersManagement(props) {
      * This function shows all absences.
      */
     function allAbsences() {
-        navigate('/allAbsences', {state:{token: getToken(), month: (new Date().getMonth()+1), year: new Date().getFullYear(), company: getCompany() }});
+        navigate('/allAbsences', {state:{token: token, month: (new Date().getMonth()+1), year: new Date().getFullYear(), company: company }});
     }
 
     /**
@@ -127,12 +113,12 @@ function UsersManagement(props) {
      */
     return (
         <Container fluid>
-            <Header token={getToken()} company={getCompany()}/>
+            <Header token={token} company={company}/>
 
             <Container fluid className="p-3 my-5 h-custom">
                 <Row className="d-flex flex-row align-items-center justify-content-center">
                     <Col>
-                        <h1 className="text-center">Users for company: {getCompany()}</h1>
+                        <h1 className="text-center">Users for company: {company}</h1>
                     </Col>
                 </Row>
             {users.map(d => (<Row className="align-items-center justify-content-center mt-3" key={d.username}>
@@ -157,16 +143,16 @@ function UsersManagement(props) {
                 </Row>
             </Container>
 
-            <StatisticsModal year={ getYear() } company={getCompany()}
-                             token={getToken()} showStatisticsModal={showStatisticsModal} setShowStatisticsModal={setShowStatisticsModal}
+            <StatisticsModal year={ getYear() } company={company}
+                             token={token} showStatisticsModal={showStatisticsModal} setShowStatisticsModal={setShowStatisticsModal}
                              username={selectedUsername}>
             </StatisticsModal>
 
-            <ResetModal company={getCompany()} token={getToken()} showResetModal={showResetModal}
+            <ResetModal company={company} token={token} showResetModal={showResetModal}
                         setShowResetModal={setShowResetModal} username={selectedUsername}>
             </ResetModal>
 
-            <AddUserModal company={getCompany()} token={getToken()} showAddUserModal={showAddUserModal}
+            <AddUserModal company={company} token={token} showAddUserModal={showAddUserModal}
                         setShowAddUserModal={setShowAddUserModal}>
             </AddUserModal>
 

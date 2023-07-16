@@ -12,22 +12,15 @@ function Logout(props) {
 
     /**
      * Retrieve the current token either from the supplied state or empty if we are in doc mode.
-     * @returns the current token as a string.
      */
-    function getToken() {
-        if ( props.docMode && props.docMode==='true') {
-            return "";
-        } else {
-            return location.state.token;
-        }
-    }
+    const token = (props.docMode && props.docMode==='true') ? "" : location.state.token;
 
     /**
      * Logout of the system via the REST API.
      */
     useEffect(() => {
         axios.post(process.env.REACT_APP_SERVER_URL + `/user/logout`, {
-            token: getToken()
+            token: token
         })
             .then(res => {
                 if ( res.status === 200 ) {
@@ -36,7 +29,7 @@ function Logout(props) {
             }).catch(error => {
                 console.error(error);
         })
-    }, [getToken(), navigate]);
+    }, [token, navigate]);
 
     /**
      * Show the user that we are trying to log them out...

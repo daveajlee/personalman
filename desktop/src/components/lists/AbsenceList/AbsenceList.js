@@ -57,12 +57,17 @@ function AbsenceList (props) {
                         const result = res.data;
                         setAbsences(result['absenceResponseList']);
                     })
+                    .catch(error => {
+                        console.error(error);
+                    })
             } else {
                 axios.get(process.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + props.token)
                     .then(res => {
                         const result = res.data;
                         setAbsences(result['absenceResponseList']);
-                    })
+                    }).catch(error => {
+                        console.error(error);
+                } )
             }
 
         }

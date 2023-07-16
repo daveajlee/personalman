@@ -20,51 +20,23 @@ function AllAbsences(props) {
 
     /**
      * Retrieve the current token either from the supplied state or empty if we are in doc mode.
-     * @returns the current token as a string.
      */
-    function getToken() {
-        if ( props.docMode && props.docMode==='true') {
-            return "";
-        } else {
-            return location.state.token;
-        }
-    }
+    const token = (props.docMode && props.docMode==='true') ? "" : location.state.token;
 
     /**
      * Retrieve the company either from the supplied state or empty if we are in doc mode.
-     * @returns the current company as a string.
      */
-    function getCompany() {
-        if ( props.docMode && props.docMode==='true') {
-            return "";
-        } else {
-            return location.state.company;
-        }
-    }
+    const company = ( props.docMode && props.docMode==='true') ? "" : location.state.company;
 
     /**
      * Retrieve the year either from the supplied state or empty if we are in doc mode.
-     * @returns the current year as a number.
      */
-    function getYear() {
-        if ( props.docMode && props.docMode==='true') {
-            return "";
-        } else {
-            return location.state.year ? location.state.year : new Date().getFullYear()
-        }
-    }
+    const year = ( props.docMode && props.docMode==='true') ? "" :  location.state.year ? location.state.year : new Date().getFullYear();
 
     /**
      * Retrieve the month either from the supplied state or empty if we are in doc mode.
-     * @returns the current month as a number.
      */
-    function getMonth() {
-        if ( props.docMode && props.docMode==='true') {
-            return "";
-        } else {
-            return location.state.month ? location.state.month : ((new Date().getMonth()) +1)
-        }
-    }
+    const month = ( props.docMode && props.docMode==='true') ? "" : location.state.month ? location.state.month : ((new Date().getMonth()) +1);
 
     /**
      * Load the absences from the REST API either for all users within a specific time period
@@ -72,7 +44,7 @@ function AllAbsences(props) {
      */
     useEffect(() => {
         // Ensure that the user is actually admin, otherwise they cannot view the page.
-        axios.get(process.env.REACT_APP_SERVER_URL + '/user/?company=' + getCompany() + '&username=' + getToken().split("-")[0] + '&token=' + getToken())
+        axios.get(process.env.REACT_APP_SERVER_URL + '/user/?company=' + company + '&username=' + token.split("-")[0] + '&token=' + token)
                 .then(res => {
                     const result = res.data;
                     setRole(result['role']);
@@ -80,27 +52,27 @@ function AllAbsences(props) {
                     console.error(error);
         })
         // Load the actual month of absences.
-        /*if ( getMonth() === null ) {
-            setStartDate('01-' + ((new Date().getMonth()) +1).toLocaleString('en-US', {
+        /*if ( month === null ) {
+            setStartDate('01-' + ((new Date().month) +1).toLocaleString('en-US', {
                 minimumIntegerDigits: 2,
                 useGrouping: false
             }) + '-' + new Date().getFullYear());
-            setEndDate(daysInMonth(((new Date().getMonth()) +1), new Date().getFullYear()) + '-' + ((new Date().getMonth()) +1).toLocaleString('en-US', {
+            setEndDate(daysInMonth(((new Date().month) +1), new Date().getFullYear()) + '-' + ((new Date().month) +1).toLocaleString('en-US', {
                 minimumIntegerDigits: 2,
                 useGrouping: false
             }) + '-' + new Date().getFullYear());
         } else {*/
-            setStartDate('01-' + (getMonth()).toLocaleString('en-US', {
+            setStartDate('01-' + (month).toLocaleString('en-US', {
                 minimumIntegerDigits: 2,
                 useGrouping: false
-            }) + '-' + getYear());
-            setEndDate(daysInMonth(getMonth(), getYear()) + '-' + (getMonth()).toLocaleString('en-US', {
+            }) + '-' + year);
+            setEndDate(daysInMonth(month, year) + '-' + (month).toLocaleString('en-US', {
                 minimumIntegerDigits: 2,
                 useGrouping: false
-            }) + '-' + getYear());
+            }) + '-' + year);
         //}
 
-    }, [getToken(), getMonth(), getYear(), getCompany()]);
+    }, [token, month, year, company]);
 
     /**
      * Return the number of days that a month has in a particular year.
@@ -117,11 +89,11 @@ function AllAbsences(props) {
      */
     return (
         <Container fluid>
-            <Header token={getToken()} company={getCompany()}/>
+            <Header token={token} company={company}/>
 
-            { role==='Admin' && <AbsenceList company={getCompany()} token={getToken()} startDate={startDate} endDate={endDate}
-                         month={getMonth()}
-                         year={getYear()}/>}
+            { role==='Admin' && <AbsenceList company={company} token={token} startDate={startDate} endDate={endDate}
+                         month={month}
+                         year={year}/>}
 
         </Container>
     )
