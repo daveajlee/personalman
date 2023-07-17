@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/personalman/static/css/main.5710faed.css",
-    "main.js": "/personalman/static/js/main.5851be0e.js",
+    "main.js": "/personalman/static/js/main.70e2b50b.js",
     "static/js/787.a6cdfd04.chunk.js": "/personalman/static/js/787.a6cdfd04.chunk.js",
     "static/media/douglas-lopes-ehyV_XOZ4iA-unsplash.jpg": "/personalman/static/media/douglas-lopes-ehyV_XOZ4iA-unsplash.0e2a85740846a7afab97.jpg",
     "static/media/joshua-earle-Dwheufds6kQ-unsplash.jpg": "/personalman/static/media/joshua-earle-Dwheufds6kQ-unsplash.be55339bb11e89ccbc40.jpg",
@@ -12,11 +12,11 @@
     "static/media/architecture-mobile.png": "/personalman/static/media/architecture-mobile.3b18dfa343a1d5d1f1d7.png",
     "index.html": "/personalman/index.html",
     "main.5710faed.css.map": "/personalman/static/css/main.5710faed.css.map",
-    "main.5851be0e.js.map": "/personalman/static/js/main.5851be0e.js.map",
+    "main.70e2b50b.js.map": "/personalman/static/js/main.70e2b50b.js.map",
     "787.a6cdfd04.chunk.js.map": "/personalman/static/js/787.a6cdfd04.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.5710faed.css",
-    "static/js/main.5851be0e.js"
+    "static/js/main.70e2b50b.js"
   ]
 }
