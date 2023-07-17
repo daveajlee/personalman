@@ -21,10 +21,8 @@ const Vision = () => (
                     <Accordion.Item eventKey="0">
                         <Accordion.Header>Easy to use</Accordion.Header>
                         <Accordion.Body>
-                            In order to make PersonalMan even easier to use, it would be better to have a web-based
-                            interface for all users. Currently additional software must be installed on the user's
-                            computer. A browser-based system could then be used in Google Chrome, Firefox or Safari without
-                            the installation of additional software.
+                            PersonalMan should only require basic computer knowledge. Any person who is capable of using
+                            a device connected to the internet (e.g. laptop, PC or smartphone) should be able to use PersonalMan without further training.
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey="1">
@@ -55,9 +53,9 @@ const Vision = () => (
                     <Accordion.Item eventKey="4">
                         <Accordion.Header>User Permissions</Accordion.Header>
                         <Accordion.Body>
-                            PersonalMan should provide small organisations with the performance
-                            and reliability that they need. Users should get quick feedback whenever they make a request and no data
-                            should be intentionally lost.
+                            PersonalMan should provide the relevant features for a particular user in the context of their position
+                            in the organisation. For example, a manager should be able to approve absences whereas employees
+                            can only apply to be absent.
                         </Accordion.Body>
                     </Accordion.Item>
                 </Accordion>

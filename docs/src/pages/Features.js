@@ -25,7 +25,6 @@ const Features = () => (
                             an employee for an organisation, the organisation itself must be created. This organisation
                             has a name, a country where it is located (e.g. to calculate public holidays) and
                             the standard number of holidays that an employee working for the company has per year.
-                            The number of holidays per year can be varied for a particular employee if desired.
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey="1">
@@ -35,9 +34,8 @@ const Features = () => (
                             is secured by a username and password. An employee can either be a standard user or an
                             admin user. In the case of admin users, the employee can add other employees to PersonalMan.
                             An employee has a name, a list of days that the employee usually works (which is necessary
-                            to calculate public holiday entitlement), their job title, their date of birth, the
-                            date that they started working for the company and the number of holidays per year
-                            (if the standard number of holidays should not be used). If an employee chooses to leave
+                            to calculate public holiday entitlement), their job title, their date of birth and the
+                            date that they started working for the company. If an employee chooses to leave
                             the organisation, an admin user can remove their account.
                         </Accordion.Body>
                     </Accordion.Item>
@@ -63,6 +61,8 @@ const Features = () => (
                         <Accordion.Body>
                             Each employee has a list of training courses that they have attended. This can be added
                             to at any point with new training courses that the employee has attended.
+                            <br/><br/><i>* This feature is currently only implemented in the Server API. The desktop client does not
+                            currently support this feature.</i>
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey="4">
@@ -72,6 +72,9 @@ const Features = () => (
                             This is particularly relevant for those employees who are paid based on the number of
                             hours that they work. It is possible to increase the number of hours later if the employee
                             has on-call duty and has to work part of the evening as well.
+
+                            <br/><br/><i>* This feature is currently only implemented in the Server API. The desktop client does not
+                            currently support this feature.</i>
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey="5">
@@ -83,6 +86,9 @@ const Features = () => (
                             The particular amount that the user should be paid is then calculated. The actual
                             payment processing must be done using separate software. It is then possible to mark
                             that all of the employees have been paid. The salary of each employee can be updated at any time.
+
+                            <br/><br/><i>* This feature is currently only implemented in the Server API. The desktop client does not
+                            currently support this feature.</i>
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey="6">
@@ -91,6 +97,9 @@ const Features = () => (
                             A user can change their password at any time as long as they can enter their old password.
                             If the user has forgotten their password, then an admin user can reset their password.
                             An admin user can also deactivate users within the organisation for whatever reason.
+
+                            <br/><br/><i>* Deactivating users is currently only implemented in the Server API. The desktop client does not
+                            currently support this feature.</i>
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey="7">
@@ -99,6 +108,9 @@ const Features = () => (
                             The most critical dates in an employee's journey with the organisation such as starting day,
                             being paid and the date that they leave are stored in the user's profile including the reason
                             why they left the organisation.
+
+                            <br/><br/><i>* This feature is currently only implemented in the Server API. The desktop client does not
+                            currently support this feature.</i>
                         </Accordion.Body>
                     </Accordion.Item>
                 </Accordion>
