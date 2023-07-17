@@ -1,71 +1,23 @@
-# personalman-frontend
-PersonalMan Frontend is a client for the PersonalMan server. 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-Electron was added using this [article](https://github.com/csepulv/electron-with-create-react-app)
+# PersonalMan Desktop Client (Electron)
 
-## Available Scripts
+This is a Desktop Client for PersonalMan which provides absence management for employees or volunteers. Please note that you need a running PersonalMan Server to use this client! The client is based on React & Electron. 
+Both Windows and Mac OS are the supported operating systems.
 
-In the project directory, you can run:
+## Using the client
 
-### `npm run dev`
+*   First of all, you need a running PersonalMan server - this can be done either locally or remote. Please follow the instructions in the personalman repository (<https://github.com/daveajlee/personalman/server>).
+*   You can run the client by cloning this repository and running the following command: `npm run electron`
+*   The PersonalMan server can be configured by editing the .env file before starting the Electron application.
 
-Runs the app in the development mode and automatically starts Electron.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Viewing the source
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+*   Clone the git branch and import the project in your favourite IDE.
+*   The project can be built via `npm run build`.
+*   The application is sorted into individual components. An overview of the components can be found via the styleguide: `npm run styleguide`
+*   Dependencies are managed via the package.json file and NPM (Node 18 is required).
+*   Unit tests can be run via `npm run test` (interactive watch mode) or `npm run test:nowatch` (single run with no watch mode).
 
-### `npm test`
+## Limitations of the client
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+*   I cannot accept any warranty for loss of data through using this client or server.
+*   Currently the client is only available in English.
