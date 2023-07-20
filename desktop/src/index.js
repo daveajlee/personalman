@@ -6,6 +6,7 @@ import {
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import App from './App';
+import './i18n/config';
 
 /**
  * Use the defined router in the React application.

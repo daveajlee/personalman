@@ -6,6 +6,7 @@ import {useState} from "react";
 import axios from "axios";
 import StatisticsModal from "../../modals/StatisticsModal/StatisticsModal";
 import AbsenceList from "../../lists/AbsenceList/AbsenceList";
+import {useTranslation} from "react-i18next";
 
 /**
  * This is the page which displays the list of absences for the current user and allows them to create new absences or
@@ -18,6 +19,8 @@ function AbsenceManagement(props) {
 
     const [showAddModal, setShowAddModal] = useState(false);
     const [showStatisticsModal, setShowStatisticsModal] = useState(false);
+
+    const {t} = useTranslation();
 
     /**
      * Function to manage the modal for adding absences.
@@ -175,8 +178,8 @@ function AbsenceManagement(props) {
             <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>
                 <Row>
                     <Col className="text-center">
-                        <Button className="mb-0 px-5 me-2" size='lg' onClick={addAbsenceInput}>Add Absence</Button>
-                        <Button className="mb-0 px-5 me-2" size='lg' onClick={viewStatistics}>View Statistics</Button>
+                        <Button className="mb-0 px-5 me-2" size='lg' onClick={addAbsenceInput}>{t('absenceManagementAddAbsence')}</Button>
+                        <Button className="mb-0 px-5 me-2" size='lg' onClick={viewStatistics}>{t('absenceManagementViewStatistics')}</Button>
                     </Col>
                 </Row>
             </Container>

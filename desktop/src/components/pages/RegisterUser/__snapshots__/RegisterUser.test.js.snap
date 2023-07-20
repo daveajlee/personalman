@@ -29,7 +29,7 @@ exports[`checks that the RegisterUser page can be rendered 1`] = `
             className="col"
           >
             <h3>
-              Getting Started: Registering a new Company/Organisation
+              registerCompanyTitle
             </h3>
           </div>
         </div>
@@ -47,7 +47,8 @@ exports[`checks that the RegisterUser page can be rendered 1`] = `
               className="form-label col-form-label col-sm-2"
               htmlFor="formPlaintextName"
             >
-              Name:
+              registerCompanyNameLabel
+              :
             </label>
             <div
               className="col-sm-10"
@@ -56,7 +57,7 @@ exports[`checks that the RegisterUser page can be rendered 1`] = `
                 className="form-control"
                 id="formPlaintextName"
                 onChange={[Function]}
-                placeholder="Name"
+                placeholder="registerCompanyNameLabel"
                 type="text"
                 value=""
               />
@@ -69,7 +70,8 @@ exports[`checks that the RegisterUser page can be rendered 1`] = `
               className="form-label col-form-label col-sm-2"
               htmlFor="formPlaintextEmail"
             >
-              Default Annual Leave:
+              registerCompanyAnnualLeaveLabel
+              :
             </label>
             <div
               className="col-sm-10"
@@ -80,7 +82,6 @@ exports[`checks that the RegisterUser page can be rendered 1`] = `
                 max="40"
                 min="20"
                 onChange={[Function]}
-                placeholder="A number between 20 and 40"
                 type="number"
                 value={20}
               />
@@ -93,7 +94,8 @@ exports[`checks that the RegisterUser page can be rendered 1`] = `
               className="form-label col-form-label col-sm-2"
               htmlFor="formPlaintextCompany"
             >
-              Base Country:
+              registerCompanyBaseCountryLabel
+              :
             </label>
             <div
               className="col-sm-10"
@@ -106,13 +108,13 @@ exports[`checks that the RegisterUser page can be rendered 1`] = `
                 value="Germany"
               >
                 <option>
-                  Germany
+                  registerCompanyCountryGermany
                 </option>
                 <option>
-                  England
+                  registerCompanyCountryEngland
                 </option>
                 <option>
-                  Scotland
+                  registerCompanyCountryScotland
                 </option>
               </select>
             </div>
@@ -134,7 +136,7 @@ exports[`checks that the RegisterUser page can be rendered 1`] = `
               onClick={[Function]}
               type="button"
             >
-              Register
+              registerCompanyRegisterButton
             </button>
             <button
               className="mb-0 px-5 me-2 btn btn-primary btn-lg"
@@ -142,7 +144,7 @@ exports[`checks that the RegisterUser page can be rendered 1`] = `
               onClick={[Function]}
               type="button"
             >
-              Reset
+              registerCompanyResetButton
             </button>
           </div>
         </div>

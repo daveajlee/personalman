@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import PropTypes from "prop-types";
+import {useTranslation} from "react-i18next";
 
 /**
  * This component displays the list of absences that have been saved in the system for either a particular username
@@ -16,8 +17,13 @@ import PropTypes from "prop-types";
 function AbsenceList (props) {
 
     const [absences, setAbsences] = useState([]);
-    const months    = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
     const navigate = useNavigate();
+
+    const {t} = useTranslation();
+
+    const months    = [t('january'),t('february'),t('march'),t('april'),t('may'),t('june'),
+        t('july'),t('august'),t('september'),t('october'),t('november'),t('december')];
 
     /**
      * Load the absences from the REST API either for a particular username or all users within a specific time period
@@ -236,7 +242,7 @@ function AbsenceList (props) {
             <Container fluid className="p-3 my-5 h-custom">
                 <Row className="d-flex flex-row align-items-center justify-content-center">
                     <Col>
-                        {props.username ? <h1 className="text-center">Absences for user: {props.username}</h1> : <h1 className="text-center">All Absences</h1> }
+                        {props.username ? <h1 className="text-center">{t('absenceListAbsenceFor')}: {props.username}</h1> : <h1 className="text-center">{t('absenceListAllAbsences')}</h1> }
                     </Col>
                 </Row>
                 <Row className="d-flex flex-row align-items-center justify-content-center mb-5">
@@ -246,10 +252,11 @@ function AbsenceList (props) {
                 </Row>
                 {absences.map(d => (<Row className="align-items-center justify-content-center" key={d.startDate + '-' + d.endDate}>
                     <Col xs lg="10">
-                        <h4 className="text-center">{d.startDate} to {d.endDate} with {d.category} for {d.username} </h4>
+
+                        <h4 className="text-center">{t('absenceListAbsence', { startDate: d.startDate, endDate: d.endDate, category: d.category, username: d.username })}</h4>
                     </Col>
                     <Col >
-                        <Button variant="danger" size='sm' onClick={deleteAbsence.bind(this, d)}>Delete</Button>
+                        <Button variant="danger" size='sm' onClick={deleteAbsence.bind(this, d)}>{t('absenceListDeleteButton')}</Button>
                     </Col>
                 </Row>))}
             </Container>
@@ -257,8 +264,8 @@ function AbsenceList (props) {
             <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>
                 <Row>
                     <Col className="text-center">
-                        <Button className="mb-0 px-5 me-2 mt-2" size='lg' onClick={previousMonth}>Previous Month</Button>
-                        <Button className="mb-0 px-5 me-2 mt-2" size='lg' onClick={nextMonth}>Next Month</Button>
+                        <Button className="mb-0 px-5 me-2 mt-2" size='lg' onClick={previousMonth}>{t('absenceListPreviousMonth')}</Button>
+                        <Button className="mb-0 px-5 me-2 mt-2" size='lg' onClick={nextMonth}>{t('absenceListNextMonth')}</Button>
                     </Col>
                 </Row>
             </Container>

@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Container, Col, Row, Form, Button, Image} from "react-bootstrap";
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 /**
  * This component represents the login screen to allow users to login to PersonalMan.
@@ -13,6 +14,8 @@ function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+
+    const {t} = useTranslation();
 
     /**
      * Load the list of available companies via the REST API.
@@ -93,7 +96,7 @@ function Login() {
                 <Container className="d-flex flex-row align-items-center justify-content-center mb-3">
                     <Row>
                         <Col>
-                            <h1>Welcome to PersonalMan!</h1>
+                            <h1>{t('loginTitle')}</h1>
                         </Col>
                     </Row>
                 </Container>
@@ -101,7 +104,7 @@ function Login() {
                 <Container className="d-flex flex-column">
                     <Form>
                         <Form.Group as={Row} className="mb-3" controlId="formPlaintextCompany">
-                            <Form.Label column sm="2">Company:</Form.Label>
+                            <Form.Label column sm="2">{t('loginCompanyLabel')}:</Form.Label>
                             <Col sm="10">
                                 <Form.Select value={company} aria-label="Company Name" onChange={handleCompanyChange}>
                                     {companies.map(company => ( <option key={company}>{company}</option>))}
@@ -110,16 +113,16 @@ function Login() {
                         </Form.Group>
 
                         <Form.Group as={Row} className="mb-3" controlId="formPlaintextUsername">
-                            <Form.Label column sm="2">Username:</Form.Label>
+                            <Form.Label column sm="2">{t('loginUsernameLabel')}:</Form.Label>
                             <Col sm="10">
-                                <Form.Control type="text" value={username} placeholder="Username" autoComplete="username" onChange={handleUsernameChange}/>
+                                <Form.Control type="text" value={username} placeholder={t('loginUsernameLabel')} autoComplete="username" onChange={handleUsernameChange}/>
                             </Col>
                         </Form.Group>
 
                         <Form.Group as={Row} className="mb-3" controlId="formPlaintextPassword">
-                            <Form.Label column sm="2">Password:</Form.Label>
+                            <Form.Label column sm="2">{t('loginPasswordLabel')}</Form.Label>
                             <Col sm="10">
-                                <Form.Control type="password" value={password} placeholder="Password" autoComplete="current-password" onChange={handlePasswordChange}/>
+                                <Form.Control type="password" value={password} placeholder={t('loginPasswordLabel')} autoComplete="current-password" onChange={handlePasswordChange}/>
                             </Col>
                         </Form.Group>
                     </Form>
@@ -128,13 +131,13 @@ function Login() {
                 <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>
                     <Row>
                         <Col className="text-center">
-                            <Button className="mb-0 px-5 me-2" size='lg' onClick={login}>Login</Button>
-                            <Button className="mb-0 px-5 me-2" size='lg' onClick={resetForm}>Reset</Button>
-                            <p className="small fw-bold mt-2 pt-1 mb-2">Not yet registered for PersonalMan? <a href="registerUser"
-                                                                                                  className="link-danger">Register</a>
+                            <Button className="mb-0 px-5 me-2" size='lg' onClick={login}>{t('loginLoginButton')}</Button>
+                            <Button className="mb-0 px-5 me-2" size='lg' onClick={resetForm}>{t('loginResetButton')}</Button>
+                            <p className="small fw-bold mt-2 pt-1 mb-2">{t('loginRegisterUserTeaser')} <a href="registerUser"
+                                                                                                  className="link-danger">{t('loginRegisterUserLink')}</a>
                             </p>
-                            <p className="small fw-bold mt-2 pt-1 mb-2">Your company does not yet exist in PersonalMan? <a href="registerCompany"
-                                                                                                               className="link-danger">Register Company</a>
+                            <p className="small fw-bold mt-2 pt-1 mb-2">{t('loginRegisterCompanyTeaser')} <a href="registerCompany"
+                                                                                                               className="link-danger">{t('loginRegisterCompanyLink')}</a>
                             </p>
                         </Col>
                     </Row>

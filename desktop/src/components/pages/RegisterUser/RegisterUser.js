@@ -1,12 +1,15 @@
 import React from "react";
 import {Col, Container, Image, Row} from "react-bootstrap";
 import AddUserForm from "../../forms/AddUserForm/AddUserForm";
+import {useTranslation} from "react-i18next";
 
 /**
  * This is the page which allows the user to register themselves for PersonalMan.
  * @returns {JSX.Element} to be displayed to the user.
  */
 function RegisterUser () {
+
+    const {t} = useTranslation();
 
     /**
      * Display the relevant elements and data to the user.
@@ -21,7 +24,7 @@ function RegisterUser () {
                 <Container className="d-flex flex-row align-items-center justify-content-center mb-3">
                     <Row>
                         <Col>
-                            <h3>Getting Started: Registering a new User</h3>
+                            <h3>{t('registerUserTitle')}</h3>
                         </Col>
                     </Row>
                 </Container>

@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {Button, Col, Container, Form, Image, Row} from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 /**
  * This is the page which allows the user to register a new company in PersonalMan.
@@ -13,6 +14,8 @@ function RegisterCompany () {
     const [annualLeave, setAnnualLeave] = useState(20);
     const [country, setCountry] = useState("Germany");
     const navigate = useNavigate();
+
+    const {t} = useTranslation();
 
     /**
      * Set the name that the user entered to the state for later.
@@ -78,7 +81,7 @@ function RegisterCompany () {
                 <Container className="d-flex flex-row align-items-center justify-content-center mb-3">
                     <Row>
                         <Col>
-                            <h3>Getting Started: Registering a new Company/Organisation</h3>
+                            <h3>{t('registerCompanyTitle')}</h3>
                         </Col>
                     </Row>
                 </Container>
@@ -87,26 +90,26 @@ function RegisterCompany () {
                     <Form>
 
                         <Form.Group as={Row} className="mb-3" controlId="formPlaintextName">
-                            <Form.Label column sm="2">Name:</Form.Label>
+                            <Form.Label column sm="2">{t('registerCompanyNameLabel')}:</Form.Label>
                             <Col sm="10">
-                                <Form.Control value={name} type="text" placeholder="Name" onChange={nameChangeHandler}/>
+                                <Form.Control value={name} type="text" placeholder={t('registerCompanyNameLabel')} onChange={nameChangeHandler}/>
                             </Col>
                         </Form.Group>
 
                         <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
-                            <Form.Label column sm="2">Default Annual Leave:</Form.Label>
+                            <Form.Label column sm="2">{t('registerCompanyAnnualLeaveLabel')}:</Form.Label>
                             <Col sm="10">
-                                <Form.Control type="number" value={annualLeave} placeholder="A number between 20 and 40" min="20" max="40" onChange={annualLeaveChangeHandler}/>
+                                <Form.Control type="number" value={annualLeave} min="20" max="40" onChange={annualLeaveChangeHandler}/>
                             </Col>
                         </Form.Group>
 
                         <Form.Group as={Row} className="mb-3" controlId="formPlaintextCompany">
-                            <Form.Label column sm="2">Base Country:</Form.Label>
+                            <Form.Label column sm="2">{t('registerCompanyBaseCountryLabel')}:</Form.Label>
                             <Col sm="10">
                                 <Form.Select value={country} aria-label="Company Name" onChange={countryChangeHandler}>
-                                    <option key="de">Germany</option>
-                                    <option key="gb-eng">England</option>
-                                    <option key="gb-sct">Scotland</option>
+                                    <option key="de">{t('registerCompanyCountryGermany')}</option>
+                                    <option key="gb-eng">{t('registerCompanyCountryEngland')}</option>
+                                    <option key="gb-sct">{t('registerCompanyCountryScotland')}</option>
                                 </Form.Select>
                             </Col>
                         </Form.Group>
@@ -117,8 +120,8 @@ function RegisterCompany () {
                 <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>
                     <Row>
                         <Col className="text-center">
-                            <Button className="mb-0 px-5 me-2" size='lg' onClick={registerCompany}>Register</Button>
-                            <Button className="mb-0 px-5 me-2" size='lg' onClick={resetForm}>Reset</Button>
+                            <Button className="mb-0 px-5 me-2" size='lg' onClick={registerCompany}>{t('registerCompanyRegisterButton')}</Button>
+                            <Button className="mb-0 px-5 me-2" size='lg' onClick={resetForm}>{t('registerCompanyResetButton')}</Button>
                         </Col>
                     </Row>
                 </Container>
