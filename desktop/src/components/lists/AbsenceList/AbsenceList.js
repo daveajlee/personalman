@@ -226,12 +226,21 @@ function AbsenceList (props) {
             + '&startDate=' + absence.startDate + '&endDate=' + absence.endDate + '&token=' + props.token)
             .then(function (response) {
                 if ( response.status === 200 ) {
-                    alert('Absence was deleted successfully!');
+                    alert(t('absenceListDeleteConfirmation'));
                     window.location.reload();
                 }
             }).catch(function (error) {
             console.log(error);
         });
+    }
+
+    /**
+     * Translate the supplied category into the currently used language.
+     * @param category the category string to translate
+     * @returns the translated text
+     */
+    function translateCategory(category) {
+        return t(category.replace(/\s+/g, ''));
     }
 
     /**
@@ -253,7 +262,7 @@ function AbsenceList (props) {
                 {absences.map(d => (<Row className="align-items-center justify-content-center" key={d.startDate + '-' + d.endDate}>
                     <Col xs lg="10">
 
-                        <h4 className="text-center">{t('absenceListAbsence', { startDate: d.startDate, endDate: d.endDate, category: d.category, username: d.username })}</h4>
+                        <h4 className="text-center">{t('absenceListAbsence', { startDate: d.startDate, endDate: d.endDate, category: translateCategory(d.category), username: d.username })}</h4>
                     </Col>
                     <Col >
                         <Button variant="danger" size='sm' onClick={deleteAbsence.bind(this, d)}>{t('absenceListDeleteButton')}</Button>

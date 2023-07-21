@@ -3,6 +3,7 @@ import {Button, Col, Container, Form, Image, Row} from "react-bootstrap";
 import axios from "axios";
 import {useLocation, useNavigate} from "react-router-dom";
 import Header from "../../layout/Header/Header";
+import {useTranslation} from "react-i18next";
 
 /**
  * This is the page which allows the user to change their password assuming they known their old password. Otherwise,
@@ -16,6 +17,8 @@ function ChangePassword (props) {
     const [confirmedPassword, setConfirmedPassword] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
+
+    const {t} = useTranslation();
 
     /**
      * Retrieve the current token either from the supplied state or empty if we are in doc mode.
@@ -80,7 +83,7 @@ function ChangePassword (props) {
      */
     function changePassword() {
         if ( newPassword !== confirmedPassword ) {
-            alert('The two new passwords were not identical! Password could not be changed');
+            alert(t('changePasswordNotIdentical'));
             return;
         }
         axios.patch(process.env.REACT_APP_SERVER_URL + '/user/password', {
@@ -91,11 +94,11 @@ function ChangePassword (props) {
             newPassword: newPassword
         }).then(function (response) {
             if ( response.status === 200 ) {
-                alert('Password was changed successfully! Please login again to continue');
+                alert(t('changePasswordSuccess'));
                 navigate("/")
             }
         }).catch(function (error) {
-            alert('Password could not be changed. Please try again later.');
+            alert(t('changePasswordError'));
         });
     }
 
@@ -123,7 +126,7 @@ function ChangePassword (props) {
                 <Container className="d-flex flex-row align-items-center justify-content-center mb-3">
                     <Row>
                         <Col>
-                            <h3>Change the password for user: {getUsername()}</h3>
+                            <h3>{t('changePasswordTitle')} {getUsername()}</h3>
                         </Col>
                     </Row>
                 </Container>
@@ -132,23 +135,23 @@ function ChangePassword (props) {
                     <Form>
 
                         <Form.Group as={Row} className="mb-3" controlId="formPlaintextCurrentPassword">
-                            <Form.Label column sm="2">Current Password:</Form.Label>
+                            <Form.Label column sm="2">{t('changePasswordCurrentPassword')}:</Form.Label>
                             <Col sm="10">
-                                <Form.Control value={currentPassword} type="password" placeholder="Current Password" onChange={currentPasswordChangeHandler}/>
+                                <Form.Control value={currentPassword} type="password" placeholder={t('changePasswordCurrentPassword')} onChange={currentPasswordChangeHandler}/>
                             </Col>
                         </Form.Group>
 
                         <Form.Group as={Row} className="mb-3" controlId="formPlaintextNewPassword">
-                            <Form.Label column sm="2">New Password:</Form.Label>
+                            <Form.Label column sm="2">{t('changePasswordNewPassword')}:</Form.Label>
                             <Col sm="10">
-                                <Form.Control value={newPassword} type="password" placeholder="New Password" onChange={newPasswordChangeHandler}/>
+                                <Form.Control value={newPassword} type="password" placeholder={t('changePasswordNewPassword')} onChange={newPasswordChangeHandler}/>
                             </Col>
                         </Form.Group>
 
                         <Form.Group as={Row} className="mb-3" controlId="formPlaintextConfirmPassword">
-                            <Form.Label column sm="2">Confirm Password:</Form.Label>
+                            <Form.Label column sm="2">{t('changePasswordConfirmPassword')}:</Form.Label>
                             <Col sm="10">
-                                <Form.Control value={confirmedPassword} type="password" placeholder="Confirmed Password" onChange={confirmedPasswordChangeHandler}/>
+                                <Form.Control value={confirmedPassword} type="password" placeholder={t('changePasswordConfirmPassword')} onChange={confirmedPasswordChangeHandler}/>
                             </Col>
                         </Form.Group>
 
@@ -158,8 +161,8 @@ function ChangePassword (props) {
                 <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>
                     <Row>
                         <Col className="text-center">
-                            <Button className="mb-0 px-5 me-2" size='lg' onClick={changePassword}>Change Password</Button>
-                            <Button className="mb-0 px-5 me-2" size='lg' onClick={resetForm}>Reset</Button>
+                            <Button className="mb-0 px-5 me-2" size='lg' onClick={changePassword}>{t('changePasswordButton')}</Button>
+                            <Button className="mb-0 px-5 me-2" size='lg' onClick={resetForm}>{t('changePasswordReset')}</Button>
                         </Col>
                     </Row>
                 </Container>

@@ -2,6 +2,7 @@ import {Button, Modal} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
+import {useTranslation} from "react-i18next";
 
 /**
  * This is the modal window to show the view statistics for a particular user. The modal is used for admin users who want
@@ -15,6 +16,8 @@ function StatisticsModal (props) {
 
     const [statisticsMap, setStatisticsMap] = useState([]);
     const [leaveEntitlement, setLeaveEntitlement] = useState(0);
+
+    const {t} = useTranslation();
 
     /**
      * Function to handle the case that the user clicks on the close button in the modal.
@@ -57,11 +60,11 @@ function StatisticsModal (props) {
     return (
         <Modal show={props.showStatisticsModal} onHide={handleStatisticsClose}>
             <Modal.Header closeButton>
-                <Modal.Title>View Statistics - {props.username} - {props.year}</Modal.Title>
+                <Modal.Title>{t('statisticsModalTitle')} - {props.username} - {props.year}</Modal.Title>
             </Modal.Header>
-            <Modal.Body>Illness: {statisticsMap['Illness']} days <br/> Holiday: {statisticsMap['Holiday']} days (Remaining: {leaveEntitlement} days) <br/>
-                Trip: {statisticsMap['Trip']} days <br/> Conference: {statisticsMap['Conference']} days <br/> Day in Lieu: {statisticsMap['Day in Lieu']} days (Remaining: {statisticsMap['Day in Lieu Request']} days) <br/>
-                Federal Holiday: {statisticsMap['Federal Holiday']} days</Modal.Body>
+            <Modal.Body>{t('Illness')}: {statisticsMap['Illness']} {t('statisticsModalDays')} <br/> {t('Holiday')}: {statisticsMap['Holiday']} {t('statisticsModalDays')} ({t('statisticsModalRemaining')}: {leaveEntitlement} {t('statisticsModalDays')}) <br/>
+                {t('Trip')}: {statisticsMap['Trip']} {t('statisticsModalDays')} <br/> {t('Conference')}: {statisticsMap['Conference']} {t('statisticsModalDays')} <br/> {t('DayinLieu')}: {statisticsMap['Day in Lieu']} {t('statisticsModalDays')} ({t('statisticsModalRemaining')}: {statisticsMap['Day in Lieu Request']} {t('statisticsModalDays')}) <br/>
+                {t('FederalHoliday')}: {statisticsMap['Federal Holiday']} {t('statisticsModalDays')}</Modal.Body>
             <Modal.Footer>
                 <Button variant="primary" onClick={handleStatisticsClose}>
                     Close

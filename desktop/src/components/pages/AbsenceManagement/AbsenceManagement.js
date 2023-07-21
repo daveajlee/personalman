@@ -118,7 +118,7 @@ function AbsenceManagement(props) {
         let startDateSplit = startDate.split("-");
         let endDateSplit = endDate.split("-");
         if ( endDateSplit[2] < startDateSplit[2] && endDateSplit[1] <= startDateSplit[1] && endDateSplit[0] <= startDateSplit[0] ) {
-            alert('Not possible to add date since end date is before start date');
+            alert(t('absenceManagementAddAbsenceFail'));
             return;
         }
         axios.post(process.env.REACT_APP_SERVER_URL + '/absences/', {
@@ -130,7 +130,7 @@ function AbsenceManagement(props) {
             token: token,
         }).then((response) => {
             if ( response.status === 201 ) {
-                alert('Absence was added successfully!');
+                alert(t('absenceManagementAddAbsenceSuccess'));
                 setShowAddModal(false);
                 window.location.reload();
             }
@@ -186,41 +186,41 @@ function AbsenceManagement(props) {
 
             <Modal show={showAddModal} onHide={handleAddClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Add an Absence</Modal.Title>
+                    <Modal.Title>{t('absenceManagementAddAbsenceModal')}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form.Group as={Row} className="mb-3" controlId="formPlaintextStartDate">
-                        <Form.Label column sm="2">Start Date:</Form.Label>
+                        <Form.Label column sm="2">{t('absenceManagementStartDateModal')}:</Form.Label>
                         <Col sm="10">
                             <Form.Control type="date" value={startDate} placeholder="yyyy-MM-dd" onChange={startDateChangeHandler}/>
                         </Col>
                     </Form.Group>
                     <Form.Group as={Row} className="mb-3" controlId="formPlaintextEndDate">
-                        <Form.Label column sm="2">End Date:</Form.Label>
+                        <Form.Label column sm="2">{t('absenceManagementEndDateModal')}:</Form.Label>
                         <Col sm="10">
                             <Form.Control type="date" value={endDate} placeholder="yyyy-MM-dd" onChange={endDateChangeHandler}/>
                         </Col>
                     </Form.Group>
                     <Form.Group as={Row} className="mb-3" controlId="formPlaintextReason">
-                        <Form.Label column sm="2">Reason:</Form.Label>
+                        <Form.Label column sm="2">{t('absenceManagementReasonModal')}:</Form.Label>
                         <Col sm="10">
                             <Form.Select aria-label="Role" value={reason} onChange={reasonChangeHandler}>
-                                <option key="illness">Illness</option>
-                                <option key="holiday">Holiday</option>
-                                <option key="trip">Trip</option>
-                                <option key="conference">Conference</option>
-                                <option key="dayinlieu">Day in Lieu</option>
-                                <option key="federalholiday">Federal Holiday</option>
+                                <option key="illness">{t('Illness')}</option>
+                                <option key="holiday">{t('Holiday')}</option>
+                                <option key="trip">{t('Trip')}</option>
+                                <option key="conference">{t('Conference')}</option>
+                                <option key="dayinlieu">{t('DayinLieu')}</option>
+                                <option key="federalholiday">{t('FederalHoliday')}</option>
                             </Form.Select>
                         </Col>
                     </Form.Group>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleAddClose}>
-                        Cancel
+                        {t('cancel')}
                     </Button>
                     <Button variant="primary" onClick={addAbsence}>
-                        Add Absence
+                        {t('absenceManagementAddAbsence')}
                     </Button>
                 </Modal.Footer>
             </Modal>
