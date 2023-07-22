@@ -2,6 +2,7 @@ import {Button, Col, Form, Modal, Row} from "react-bootstrap";
 import React, {useState} from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
+import {useTranslation} from "react-i18next";
 
 /**
  * This is the modal window to show the reset password form. The modal is used for admin users who want to reset
@@ -20,6 +21,7 @@ function ResetModal (props) {
 
     const [newPassword, setNewPassword] = useState("");
     const [confirmedPassword, setConfirmedPassword] = useState("");
+    const {t} = useTranslation();
 
     /**
      * Set the new password that the user entered to the state for later.
@@ -42,7 +44,7 @@ function ResetModal (props) {
      */
     function resetPassword() {
         if ( newPassword !== confirmedPassword ) {
-            alert('The two new passwords were not identical! Password could not be changed');
+            alert(t('resetPasswordNotIdentical'));
             return;
         }
         axios.patch(process.env.REACT_APP_SERVER_URL + '/user/reset', {
@@ -52,11 +54,11 @@ function ResetModal (props) {
             password: newPassword
         }).then(function (response) {
             if ( response.status === 200 ) {
-                alert('Password was reset successfully!');
+                alert(t('resetPasswordSuccess'));
                 props.setShowResetModal(false);
             }
         }).catch(function (error) {
-            alert('Password could not be changed. Please try again later.');
+            alert(t('resetPasswordError'));
         });
 
     }
@@ -67,31 +69,31 @@ function ResetModal (props) {
     return (
         <Modal show={props.showResetModal} onHide={handleResetClose}>
             <Modal.Header closeButton>
-                <Modal.Title>Reset Password - {props.username}</Modal.Title>
+                <Modal.Title>{t('resetPasswordTitle')} - {props.username}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form>
                     <Form.Group as={Row} className="mb-3" controlId="formPlaintextNewPassword">
-                        <Form.Label column sm="2">New Password:</Form.Label>
+                        <Form.Label column sm="2">{t('resetPasswordNewPassword')}:</Form.Label>
                         <Col sm="10">
-                            <Form.Control value={newPassword} type="password" placeholder="New Password" onChange={newPasswordChangeHandler}/>
+                            <Form.Control value={newPassword} type="password" placeholder={t('resetPasswordNewPassword')} onChange={newPasswordChangeHandler}/>
                         </Col>
                     </Form.Group>
 
                     <Form.Group as={Row} className="mb-3" controlId="formPlaintextConfirmPassword">
-                        <Form.Label column sm="2">Confirm Password:</Form.Label>
+                        <Form.Label column sm="2">{t('resetPasswordConfirmPassword')}:</Form.Label>
                         <Col sm="10">
-                            <Form.Control value={confirmedPassword} type="password" placeholder="Confirmed Password" onChange={confirmedPasswordChangeHandler}/>
+                            <Form.Control value={confirmedPassword} type="password" placeholder={t('resetPasswordConfirmPassword')} onChange={confirmedPasswordChangeHandler}/>
                         </Col>
                     </Form.Group>
                 </Form>
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="primary" onClick={resetPassword}>
-                    Reset Password
+                    {t('resetPasswordModalButton')}
                 </Button>
                 <Button variant="primary" onClick={handleResetClose}>
-                    Close
+                    {t('resetPasswordCloseModalButton')}
                 </Button>
             </Modal.Footer>
         </Modal>

@@ -91,7 +91,7 @@ function AllAbsences(props) {
         <Container fluid>
             <Header token={token} company={company}/>
 
-            { role==='Admin' && <AbsenceList company={company} token={token} startDate={startDate} endDate={endDate}
+            { role==='Admin' && <AbsenceList company={company} token={token} username='' startDate={startDate} endDate={endDate}
                          month={month}
                          year={year}/>}
 

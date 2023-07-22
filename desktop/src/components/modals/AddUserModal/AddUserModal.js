@@ -2,6 +2,7 @@ import {Modal} from "react-bootstrap";
 import React from "react";
 import AddUserForm from "../../forms/AddUserForm/AddUserForm";
 import PropTypes from "prop-types";
+import {useTranslation} from "react-i18next";
 
 /**
  * This is the modal window to show the add user form. The modal is used for admin users who want to create new users
@@ -17,13 +18,15 @@ function AddUserModal (props) {
      */
     const handleAddUserClose = () => props.setShowAddUserModal(false);
 
+    const {t} = useTranslation();
+
     /**
      * Display the relevant elements and data to the user.
      */
     return (
         <Modal show={props.showAddUserModal} onHide={handleAddUserClose}>
             <Modal.Header closeButton>
-                <Modal.Title>Add User</Modal.Title>
+                <Modal.Title>{t('addUserModalTitle')}</Modal.Title>
             </Modal.Header>
             <Modal.Body><AddUserForm company={props.company} handleAddUserClose={handleAddUserClose}/></Modal.Body>
         </Modal>

@@ -6,6 +6,7 @@ import axios from "axios";
 import StatisticsModal from "../../modals/StatisticsModal/StatisticsModal";
 import ResetModal from "../../modals/ResetModal/ResetModal";
 import AddUserModal from "../../modals/AddUserModal/AddUserModal";
+import {useTranslation} from "react-i18next";
 
 /**
  * This is the page which allows an admin user to manage users in their company.
@@ -16,6 +17,7 @@ function UsersManagement(props) {
     const location = useLocation();
     const [users, setUsers] = useState([]);
     const navigate = useNavigate();
+    const {t} = useTranslation();
 
     const [selectedUsername, setSelectedUsername] = useState('');
     const [showStatisticsModal, setShowStatisticsModal] = useState(false);
@@ -63,12 +65,12 @@ function UsersManagement(props) {
      * @param username the username of the user to delete
      */
     function deleteUser(username) {
-        if(window.confirm('Do you really want to delete the user - ' + username + '?')) {
+        if(window.confirm(t('usersManagementDeleteUser', { username: username }))) {
             axios.delete(process.env.REACT_APP_SERVER_URL + '/user/?company=' + company + '&username=' + username +
                 '&token=' + token)
                 .then(function (response) {
                     if ( response.status === 200 ) {
-                        alert('User was deleted successfully!');
+                        alert(t('usersManagementDeleteUserSuccess'));
                         window.location.reload();
                     }
                 }).catch(function (error) {
@@ -118,7 +120,7 @@ function UsersManagement(props) {
             <Container fluid className="p-3 my-5 h-custom">
                 <Row className="d-flex flex-row align-items-center justify-content-center">
                     <Col>
-                        <h1 className="text-center">Users for company: {company}</h1>
+                        <h1 className="text-center">{t('usersManagementTitle')} {company}</h1>
                     </Col>
                 </Row>
             {users.map(d => (<Row className="align-items-center justify-content-center mt-3" key={d.username}>
@@ -127,9 +129,9 @@ function UsersManagement(props) {
                     <h4 className="text-center">{d.firstName} {d.surname} ({d.username}) </h4>
                 </Col>
                 <Col xs={12} sm={12} md={6} lg={4} className="align-items-center justify-content-center mt-3">
-                    <Button className="me-2 align-items-center justify-content-center" variant="info" size='lg' onClick={statisticsUser.bind(this, d.username)}>Statistics</Button>
-                    <Button className="me-2 align-items-center justify-content-center" variant="warning" size='lg' onClick={resetUser.bind(this, d.username)}>Reset</Button>
-                    <Button className="me-2 align-items-center justify-content-center" variant="danger" size='lg' onClick={deleteUser.bind(this, d.username)}>Delete</Button>
+                    <Button className="me-2 align-items-center justify-content-center" variant="info" size='lg' onClick={statisticsUser.bind(this, d.username)}>{t('usersManagementStatisticsButton')}</Button>
+                    <Button className="me-2 align-items-center justify-content-center" variant="warning" size='lg' onClick={resetUser.bind(this, d.username)}>{t('usersManagementResetButton')}</Button>
+                    <Button className="me-2 align-items-center justify-content-center" variant="danger" size='lg' onClick={deleteUser.bind(this, d.username)}>{t('usersManagementDeleteButton')}</Button>
                 </Col>
             </Row>))}
             </Container>
@@ -137,8 +139,8 @@ function UsersManagement(props) {
             <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>
                 <Row>
                     <Col className="text-center">
-                        <Button className="mb-0 px-5 me-2" size='lg' onClick={addUser}>Add User</Button>
-                        <Button className="mb-0 px-5 me-2" size='lg' onClick={allAbsences}>All Absences</Button>
+                        <Button className="mb-0 px-5 me-2" size='lg' onClick={addUser}>{t('usersManagementAddUserButton')}</Button>
+                        <Button className="mb-0 px-5 me-2" size='lg' onClick={allAbsences}>{t('usersManagementAllAbsencesButton')}</Button>
                     </Col>
                 </Row>
             </Container>

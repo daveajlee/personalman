@@ -4,6 +4,7 @@ import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import PropTypes from "prop-types";
 import Header from "../../layout/Header/Header";
+import {useTranslation} from "react-i18next";
 
 /**
  * This is the form to display when the user wishes to create a new user for a particular company.
@@ -26,6 +27,8 @@ function AddUserForm (props) {
     const navigate = useNavigate();
 
     const [companies, setCompanies] = useState([]);
+
+    const {t} = useTranslation();
 
     /**
      * Load the list of companies that are currently available in PersonalMan if no company name was supplied
@@ -236,7 +239,7 @@ function AddUserForm (props) {
             }).then(function (response) {
                 if ( response.status === 201 ) {
                     if ( props.company === '' ) {
-                        alert('Thank you for registering for PersonalMan. Your account was created successfully. Please login with your new account on the next screen.')
+                        alert(t('addUserFormSuccess'))
                         navigate("/")
                     } else {
                         props.handleAddUserClose();
@@ -269,21 +272,21 @@ function AddUserForm (props) {
         <Form>
 
             <Form.Group as={Row} className="mb-3" controlId="formPlaintextFirstName">
-                <Form.Label column sm="2">First Name:</Form.Label>
+                <Form.Label column sm="2">{t('addUserFormFirstName')}:</Form.Label>
                 <Col sm="10">
-                    <Form.Control type="text" value={firstName} placeholder="First Name" onChange={firstNameChangeHandler}/>
+                    <Form.Control type="text" value={firstName} placeholder={t('addUserFormFirstName')} onChange={firstNameChangeHandler}/>
                 </Col>
             </Form.Group>
 
             <Form.Group as={Row} className="mb-3" controlId="formPlaintextLastName">
-                <Form.Label column sm="2">Surname:</Form.Label>
+                <Form.Label column sm="2">{t('addUserFormSurname')}:</Form.Label>
                 <Col sm="10">
-                    <Form.Control type="text" value={lastName} placeholder="Surname" onChange={lastNameChangeHandler}/>
+                    <Form.Control type="text" value={lastName} placeholder={t('addUserFormSurname')} onChange={lastNameChangeHandler}/>
                 </Col>
             </Form.Group>
 
             <Form.Group as={Row} className="mb-3" controlId="formPlaintextCompany">
-                <Form.Label column sm="2">Company:</Form.Label>
+                <Form.Label column sm="2">{t('addUserFormCompany')}:</Form.Label>
                 <Col sm="10">
                     <Form.Select value={company} aria-label="Company Name" onChange={companyChangeHandler}>
                         {companies.map(company => ( <option key={company}>{company}</option>))}
@@ -291,24 +294,24 @@ function AddUserForm (props) {
                 </Col>
             </Form.Group>
 
-            { ( props.company ==='' ) ? <p className="small text-center fw-bold mt-2 pt-1 mb-4">Your company does not yet exist in PersonalMan? <a href="registerCompany"
-                className="link-danger">Register Company</a>
+            { ( props.company ==='' ) ? <p className="small text-center fw-bold mt-2 pt-1 mb-4">{t('loginRegisterCompanyTeaser')} <a href="registerCompany"
+                className="link-danger">{t('loginRegisterCompanyLink')}</a>
                 </p> : <p></p> }
 
 
             <Form.Group as={Row} className="mb-3" controlId="formPlaintextPosition">
-                <Form.Label column sm="2">Position:</Form.Label>
+                <Form.Label column sm="2">{t('addUserFormPosition')}:</Form.Label>
                 <Col sm="10">
-                    <Form.Control value={position} type="text" placeholder="Position" onChange={positionChangeHandler}/>
+                    <Form.Control value={position} type="text" placeholder={t('addUserFormPosition')} onChange={positionChangeHandler}/>
                 </Col>
             </Form.Group>
 
             <Form.Group as={Row} className="mb-3" controlId="formCheckWorkingDays">
-                <Form.Label column sm="2">Working Days:</Form.Label>
+                <Form.Label column sm="2">{t('addUserFormWorkingDays')}:</Form.Label>
                 <Col sm="10">
                     <Form.Check
                         inline
-                        label="Mo"
+                        label={t('shortMonday')}
                         name="group1"
                         type="checkbox"
                         id={`checkbox-mo`}
@@ -316,7 +319,7 @@ function AddUserForm (props) {
                     />
                     <Form.Check
                         inline
-                        label="Tu"
+                        label={t('shortTuesday')}
                         name="group1"
                         type="checkbox"
                         id={`checkbox-tu`}
@@ -324,35 +327,35 @@ function AddUserForm (props) {
                     />
                     <Form.Check
                         inline
-                        label="We"
+                        label={t('shortWednesday')}
                         type="checkbox"
                         id={`checkbox-we`}
                         onChange={workingDaysHandler}
                     />
                     <Form.Check
                         inline
-                        label="Th"
+                        label={t('shortThursday')}
                         type="checkbox"
                         id={`checkbox-th`}
                         onChange={workingDaysHandler}
                     />
                     <Form.Check
                         inline
-                        label="Fr"
+                        label={t('shortFriday')}
                         type="checkbox"
                         id={`checkbox-fr`}
                         onChange={workingDaysHandler}
                     />
                     <Form.Check
                         inline
-                        label="Sa"
+                        label={t('shortSaturday')}
                         type="checkbox"
                         id={`checkbox-sa`}
                         onChange={workingDaysHandler}
                     />
                     <Form.Check
                         inline
-                        label="Su"
+                        label={t('shortSunday')}
                         type="checkbox"
                         id={`checkbox-su`}
                         onChange={workingDaysHandler}
@@ -361,48 +364,48 @@ function AddUserForm (props) {
             </Form.Group>
 
             <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
-                <Form.Label column sm="2">Username:</Form.Label>
+                <Form.Label column sm="2">{t('addUserFormUsername')}:</Form.Label>
                 <Col sm="10">
-                    <Form.Control type="text" value={username} placeholder="Username" autoComplete="username" onChange={usernameChangeHandler}/>
+                    <Form.Control type="text" value={username} placeholder={t('addUserFormUsername')} autoComplete="username" onChange={usernameChangeHandler}/>
                 </Col>
             </Form.Group>
 
             <Form.Group as={Row} className="mb-3" controlId="formPlaintextPassword">
-                <Form.Label column sm="2">Password:</Form.Label>
+                <Form.Label column sm="2">{t('addUserFormPassword')}:</Form.Label>
                 <Col sm="10">
-                    <Form.Control type="password" value={password} placeholder="Password" autoComplete="current-password"
+                    <Form.Control type="password" value={password} placeholder={t('addUserFormPassword')} autoComplete="current-password"
                                   onChange={passwordChangeHandler}/>
                 </Col>
             </Form.Group>
 
             <Form.Group as={Row} className="mb-3" controlId="formPlaintextConfirmPassword">
-                <Form.Label column sm="2">Confirm Password:</Form.Label>
+                <Form.Label column sm="2">{t('addUserFormConfirmPassword')}:</Form.Label>
                 <Col sm="10">
-                    <Form.Control type="password" value={confirmPassword} placeholder="Password" autoComplete="current-password"
+                    <Form.Control type="password" value={confirmPassword} placeholder={t('addUserFormConfirmPassword')} autoComplete="current-password"
                                   onChange={confirmPasswordChangeHandler}/>
                 </Col>
             </Form.Group>
 
             <Form.Group as={Row} className="mb-3" controlId="formPlaintextDateOfBirth">
-                <Form.Label column sm="2">Date of Birth:</Form.Label>
+                <Form.Label column sm="2">{t('addUserFormDateofBirth')}:</Form.Label>
                 <Col sm="10">
                     <Form.Control type="date" value={dateOfBirth} placeholder="yyyy-MM-dd" onChange={dateOfBirthChangeHandler}/>
                 </Col>
             </Form.Group>
 
             <Form.Group as={Row} className="mb-3" controlId="formPlaintextStartDate">
-                <Form.Label column sm="2">Start Date:</Form.Label>
+                <Form.Label column sm="2">{t('addUserFormStartDate')}:</Form.Label>
                 <Col sm="10">
                     <Form.Control type="date" value={startDate} onChange={startDateChangeHandler}/>
                 </Col>
             </Form.Group>
 
             <Form.Group as={Row} className="mb-3" controlId="formPlaintextRole">
-                <Form.Label column sm="2">Role:</Form.Label>
+                <Form.Label column sm="2">{t('addUserFormRole')}:</Form.Label>
                 <Col sm="10">
                     <Form.Select aria-label="Role" value={role} onChange={roleChangeHandler}>
-                        <option key="employee">Employee</option>
-                        <option key="admin">Admin</option>
+                        <option key="employee">{t('roleEmployee')}</option>
+                        <option key="admin">{t('roleAdmin')}</option>
                     </Form.Select>
                 </Col>
             </Form.Group>
@@ -413,9 +416,9 @@ function AddUserForm (props) {
         <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>
             <Row>
                 <Col className="text-center">
-                    <Button className="mb-0 px-5 me-2" size='lg' onClick={registerUser}>Register</Button>
-                    { ( props.company ==='' ) ? <Button className="mb-0 px-5 me-2" size='lg' onClick={resetForm}>Reset</Button> : <p></p> }
-                    <Button className="mb-0 px-5 me-2" size='lg' onClick={cancelRegistration}>Cancel</Button>
+                    <Button className="mb-0 px-5 me-2" size='lg' onClick={registerUser}>{t('addUserFormRegisterButton')}</Button>
+                    { ( props.company ==='' ) ? <Button className="mb-0 px-5 me-2" size='lg' onClick={resetForm}>{t('addUserFormResetButton')}</Button> : <p></p> }
+                    <Button className="mb-0 px-5 me-2" size='lg' onClick={cancelRegistration}>{t('addUserFormCancelButton')}</Button>
                 </Col>
             </Row>
         </Container>
