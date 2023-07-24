@@ -74,7 +74,7 @@ public class AbsenceUtils {
         //Go through and add it to the correct category.
         for ( AbsenceResponse absenceResponse : absenceResponseList ) {
             if ( absenceResponse.getStartDate() != null && absenceResponse.getEndDate() != null
-                && absenceResponse.getCategory != null ) {
+                && absenceResponse.getCategory() != null ) {
                 absencesResponse.addToStatisticsMap(absenceResponse.getCategory(),
                         Period.between(DateUtils.convertDateToLocalDate(absenceResponse.getStartDate()),
                                 DateUtils.convertDateToLocalDate(absenceResponse.getEndDate())).getDays() + 1);
