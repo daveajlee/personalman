@@ -205,12 +205,12 @@ function AbsenceManagement(props) {
                         <Form.Label column sm="2">{t('absenceManagementReasonModal')}:</Form.Label>
                         <Col sm="10">
                             <Form.Select aria-label="Role" value={reason} onChange={reasonChangeHandler}>
-                                <option key="illness">{t('Illness')}</option>
-                                <option key="holiday">{t('Holiday')}</option>
-                                <option key="trip">{t('Trip')}</option>
-                                <option key="conference">{t('Conference')}</option>
-                                <option key="dayinlieu">{t('DayinLieu')}</option>
-                                <option key="federalholiday">{t('FederalHoliday')}</option>
+                                <option value="Illness">{t('Illness')}</option>
+                                <option value="Holiday">{t('Holiday')}</option>
+                                <option value="Trip">{t('Trip')}</option>
+                                <option value="Conference">{t('Conference')}</option>
+                                <option value="Day in Lieu">{t('DayinLieu')}</option>
+                                <option value="Federal Holiday">{t('FederalHoliday')}</option>
                             </Form.Select>
                         </Col>
                     </Form.Group>

@@ -1,9 +1,10 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
 
-i18n.use(initReactI18next).init({
+i18n.use(LanguageDetector).use(initReactI18next).init({
+    debug: true,
     fallbackLng: 'en',
-    lng: 'de',
     resources: {
         en: {
             translations: require('./locales/en/translations.json')
@@ -16,6 +17,7 @@ i18n.use(initReactI18next).init({
     defaultNS: 'translations'
 });
 
+i18n.changeLanguage();
 i18n.languages = ['en','de'];
 
 export default i18n;
