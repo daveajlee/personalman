@@ -11,7 +11,7 @@ PersonalMan is a open source employee management software for non-profit organis
 
 | Folder | Description |
 | --- | ----------- |
-| desktop | Future Desktop Client for PersonalMan based on Electron and React for Windows, Linux and Mac OS. (Currently being developed and not yet feature complete). Please use the old Java Desktop Client instead: https://github.com/daveajlee/personalman_desktop_client |
+| desktop | Desktop Client for PersonalMan based on Electron and React for Windows, Linux and Mac OS. |
 | docs | Current PersonalMan website with more information about the goals of the PersonalMan project. |
 | java-api | The current API of PersonalMan in the Java language. This can be used to write a Java client which talks with the Personalman server. To use these libraries you can simply define the API module as a maven dependency in your Java Client. |
 | server | This is the server application of PersonalMan with a RESTful API which any client can then implement in any programming language. |
@@ -33,7 +33,7 @@ Personalman comes with a Swagger API documentation which can be used to implemen
 
 ## Desktop
 
-Since the future desktop client based on Electron is still being developed, the old Java Desktop Client can be used instead: https://github.com/daveajlee/personalman_desktop_client
+The current architecture of PersonalMan allows multiple clients to be built - each client simply has to implement the API provided by the server. Currently there is only one client which is available for download: the PersonalMan Web Client. This client implements the API in React and can be used in most modern web browsers which support JavaScript. A second client based on Electron will be available soon.
 
 ## Current Limitations
 
