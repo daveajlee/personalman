@@ -33,13 +33,13 @@ const Architecture = () => (
             <Col>
                 <Accordion defaultActiveKey="0">
                     <Accordion.Item eventKey="0">
-                        <Accordion.Header>Client (PersonalMan Desktop Client)</Accordion.Header>
+                        <Accordion.Header>Client (PersonalMan Desktop & Web Clients)</Accordion.Header>
                         <Accordion.Body>
                             The current architecture of PersonalMan allows multiple clients to be built - each client
                             simply has to implement the API provided by the server. Currently there is only one client
-                            which is available for download: the PersonalMan Desktop Java Client. This client implements
-                            the API in Java and therefore is typically restricted to Desktop or Laptop systems. A responsive
-                            browser-based client or a mobile app is possible in the current architecture and is part of
+                            which is available for download: the PersonalMan Web Client. This client implements
+                            the API in React and can be used in most modern web browsers which support JavaScript. A
+                            second client based on Electron will be available soon. A mobile app is possible in the current architecture and is part of
                             the roadmap of PersonalMan development.
                         </Accordion.Body>
                     </Accordion.Item>

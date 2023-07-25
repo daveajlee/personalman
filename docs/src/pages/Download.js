@@ -29,11 +29,11 @@ const Download = () => (
                     <Card.Body>
                         <Card.Title>Desktop Client</Card.Title>
                         <Card.Text>
-                            There is currently only a desktop client for PersonalMan in a JAR file which can be run on
-                            any computer which supports Java 11 or above. In the default configuration it assumes a local
-                            PersonalMan server on the same part but this can be changed manually.
+                            There is currently only a web client for PersonalMan based on React. Extract the Zip File and open
+                            the index.html file to start the client. In the default configuration it assumes a local
+                            PersonalMan server on the same PC but this can be changed manually.
                         </Card.Text>
-                        <Button variant="primary" href="https://github.com/daveajlee/personalman_desktop_client/packages/120617">JAR</Button>
+                        <Button variant="primary" href="https://github.com/daveajlee/personalman/releases/download/desktop-v0.1.0/personalman-web-client-0.1.0.zip">Zip File</Button>
                     </Card.Body>
                 </Card>
             </Col>

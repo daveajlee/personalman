@@ -21,15 +21,6 @@ const Roadmap = () => (
         <Row>
             <Col>
                 <Accordion defaultActiveKey="0">
-                    <Accordion.Item eventKey="0">
-                        <Accordion.Header>Browser-based Administration</Accordion.Header>
-                        <Accordion.Body>
-                            In order to make PersonalMan even easier to use, it would be better to have a web-based
-                            interface for all users. Currently additional software must be installed on the user's
-                            computer. A browser-based system could then be used in Google Chrome, Firefox or Safari without
-                            the installation of additional software.
-                        </Accordion.Body>
-                    </Accordion.Item>
                     <Accordion.Item eventKey="1">
                         <Accordion.Header>Backup Organisations</Accordion.Header>
                         <Accordion.Body>
