@@ -13,11 +13,11 @@ Both Windows and Mac OS are the supported operating systems.
 
 *   Clone the git branch and import the project in your favourite IDE.
 *   The project can be built via `npm run build`.
-*   The application is sorted into individual components. An overview of the components can be found via the styleguide: `npm run styleguide`
+*   The application is sorted into individual components. An overview of the components can be found via the styleguide: `npm run styleguide` (this is generated using Reactstyleguidist (https://github.com/styleguidist/react-styleguidist/)
 *   Dependencies are managed via the package.json file and NPM (Node 18 is required).
 *   Unit tests can be run via `npm run test` (interactive watch mode) or `npm run test:nowatch` (single run with no watch mode).
 
 ## Limitations of the client
 
 *   I cannot accept any warranty for loss of data through using this client or server.
-*   Currently the client is only available in English.
+*   Currently the client is only available in English and German.
