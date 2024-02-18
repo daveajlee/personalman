@@ -12,7 +12,7 @@ it('checks that the Header component can be rendered', () => {
     const component = renderer.create(
         <React.StrictMode>
             <RouterProvider router={createBrowserRouter([{
-                path: "/",
+                path: "*",
                 element: <App/>,
                 errorElement: <ErrorPage />,
             },{

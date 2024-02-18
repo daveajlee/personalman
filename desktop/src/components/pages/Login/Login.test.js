@@ -11,7 +11,7 @@ it('checks that the Login page can be rendered', () => {
     const component = renderer.create(
         <React.StrictMode>
             <RouterProvider router={createBrowserRouter([{
-                path: "/",
+                path: "*",
                 element: <App/>,
                 errorElement: <ErrorPage />,
             },{

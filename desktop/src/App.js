@@ -11,6 +11,7 @@ import ChangePassword from "./components/pages/ChangePassword/ChangePassword";
 import UsersManagement from "./components/pages/UsersManagement/UsersManagement";
 import AllAbsences from "./components/pages/AllAbsences/AllAbsences";
 import Logout from "./components/pages/Logout/Logout";
+import './i18n/config';
 
 /**
  * This is the first page that the user visits when starting PersonalMan - either show the login screen or the register

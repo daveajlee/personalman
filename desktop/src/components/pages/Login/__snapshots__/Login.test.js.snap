@@ -29,7 +29,7 @@ exports[`checks that the Login page can be rendered 1`] = `
             className="col"
           >
             <h3>
-              registerCompanyTitle
+              Getting Started: Registering a new Company/Organisation
             </h3>
           </div>
         </div>
@@ -47,7 +47,7 @@ exports[`checks that the Login page can be rendered 1`] = `
               className="form-label col-form-label col-sm-2"
               htmlFor="formPlaintextName"
             >
-              registerCompanyNameLabel
+              Name
               :
             </label>
             <div
@@ -57,7 +57,7 @@ exports[`checks that the Login page can be rendered 1`] = `
                 className="form-control"
                 id="formPlaintextName"
                 onChange={[Function]}
-                placeholder="registerCompanyNameLabel"
+                placeholder="Name"
                 type="text"
                 value=""
               />
@@ -70,7 +70,7 @@ exports[`checks that the Login page can be rendered 1`] = `
               className="form-label col-form-label col-sm-2"
               htmlFor="formPlaintextEmail"
             >
-              registerCompanyAnnualLeaveLabel
+              Default Annual Leave
               :
             </label>
             <div
@@ -94,7 +94,7 @@ exports[`checks that the Login page can be rendered 1`] = `
               className="form-label col-form-label col-sm-2"
               htmlFor="formPlaintextCompany"
             >
-              registerCompanyBaseCountryLabel
+              Base Country
               :
             </label>
             <div
@@ -108,13 +108,13 @@ exports[`checks that the Login page can be rendered 1`] = `
                 value="Germany"
               >
                 <option>
-                  registerCompanyCountryGermany
+                  Germany
                 </option>
                 <option>
-                  registerCompanyCountryEngland
+                  England
                 </option>
                 <option>
-                  registerCompanyCountryScotland
+                  Scotland
                 </option>
               </select>
             </div>
@@ -136,7 +136,7 @@ exports[`checks that the Login page can be rendered 1`] = `
               onClick={[Function]}
               type="button"
             >
-              registerCompanyRegisterButton
+              Register
             </button>
             <button
               className="mb-0 px-5 me-2 btn btn-primary btn-lg"
@@ -144,7 +144,7 @@ exports[`checks that the Login page can be rendered 1`] = `
               onClick={[Function]}
               type="button"
             >
-              registerCompanyResetButton
+              Reset
             </button>
           </div>
         </div>
