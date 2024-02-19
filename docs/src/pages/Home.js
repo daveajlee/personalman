@@ -30,7 +30,7 @@ const Home = () => (
         <Row className="mt-3">
             <Col xs={12} sm={12} md={6} lg={3}>
                 <Card className="text-center nav-card">
-                    <Card.Img variant="top" src={visionImage} />
+                    <Card.Img variant="top" src={visionImage} alt={"Person sitting on mountain and viewing clouds"}/>
                     <Card.Body>
                         <Card.Title>Vision</Card.Title>
                         <Card.Text>
@@ -42,7 +42,7 @@ const Home = () => (
             </Col>
             <Col xs={12} sm={12} md={6} lg={3}>
                 <Card className="text-center nav-card">
-                    <Card.Img variant="top" src={roadmapImage} />
+                    <Card.Img variant="top" src={roadmapImage} alt={"Photo of a diary and pen"}/>
                     <Card.Body>
                         <Card.Title>Features & Roadmap</Card.Title>
                         <Card.Text>
@@ -55,7 +55,7 @@ const Home = () => (
             </Col>
             <Col xs={12} sm={12} md={6} lg={3}>
                 <Card className="text-center nav-card">
-                    <Card.Img variant="top" src={architectureImage} />
+                    <Card.Img variant="top" src={architectureImage} alt={"Photo of a mobile phone and a big screen"} />
                     <Card.Body>
                         <Card.Title>Architecture</Card.Title>
                         <Card.Text>
@@ -67,7 +67,7 @@ const Home = () => (
             </Col>
             <Col xs={12} sm={12} md={6} lg={3}>
                 <Card className="text-center nav-card">
-                    <Card.Img variant="top" src={apiImage} />
+                    <Card.Img variant="top" src={apiImage} alt={"Photo of a laptop with an API client visible on the main screen"} />
                     <Card.Body>
                         <Card.Title>API</Card.Title>
                         <Card.Text>
