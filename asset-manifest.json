@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/personalman/static/css/main.34d295aa.css",
-    "main.js": "/personalman/static/js/main.1ff445ed.js",
+    "main.js": "/personalman/static/js/main.45f95ac8.js",
     "static/js/685.3ef42177.chunk.js": "/personalman/static/js/685.3ef42177.chunk.js",
     "static/media/douglas-lopes-ehyV_XOZ4iA-unsplash.jpg": "/personalman/static/media/douglas-lopes-ehyV_XOZ4iA-unsplash.0e2a85740846a7afab97.jpg",
     "static/media/joshua-earle-Dwheufds6kQ-unsplash.jpg": "/personalman/static/media/joshua-earle-Dwheufds6kQ-unsplash.be55339bb11e89ccbc40.jpg",
@@ -14,6 +14,6 @@
   },
   "entrypoints": [
     "static/css/main.34d295aa.css",
-    "static/js/main.1ff445ed.js"
+    "static/js/main.45f95ac8.js"
   ]
 }
