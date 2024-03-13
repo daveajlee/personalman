@@ -3,6 +3,7 @@ import {Button, Col, Container, Form, Image, Row} from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {useTranslation} from "react-i18next";
+import logo from './../../../assets/personalman-logo.png';
 
 /**
  * This is the page which allows the user to register a new company in PersonalMan.
@@ -14,6 +15,7 @@ function RegisterCompany () {
     const [annualLeave, setAnnualLeave] = useState(20);
     const [country, setCountry] = useState("Germany");
     const navigate = useNavigate();
+    const [errorText, setErrorText] = useState("");
 
     const {t} = useTranslation();
 
@@ -54,6 +56,9 @@ function RegisterCompany () {
      * Register the new company by sending the request to the API. Display an alert and then move back to the home page.
      */
     function registerCompany() {
+        console.log('*****');
+        const userAgent = navigator.userAgent.toLowerCase();
+        console.log(userAgent);
         axios.post(process.env.REACT_APP_SERVER_URL  + '/company/', {
             name: name,
             defaultAnnualLeaveInDays: annualLeave,
@@ -62,8 +67,11 @@ function RegisterCompany () {
             if ( response.status === 201 ) {
                 alert('Thank you for registering for PersonalMan. You can now create users on the login page.')
                 navigate("/registerUser")
+            } else {
+                setErrorText('Server is not available. Please check the server is configured correctly.')
             }
         }).catch(function (error) {
+            setErrorText('Server is not available. Please check the server is configured correctly.')
             console.log(error);
         });
     }
@@ -74,14 +82,14 @@ function RegisterCompany () {
     return (<Container fluid className="p-3 my-5 h-custom">
         <Row className="d-flex flex-row align-items-center justify-content-center">
             <Col>
-                <Image src="https://www.davelee.de/common/assets/img/portfolio/personalman-logo.png"
+                <Image src={logo}
                        className="d-block mx-auto img-fluid w-50" alt="PersonalMan Logo"/>
             </Col>
             <Col>
                 <Container className="d-flex flex-row align-items-center justify-content-center mb-3">
                     <Row>
                         <Col>
-                            <h3>{t('registerCompanyTitle')}</h3>
+                            <h3>Test {t('registerCompanyTitle')}</h3>
                         </Col>
                     </Row>
                 </Container>
@@ -115,6 +123,14 @@ function RegisterCompany () {
                         </Form.Group>
 
                     </Form>
+                </Container>
+
+                <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>
+                    <Row>
+                        <Col className="text-center">
+                            <h2 style={{color:`red`}}>{errorText}</h2>
+                        </Col>
+                    </Row>
                 </Container>
 
                 <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>

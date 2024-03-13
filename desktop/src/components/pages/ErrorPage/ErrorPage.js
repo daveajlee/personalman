@@ -1,5 +1,6 @@
 import React from "react";
 import {Col, Container, Image, Row} from "react-bootstrap";
+import logo from './../../../assets/personalman-logo.png';
 
 /**
  * This page is the error page which is displayed whenever the user visits an invalid url.
@@ -14,7 +15,7 @@ function ErrorPage() {
         <Container fluid className="p-3 my-5 h-custom">
             <Row className="d-flex flex-row align-items-center justify-content-center">
                 <Col>
-                    <Image src="https://www.davelee.de/common/assets/img/portfolio/personalman-logo.png"
+                    <Image src={logo}
                            className="d-block mx-auto img-fluid w-50" alt="PersonalMan Logo"/>
                 </Col>
                 <Col>

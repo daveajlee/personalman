@@ -4,6 +4,7 @@ import axios from "axios";
 import {useLocation, useNavigate} from "react-router-dom";
 import Header from "../../layout/Header/Header";
 import {useTranslation} from "react-i18next";
+import logo from './../../../assets/personalman-logo.png';
 
 /**
  * This is the page which allows the user to change their password assuming they known their old password. Otherwise,
@@ -119,7 +120,7 @@ function ChangePassword (props) {
         <Container fluid className="p-3 my-5 h-custom">
         <Row className="d-flex flex-row align-items-center justify-content-center">
             <Col>
-                <Image src="https://www.davelee.de/common/assets/img/portfolio/personalman-logo.png"
+                <Image src={logo}
                        className="d-block mx-auto img-fluid w-50" alt="PersonalMan Logo"/>
             </Col>
             <Col>

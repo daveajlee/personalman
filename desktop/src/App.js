@@ -33,7 +33,7 @@ function App() {
           const companies = res.data;
           setCompanies(companies);
         }).catch(error => {
-            console.log('No connection to API');
+            console.log('No connection to API available');
     })
   }, []);
 

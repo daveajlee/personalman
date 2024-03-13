@@ -3,6 +3,7 @@ import {Container, Col, Row, Form, Button, Image} from "react-bootstrap";
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
+import logo from './../../../assets/personalman-logo.png';
 
 /**
  * This component represents the login screen to allow users to login to PersonalMan.
@@ -89,7 +90,7 @@ function Login() {
     return (<Container fluid className="p-3 my-5 h-custom">
         <Row className="d-flex flex-row align-items-center justify-content-center">
             <Col>
-                <Image src="https://www.davelee.de/common/assets/img/portfolio/personalman-logo.png"
+                <Image src={logo}
                        className="d-block mx-auto img-fluid w-50" alt="PersonalMan Logo"/>
             </Col>
             <Col>
