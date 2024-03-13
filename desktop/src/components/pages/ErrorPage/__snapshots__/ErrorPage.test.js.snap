@@ -13,7 +13,7 @@ exports[`checks that the ErrorPage page can be rendered 1`] = `
       <img
         alt="PersonalMan Logo"
         className="d-block mx-auto img-fluid w-50"
-        src="https://www.davelee.de/common/assets/img/portfolio/personalman-logo.png"
+        src="personalman-logo.png"
       />
     </div>
     <div

@@ -13,7 +13,7 @@ exports[`checks that the AbsenceList component can be rendered 1`] = `
       <img
         alt="PersonalMan Logo"
         className="d-block mx-auto img-fluid w-50"
-        src="https://www.davelee.de/common/assets/img/portfolio/personalman-logo.png"
+        src="personalman-logo.png"
       />
     </div>
     <div
@@ -29,6 +29,7 @@ exports[`checks that the AbsenceList component can be rendered 1`] = `
             className="col"
           >
             <h3>
+              Test 
               Getting Started: Registering a new Company/Organisation
             </h3>
           </div>
@@ -120,6 +121,25 @@ exports[`checks that the AbsenceList component can be rendered 1`] = `
             </div>
           </div>
         </form>
+      </div>
+      <div
+        className="align-items-center justify-content-center text-md-start mt-4 pt-2 container"
+      >
+        <div
+          className="row"
+        >
+          <div
+            className="text-center col"
+          >
+            <h2
+              style={
+                Object {
+                  "color": "red",
+                }
+              }
+            />
+          </div>
+        </div>
       </div>
       <div
         className="align-items-center justify-content-center text-md-start mt-4 pt-2 container"
