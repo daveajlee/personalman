@@ -52,8 +52,6 @@ function createWindow() {
         })
     })
 
-    mainWindow.openDevTools();
-
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
         // Dereference the window object, usually you would store windows
