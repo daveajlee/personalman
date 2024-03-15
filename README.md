@@ -33,7 +33,7 @@ Personalman comes with a Swagger API documentation which can be used to implemen
 
 ## Desktop
 
-The current architecture of PersonalMan allows multiple clients to be built - each client simply has to implement the API provided by the server. Currently there is only one client which is available for download: the PersonalMan Web Client. This client implements the API in React and can be used in most modern web browsers which support JavaScript. A second client based on Electron will be available soon.
+The current architecture of PersonalMan allows multiple clients to be built - each client simply has to implement the API provided by the server. Currently there is a single client available for download: the PersonalMan Web & Desktop Client. This client implements the API in React and can be used in most modern web browsers which support JavaScript. Additional versions of this client are also supplied which run natively on desktop operating systems such as Windows, Linux and Mac by utilising the Electron framework.
 
 ## Current Limitations
 
