@@ -35,7 +35,7 @@
     "styleguide": "styleguidist server",
     "styleguide:build": "styleguidist build",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make --platform darwin & electron-forge make --platform linux & electron-forge make --platform win32"
   },
   "eslintConfig": {
     "extends": [

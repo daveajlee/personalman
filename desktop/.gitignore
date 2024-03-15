@@ -24,3 +24,7 @@ sketch
 docs
 
 out/
+
+*.pfx
+
+.env

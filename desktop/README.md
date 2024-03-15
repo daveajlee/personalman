@@ -17,6 +17,10 @@ Both Windows and Mac OS are the supported operating systems.
 *   Dependencies are managed via the package.json file and NPM (Node 18 is required).
 *   Unit tests can be run via `npm run test` (interactive watch mode) or `npm run test:nowatch` (single run with no watch mode).
 
+## Create Windows Electron Binary on Mac
+
+* Wine Cask must be installed via HomeBrew: `brew install --cask wine-stable`
+
 ## Limitations of the client
 
 *   I cannot accept any warranty for loss of data through using this client or server.
