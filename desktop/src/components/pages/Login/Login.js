@@ -134,10 +134,10 @@ function Login() {
                         <Col className="text-center">
                             <Button className="mb-0 px-5 me-2" size='lg' onClick={login}>{t('loginLoginButton')}</Button>
                             <Button className="mb-0 px-5 me-2" size='lg' onClick={resetForm}>{t('loginResetButton')}</Button>
-                            <p className="small fw-bold mt-2 pt-1 mb-2">{t('loginRegisterUserTeaser')} <a href="registerUser"
+                            <p className="small fw-bold mt-2 pt-1 mb-2">{t('loginRegisterUserTeaser')} <a href="/#/registerUser"
                                                                                                   className="link-danger">{t('loginRegisterUserLink')}</a>
                             </p>
-                            <p className="small fw-bold mt-2 pt-1 mb-2">{t('loginRegisterCompanyTeaser')} <a href="registerCompany"
+                            <p className="small fw-bold mt-2 pt-1 mb-2">{t('loginRegisterCompanyTeaser')} <a href="/#/registerCompany"
                                                                                                                className="link-danger">{t('loginRegisterCompanyLink')}</a>
                             </p>
                         </Col>

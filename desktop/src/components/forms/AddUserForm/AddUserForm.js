@@ -35,7 +35,7 @@ function AddUserForm (props) {
      * in the parameters.
      */
     useEffect(() => {
-        if ( props.company === '' ) {
+        if ( !props.company || props.company === '' ) {
             axios.get(process.env.REACT_APP_SERVER_URL + `/companies/`)
                 .then(res => {
                     const companies = res.data;
@@ -238,7 +238,7 @@ function AddUserForm (props) {
                 dateOfBirth: dateOfBirthSplit[2] + '-' + dateOfBirthSplit[1] + '-' + dateOfBirthSplit[0]
             }).then(function (response) {
                 if ( response.status === 201 ) {
-                    if ( props.company === '' ) {
+                    if ( !props.company || props.company === '' ) {
                         alert(t('addUserFormSuccess'))
                         navigate("/")
                     } else {
@@ -294,7 +294,7 @@ function AddUserForm (props) {
                 </Col>
             </Form.Group>
 
-            { ( props.company ==='' ) ? <p className="small text-center fw-bold mt-2 pt-1 mb-4">{t('loginRegisterCompanyTeaser')} <a href="registerCompany"
+            { ( props.company ==='' ) ? <p className="small text-center fw-bold mt-2 pt-1 mb-4">{t('loginRegisterCompanyTeaser')} <a href="/#/registerCompany"
                 className="link-danger">{t('loginRegisterCompanyLink')}</a>
                 </p> : <p></p> }
 

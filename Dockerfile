@@ -10,7 +10,7 @@ RUN apk add maven
 
 #Git
 RUN apk add git
-RUN mkdir /trams-crm
+RUN mkdir /personalman
 RUN git clone https://github.com/daveajlee/personalman.git /personalman
 
 #Build
