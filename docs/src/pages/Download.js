@@ -29,11 +29,13 @@ const Download = () => (
                     <Card.Body>
                         <Card.Title>Desktop Client</Card.Title>
                         <Card.Text>
-                            There is currently only a web client for PersonalMan based on React. Extract the Zip File and open
-                            the index.html file to start the client. In the default configuration it assumes a local
-                            PersonalMan server on the same PC but this can be changed manually.
+                            The PersonalMan Web & Desktop Client can be used in web browsers which support JavaScript
+                            or natively on desktop operating systems such as Windows, Linux and Mac by utilising the
+                            Electron framework.
+                            <br className="d-none d-lg-block"/><br className="d-none d-lg-block"/>
                         </Card.Text>
-                        <Button variant="primary" href="https://github.com/daveajlee/personalman/releases/download/desktop-v0.1.0/personalman-web-client-0.1.0.zip">Zip File</Button>
+                        <Button variant="primary"
+                                href="https://github.com/daveajlee/personalman/releases">Download Client</Button>
                     </Card.Body>
                 </Card>
             </Col>
