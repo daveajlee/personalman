@@ -37,7 +37,7 @@ function StatisticsModal (props) {
         } else {
             username = props.username;
         }
-        axios.get(process.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&username=' + username + '&startDate=' + startYearDate + '&endDate=' + endYearDate + '&onlyCount=false&token=' + props.token)
+        axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&username=' + username + '&startDate=' + startYearDate + '&endDate=' + endYearDate + '&onlyCount=false&token=' + props.token)
             .then(res => {
                 const result = res.data;
                 setStatisticsMap(result['statisticsMap']);
@@ -45,7 +45,7 @@ function StatisticsModal (props) {
                 console.error(error);
         })
         // Get the leave entitlement for this user.
-        axios.get(process.env.REACT_APP_SERVER_URL  + '/user/?company=' + props.company + '&username=' + username + '&token=' + props.token)
+        axios.get(import.meta.env.REACT_APP_SERVER_URL  + '/user/?company=' + props.company + '&username=' + username + '&token=' + props.token)
             .then(res => {
                 const result = res.data;
                 setLeaveEntitlement(result['leaveEntitlementPerYear']);

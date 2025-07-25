@@ -87,7 +87,7 @@ function ChangePassword (props) {
             alert(t('changePasswordNotIdentical'));
             return;
         }
-        axios.patch(process.env.REACT_APP_SERVER_URL + '/user/password', {
+        axios.patch(import.meta.env.REACT_APP_SERVER_URL + '/user/password', {
             company: getCompany(),
             username: getUsername(),
             token: getToken(),

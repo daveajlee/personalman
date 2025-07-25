@@ -32,7 +32,7 @@ function AbsenceList (props) {
     useEffect(() => {
         if ( props.startDate && props.endDate ) {
             if ( props.username ) {
-                axios.get(process.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&username=' + props.username + '&startDate=' + props.startDate + '&endDate=' + props.endDate + '&onlyCount=false&token=' + props.token)
+                axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&username=' + props.username + '&startDate=' + props.startDate + '&endDate=' + props.endDate + '&onlyCount=false&token=' + props.token)
                     .then(res => {
                         const result = res.data;
                         setAbsences(result['absenceResponseList']);
@@ -40,7 +40,7 @@ function AbsenceList (props) {
                         console.error(error);
                 })
             } else {
-                axios.get(process.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&startDate=' + props.startDate + '&endDate=' + props.endDate + '&onlyCount=false&token=' + props.token)
+                axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&startDate=' + props.startDate + '&endDate=' + props.endDate + '&onlyCount=false&token=' + props.token)
                     .then(res => {
                         const result = res.data;
                         setAbsences(result['absenceResponseList']);
@@ -58,7 +58,7 @@ function AbsenceList (props) {
                 useGrouping: false
             }) + '-' + props.year
             if ( props.username ) {
-                axios.get(process.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&username=' + props.username + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + props.token)
+                axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&username=' + props.username + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + props.token)
                     .then(res => {
                         const result = res.data;
                         setAbsences(result['absenceResponseList']);
@@ -67,7 +67,7 @@ function AbsenceList (props) {
                         console.error(error);
                     })
             } else {
-                axios.get(process.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + props.token)
+                axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + props.token)
                     .then(res => {
                         const result = res.data;
                         setAbsences(result['absenceResponseList']);
@@ -222,7 +222,7 @@ function AbsenceList (props) {
      * @param absence the absence to delete
      */
     function deleteAbsence(absence) {
-        axios.delete(process.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&username=' + absence.username
+        axios.delete(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&username=' + absence.username
             + '&startDate=' + absence.startDate + '&endDate=' + absence.endDate + '&token=' + props.token)
             .then(function (response) {
                 if ( response.status === 200 ) {

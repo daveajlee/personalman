@@ -36,7 +36,7 @@ function AddUserForm (props) {
      */
     useEffect(() => {
         if ( !props.company || props.company === '' ) {
-            axios.get(process.env.REACT_APP_SERVER_URL + `/companies/`)
+            axios.get(import.meta.env.REACT_APP_SERVER_URL + `/companies/`)
                 .then(res => {
                     const companies = res.data;
                     setCompanies(companies);
@@ -225,7 +225,7 @@ function AddUserForm (props) {
         else {
             let startDateSplit = startDate.split("-");
             let dateOfBirthSplit = dateOfBirth.split("-");
-            axios.post(process.env.REACT_APP_SERVER_URL + '/user/', {
+            axios.post(import.meta.env.REACT_APP_SERVER_URL + '/user/', {
                 firstName: firstName,
                 surname: lastName,
                 username: username,

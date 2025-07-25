@@ -59,7 +59,7 @@ function RegisterCompany () {
         console.log('*****');
         const userAgent = navigator.userAgent.toLowerCase();
         console.log(userAgent);
-        axios.post(process.env.REACT_APP_SERVER_URL  + '/company/', {
+        axios.post(import.meta.env.REACT_APP_SERVER_URL  + '/company/', {
             name: name,
             defaultAnnualLeaveInDays: annualLeave,
             country: country

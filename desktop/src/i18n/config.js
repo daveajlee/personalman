@@ -7,10 +7,10 @@ i18n.use(LanguageDetector).use(initReactI18next).init({
     fallbackLng: 'en',
     resources: {
         en: {
-            translations: require('./locales/en/translations.json')
+            translations: import('./locales/en/translations.json')
         },
         de: {
-            translations: require('./locales/de/translations.json')
+            translations: import('./locales/de/translations.json')
         }
     },
     ns: ['translations'],

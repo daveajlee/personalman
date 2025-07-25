@@ -19,7 +19,7 @@ function Logout(props) {
      * Logout of the system via the REST API.
      */
     useEffect(() => {
-        axios.post(process.env.REACT_APP_SERVER_URL + `/user/logout`, {
+        axios.post(import.meta.env.REACT_APP_SERVER_URL + `/user/logout`, {
             token: token
         })
             .then(res => {

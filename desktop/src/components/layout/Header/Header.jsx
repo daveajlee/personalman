@@ -23,7 +23,7 @@ function Header(props) {
      * Load the first name, surname and role of the currently logged in user to be displayed as part of the header bar.
      */
     useEffect(() => {
-        axios.get(process.env.REACT_APP_SERVER_URL + '/user/?company=' + props.company + '&username=' + props.token.split("-")[0] + '&token=' + props.token)
+        axios.get(import.meta.env.REACT_APP_SERVER_URL + '/user/?company=' + props.company + '&username=' + props.token.split("-")[0] + '&token=' + props.token)
             .then(res => {
                 const result = res.data;
                 setName(result['firstName'] + ' ' + result['surname']);
