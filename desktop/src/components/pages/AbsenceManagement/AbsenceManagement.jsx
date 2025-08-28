@@ -121,7 +121,7 @@ function AbsenceManagement(props) {
             alert(t('absenceManagementAddAbsenceFail'));
             return;
         }
-        axios.post(process.env.REACT_APP_SERVER_URL + '/absences/', {
+        axios.post(import.meta.env.REACT_APP_SERVER_URL + '/absences/', {
             company: company,
             username: getUsername(),
             startDate: startDateSplit[2] + '-' + startDateSplit[1] + '-' + startDateSplit[0],

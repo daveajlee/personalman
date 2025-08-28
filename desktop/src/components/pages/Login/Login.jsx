@@ -22,8 +22,10 @@ function Login() {
      * Load the list of available companies via the REST API.
      */
     useEffect(() => {
-        axios.get(process.env.REACT_APP_SERVER_URL + `/companies/`)
+        console.log(import.meta.env.REACT_APP_SERVER_URL);
+        axios.get(import.meta.env.REACT_APP_SERVER_URL + `/companies/`)
             .then(res => {
+                console.log(res);
                 const companies = res.data;
                 setCompanies(companies);
                 setCompany(companies[0]);
@@ -61,7 +63,7 @@ function Login() {
      * display a simple alert.
      */
     function login() {
-        axios.post(process.env.REACT_APP_SERVER_URL + '/user/login', {
+        axios.post(import.meta.env.REACT_APP_SERVER_URL + '/user/login', {
             company: company,
             username: username,
             password: password,
