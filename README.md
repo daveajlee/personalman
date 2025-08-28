@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://www.davelee.de/common/assets/img/portfolio/personalman-logo.png" alt="PersonalMan" width="300" height="300">
+<img src="https://www.davelee.de/common/assets/img/portfolio/personalman.webp" alt="PersonalMan" width="300" height="300">
 </p>
 
 <p align=center><a href="https://app.codacy.com/manual/dave_33/personalman?utm_source=github.com&utm_medium=referral&utm_content=daveajlee/personalman&utm_campaign=Badge_Grade_Dashboard"><img src="https://api.codacy.com/project/badge/Grade/14098397910b469084be11762d5c063d" alt="Codacy Badge"> </a>
