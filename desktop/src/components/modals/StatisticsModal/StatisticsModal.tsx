@@ -1,8 +1,17 @@
 import {Button, Modal} from "react-bootstrap";
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
 import {useTranslation} from "react-i18next";
+
+type StatisticsModalProps = {
+    setShowStatisticsModal: Function;
+    year: number;
+    company: string;
+    username: string;
+    token: string;
+    showStatisticsModal: boolean;
+}
 
 /**
  * This is the modal window to show the view statistics for a particular user. The modal is used for admin users who want
@@ -12,9 +21,9 @@ import {useTranslation} from "react-i18next";
  * token - the current user access token of the admin user, year - the year that the statistics should be displayed for
  * @returns {JSX.Element} to be displayed to the user.
  */
-function StatisticsModal (props) {
+function StatisticsModal ({setShowStatisticsModal, year, company, username, token, showStatisticsModal}: StatisticsModalProps) {
 
-    const [statisticsMap, setStatisticsMap] = useState([]);
+    const [statisticsMap, setStatisticsMap] = useState<{[key: string]: string}>({});
     const [leaveEntitlement, setLeaveEntitlement] = useState(0);
 
     const {t} = useTranslation();
@@ -22,22 +31,19 @@ function StatisticsModal (props) {
     /**
      * Function to handle the case that the user clicks on the close button in the modal.
      */
-    const handleStatisticsClose = () => props.setShowStatisticsModal(false);
+    const handleStatisticsClose = () => setShowStatisticsModal(false);
 
     /**
      * Load the statistics from the REST API based on the supplied information.
      */
     useEffect(() => {
         // Load the statistics for the current year.
-        let startYearDate = '01-01-' + props.year;
-        let endYearDate = '31-12-' + props.year;
-        let username;
-        if ( props.username === '') {
-            username = props.token.split("-")[0];
-        } else {
-            username = props.username;
+        let startYearDate = '01-01-' + year;
+        let endYearDate = '31-12-' + year;
+        if ( username === '') {
+            username = token.split("-")[0];
         }
-        axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&username=' + username + '&startDate=' + startYearDate + '&endDate=' + endYearDate + '&onlyCount=false&token=' + props.token)
+        axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startYearDate + '&endDate=' + endYearDate + '&onlyCount=false&token=' + token)
             .then(res => {
                 const result = res.data;
                 setStatisticsMap(result['statisticsMap']);
@@ -45,22 +51,22 @@ function StatisticsModal (props) {
                 console.error(error);
         })
         // Get the leave entitlement for this user.
-        axios.get(import.meta.env.REACT_APP_SERVER_URL  + '/user/?company=' + props.company + '&username=' + username + '&token=' + props.token)
+        axios.get(import.meta.env.REACT_APP_SERVER_URL  + '/user/?company=' + company + '&username=' + username + '&token=' + token)
             .then(res => {
                 const result = res.data;
                 setLeaveEntitlement(result['leaveEntitlementPerYear']);
             }).catch(error => {
                 console.error(error);
         })
-    }, [props.company, props.token, props.year, props.username]);
+    }, [company, token, year, username]);
 
     /**
      * Display the relevant elements and data to the user.
      */
     return (
-        <Modal show={props.showStatisticsModal} onHide={handleStatisticsClose}>
+        <Modal show={showStatisticsModal} onHide={handleStatisticsClose}>
             <Modal.Header closeButton>
-                <Modal.Title>{t('statisticsModalTitle')} - {props.username} - {props.year}</Modal.Title>
+                <Modal.Title>{t('statisticsModalTitle')} - {username} - {year}</Modal.Title>
             </Modal.Header>
             <Modal.Body>{t('Illness')}: {statisticsMap['Illness']} {t('statisticsModalDays')} <br/> {t('Holiday')}: {statisticsMap['Holiday']} {t('statisticsModalDays')} ({t('statisticsModalRemaining')}: {leaveEntitlement} {t('statisticsModalDays')}) <br/>
                 {t('Trip')}: {statisticsMap['Trip']} {t('statisticsModalDays')} <br/> {t('Conference')}: {statisticsMap['Conference']} {t('statisticsModalDays')} <br/> {t('DayinLieu')}: {statisticsMap['Day in Lieu']} {t('statisticsModalDays')} ({t('statisticsModalRemaining')}: {statisticsMap['Day in Lieu Request']} {t('statisticsModalDays')}) <br/>

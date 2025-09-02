@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import {type ChangeEvent, useState} from "react";
 import {Button, Col, Container, Form, Image, Row} from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +23,7 @@ function RegisterCompany () {
      * Set the name that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function nameChangeHandler(event) {
+    function nameChangeHandler(event: ChangeEvent<HTMLInputElement>) {
         setName(event.target.value);
     }
 
@@ -31,15 +31,15 @@ function RegisterCompany () {
      * Set the annual leave that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function annualLeaveChangeHandler(event) {
-        setAnnualLeave(event.target.value);
+    function annualLeaveChangeHandler(event: ChangeEvent<HTMLInputElement>) {
+        setAnnualLeave(parseInt(event.target.value));
     }
 
     /**
      * Set the country that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function countryChangeHandler(event) {
+    function countryChangeHandler(event: ChangeEvent<HTMLSelectElement>) {
         setCountry(event.target.value)
     }
 

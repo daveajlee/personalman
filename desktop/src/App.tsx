@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/App.css'
 import Login from "./components/pages/Login/Login";
 import RegisterCompany from "./components/pages/RegisterCompany/RegisterCompany";
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import {Route, Routes} from "react-router-dom";
 import RegisterUser from "./components/pages/RegisterUser/RegisterUser";
@@ -11,7 +11,6 @@ import ChangePassword from "./components/pages/ChangePassword/ChangePassword";
 import UsersManagement from "./components/pages/UsersManagement/UsersManagement";
 import AllAbsences from "./components/pages/AllAbsences/AllAbsences";
 import Logout from "./components/pages/Logout/Logout";
-import './i18n/config';
 
 /**
  * This is the first page that the user visits when starting PersonalMan - either show the login screen or the register
@@ -27,7 +26,7 @@ function App() {
      * Load the current list of companies that are available on the REST API server.
      */
   useEffect(() => {
-    axios.get(import.meta.env.REACT_APP_SERVER_URL + `/companies/`)
+    axios.get(import.meta.env.VITE_SERVER_URL + `/companies/`)
         .then(res => {
           setLoading(false);
           const companies = res.data;
@@ -55,4 +54,4 @@ function App() {
   );
 }
 
-export default App;
+export default App

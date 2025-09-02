@@ -1,9 +1,26 @@
 import {Button, Col, Container, Row} from "react-bootstrap";
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import PropTypes from "prop-types";
 import {useTranslation} from "react-i18next";
+
+type AbsenceListProps = {
+    startDate: string;
+    endDate: string;
+    username: string;
+    company: string;
+    token: string;
+    month: number;
+    year: number;
+}
+
+type Absence = {
+    username: string;
+    startDate: string;
+    endDate: string;
+    category: string;
+}
 
 /**
  * This component displays the list of absences that have been saved in the system for either a particular username
@@ -14,7 +31,7 @@ import {useTranslation} from "react-i18next";
  * month - the month to display absences, year - the year to display absences.
  * @returns {JSX.Element} to be displayed to the user.
  */
-function AbsenceList (props) {
+function AbsenceList ({startDate, endDate, username, company, token, month, year}: AbsenceListProps) {
 
     const [absences, setAbsences] = useState([]);
 
@@ -30,9 +47,9 @@ function AbsenceList (props) {
      * (usually a month in a year).
      */
     useEffect(() => {
-        if ( props.startDate && props.endDate ) {
-            if ( props.username ) {
-                axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&username=' + props.username + '&startDate=' + props.startDate + '&endDate=' + props.endDate + '&onlyCount=false&token=' + props.token)
+        if ( startDate && endDate ) {
+            if ( username ) {
+                axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token)
                     .then(res => {
                         const result = res.data;
                         setAbsences(result['absenceResponseList']);
@@ -40,7 +57,7 @@ function AbsenceList (props) {
                         console.error(error);
                 })
             } else {
-                axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&startDate=' + props.startDate + '&endDate=' + props.endDate + '&onlyCount=false&token=' + props.token)
+                axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' +  token)
                     .then(res => {
                         const result = res.data;
                         setAbsences(result['absenceResponseList']);
@@ -49,16 +66,16 @@ function AbsenceList (props) {
                 })
             }
         } else {
-            let startDate = '01-'+ props.month.toLocaleString('en-US', {
+            let startDate = '01-'+ month.toLocaleString('en-US', {
                 minimumIntegerDigits: 2,
                 useGrouping: false
-            }) + '-' + props.year;
-            let endDate = '31-' + props.month.toLocaleString('en-US', {
+            }) + '-' +  year;
+            let endDate = '31-' +  month.toLocaleString('en-US', {
                 minimumIntegerDigits: 2,
                 useGrouping: false
-            }) + '-' + props.year
-            if ( props.username ) {
-                axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&username=' + props.username + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + props.token)
+            }) + '-' + year
+            if ( username ) {
+                axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token)
                     .then(res => {
                         const result = res.data;
                         setAbsences(result['absenceResponseList']);
@@ -67,7 +84,7 @@ function AbsenceList (props) {
                         console.error(error);
                     })
             } else {
-                axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + props.token)
+                axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token)
                     .then(res => {
                         const result = res.data;
                         setAbsences(result['absenceResponseList']);
@@ -77,15 +94,15 @@ function AbsenceList (props) {
             }
 
         }
-    }, [props.token, props.company, props.startDate, props.endDate, props.month, props.year, props.username]);
+    }, [token, company, startDate, endDate, month, year, username]);
 
     /**
      * Get the name of the current month that we are in.
      * @returns the name of the month in English
      */
     function getMonthName() {
-        if ( props.month >= 1 ) {
-            return months[props.month-1];
+        if ( month >= 1 ) {
+            return months[month-1];
         } else {
             return months[new Date().getMonth()];
         }
@@ -96,8 +113,8 @@ function AbsenceList (props) {
      * @returns the current year to be displayed.
      */
     function getYear() {
-        if ( props.year ) {
-            return props.year;
+        if ( year ) {
+            return year;
         } else {
             return new Date().getFullYear();
         }
@@ -107,27 +124,26 @@ function AbsenceList (props) {
      * Move back to the previous month.
      */
     function previousMonth() {
-        if ( props.month ) {
-            let month = props.month; let year = props.year;
-            if ( props.month <= 1 ) {
+        if ( month ) {
+            if (  month <= 1 ) {
                 month = 12;
-                if ( props.year ) {
+                if ( year ) {
                     year -= 1;
                 }
             } else {
                 month -= 1;
             }
-            if ( props.year ) {
-                if ( props.username ) {
-                    navigate("/absences", {state:{token: props.token, month: month, year: year, company: props.company }})
+            if ( year ) {
+                if ( username ) {
+                    navigate("/absences", {state:{token: token, month: month, year: year, company: company }})
                 } else {
-                    navigate("/allAbsences", {state:{token: props.token, month: month, year: year, company: props.company }})
+                    navigate("/allAbsences", {state:{token: token, month: month, year: year, company: company }})
                 }
             } else {
-                if ( props.username ) {
-                    navigate("/absences", {state:{token: props.token, month: month, year: new Date().getFullYear(), company: props.company }})
+                if ( username ) {
+                    navigate("/absences", {state:{token: token, month: month, year: new Date().getFullYear(), company: company }})
                 } else {
-                    navigate("/allAbsences", {state:{token: props.token, month: month, year: new Date().getFullYear(), company: props.company }})
+                    navigate("/allAbsences", {state:{token: token, month: month, year: new Date().getFullYear(), company: company }})
                 }
 
             }
@@ -138,22 +154,22 @@ function AbsenceList (props) {
             } else {
                 month -= 1;
             }
-            if ( props.username ) {
+            if ( username ) {
                 navigate("/absences", {
                     state: {
-                        token: props.token,
+                        token: token,
                         month: month,
                         year: new Date().getFullYear(),
-                        company: props.company
+                        company: company
                     }
                 })
             } else {
                 navigate("/allAbsences", {
                     state: {
-                        token: props.token,
+                        token: token,
                         month: month,
                         year: new Date().getFullYear(),
-                        company: props.company
+                        company: company
                     }
                 })
             }
@@ -164,28 +180,27 @@ function AbsenceList (props) {
      * Move forward to the next month.
      */
     function nextMonth() {
-        if ( props.month ) {
-            let month = props.month; let year = props.year;
-            if ( props.month >= 12 ) {
+        if ( month ) {
+            if ( month >= 12 ) {
                 month = 1;
-                if ( props.year ) {
+                if ( year ) {
                     year += 1;
                 }
             } else {
                 month += 1;
             }
-            if ( props.year ) {
-                if ( props.username ) {
-                    navigate("/absences", {state:{token: props.token, month: month, year: year, company: props.company }})
+            if ( year ) {
+                if ( username ) {
+                    navigate("/absences", {state:{token: token, month: month, year: year, company: company }})
                 } else {
-                    navigate("/allAbsences", {state:{token: props.token, month: month, year: year, company: props.company }})
+                    navigate("/allAbsences", {state:{token: token, month: month, year: year, company: company }})
                 }
 
             } else {
-                if ( props.username ) {
-                    navigate("/absences", {state:{token: props.token, month: month, year: new Date().getFullYear(), company: props.company }})
+                if ( username ) {
+                    navigate("/absences", {state:{token: token, month: month, year: new Date().getFullYear(), company: company }})
                 } else {
-                    navigate("/allAbsences", {state:{token: props.token, month: month, year: new Date().getFullYear(), company: props.company }})
+                    navigate("/allAbsences", {state:{token: token, month: month, year: new Date().getFullYear(), company: company }})
                 }
             }
         } else {
@@ -195,22 +210,22 @@ function AbsenceList (props) {
             } else {
                 month += 1;
             }
-            if ( props.username ) {
+            if ( username ) {
                 navigate("/absences", {
                     state: {
-                        token: props.token,
+                        token: token,
                         month: month,
                         year: new Date().getFullYear(),
-                        company: props.company
+                        company: company
                     }
                 })
             } else {
                 navigate("/allAbsences", {
                     state: {
-                        token: props.token,
+                        token: token,
                         month: month,
                         year: new Date().getFullYear(),
-                        company: props.company
+                        company: company
                     }
                 })
             }
@@ -221,9 +236,9 @@ function AbsenceList (props) {
      * Delete the supplied absence.
      * @param absence the absence to delete
      */
-    function deleteAbsence(absence) {
-        axios.delete(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + props.company + '&username=' + absence.username
-            + '&startDate=' + absence.startDate + '&endDate=' + absence.endDate + '&token=' + props.token)
+    function deleteAbsence(absence: Absence) {
+        axios.delete(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + company + '&username=' + absence.username
+            + '&startDate=' + absence.startDate + '&endDate=' + absence.endDate + '&token=' + token)
             .then(function (response) {
                 if ( response.status === 200 ) {
                     alert(t('absenceListDeleteConfirmation'));
@@ -239,19 +254,20 @@ function AbsenceList (props) {
      * @param category the category string to translate
      * @returns the translated text
      */
-    function translateCategory(category) {
+    function translateCategory(category: string) {
         return t(category.replace(/\s+/g, ''));
     }
 
     /**
      * Display the relevant elements and data to the user.
      */
+    // @ts-ignore
     return (
         <Container>
             <Container fluid className="p-3 my-5 h-custom">
                 <Row className="d-flex flex-row align-items-center justify-content-center">
                     <Col>
-                        {props.username ? <h1 className="text-center">{t('absenceListAbsenceFor')}: {props.username}</h1> : <h1 className="text-center">{t('absenceListAllAbsences')}</h1> }
+                        {username ? <h1 className="text-center">{t('absenceListAbsenceFor')}: {username}</h1> : <h1 className="text-center">{t('absenceListAllAbsences')}</h1> }
                     </Col>
                 </Row>
                 <Row className="d-flex flex-row align-items-center justify-content-center mb-5">
@@ -259,7 +275,7 @@ function AbsenceList (props) {
                         <h1 className="text-center">{getMonthName()} {getYear()}</h1>
                     </Col>
                 </Row>
-                {absences.map(d => (<Row className="align-items-center justify-content-center" key={d.startDate + '-' + d.endDate}>
+                {absences.map((d: Absence) => (<Row className="align-items-center justify-content-center" key={d.startDate + '-' + d.endDate}>
                     <Col xs lg="10">
 
                         <h4 className="text-center">{t('absenceListAbsence', { startDate: d.startDate, endDate: d.endDate, category: translateCategory(d.category), username: d.username })}</h4>
