@@ -11,13 +11,14 @@ import ChangePassword from "./components/pages/ChangePassword/ChangePassword";
 import UsersManagement from "./components/pages/UsersManagement/UsersManagement";
 import AllAbsences from "./components/pages/AllAbsences/AllAbsences";
 import Logout from "./components/pages/Logout/Logout";
+import * as React from "react";
 
 /**
  * This is the first page that the user visits when starting PersonalMan - either show the login screen or the register
  * a company screen if no companies have been defined so far.
- * @returns {JSX.Element} to be displayed to the user.
+ * @returns {Element} to be displayed to the user.
  */
-function App() {
+function App(): React.JSX.Element {
 
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +33,7 @@ function App() {
           const companies = res.data;
           setCompanies(companies);
         }).catch(error => {
-            console.log('No connection to API available');
+            console.log('No connection to API available: ', error);
     })
   }, []);
 
@@ -41,15 +42,15 @@ function App() {
      */
     return (
         <Routes>
-            <Route exact path="/" element={!loading && companies && companies.length > 0 ? <Login/> : <RegisterCompany/>}/>
+            <Route path="/" element={!loading && companies && companies.length > 0 ? <Login/> : <RegisterCompany/>}/>
             <Route path='/login' element={<Login/>} />
             <Route path='/registerCompany' element={<RegisterCompany/>} />
-            <Route path='/registerUser' element={<RegisterUser/>} />
-            <Route path='/absences' element={<AbsenceManagement/>} />
-            <Route path='/changePassword' element={<ChangePassword/>} />
-            <Route path='/users' element={<UsersManagement/>} />
-            <Route path='/allAbsences' element={<AllAbsences/>} />
-            <Route path='/logout' element={<Logout/>} />
+            <Route path='/registerUser' element={<RegisterUser companyName="" token=""/>} />
+            <Route path='/absences' element={<AbsenceManagement docMode="false"/>} />
+            <Route path='/changePassword' element={<ChangePassword docMode="false"/>} />
+            <Route path='/users' element={<UsersManagement docMode="false"/>} />
+            <Route path='/allAbsences' element={<AllAbsences docMode="false"/>} />
+            <Route path='/logout' element={<Logout docMode="false"/>} />
         </Routes>
   );
 }

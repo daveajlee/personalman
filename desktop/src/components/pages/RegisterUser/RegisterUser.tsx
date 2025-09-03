@@ -2,6 +2,7 @@ import {Col, Container, Image, Row} from "react-bootstrap";
 import AddUserForm from "../../forms/AddUserForm/AddUserForm";
 import {useTranslation} from "react-i18next";
 import logo from './../../../assets/personalman-logo.png';
+import * as React from "react";
 
 type RegisterUserProps = {
     companyName: string;
@@ -12,7 +13,7 @@ type RegisterUserProps = {
  * This is the page which allows the user to register themselves for PersonalMan.
  * @returns {JSX.Element} to be displayed to the user.
  */
-function RegisterUser ({companyName, token}: RegisterUserProps) {
+function RegisterUser ({companyName, token}: RegisterUserProps): React.JSX.Element {
 
     const {t} = useTranslation();
 

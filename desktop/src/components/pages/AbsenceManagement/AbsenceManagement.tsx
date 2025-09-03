@@ -7,13 +7,18 @@ import axios from "axios";
 import StatisticsModal from "../../modals/StatisticsModal/StatisticsModal";
 import AbsenceList from "../../lists/AbsenceList/AbsenceList";
 import {useTranslation} from "react-i18next";
+import * as React from "react";
+
+type AbsenceManagementProps = {
+    docMode: string;
+}
 
 /**
  * This is the page which displays the list of absences for the current user and allows them to create new absences or
  * view other months or add an absence.
  * @returns {JSX.Element} to be displayed to the user.
  */
-function AbsenceManagement(props) {
+function AbsenceManagement({docMode}: AbsenceManagementProps): React.JSX.Element {
 
     const location = useLocation();
 
@@ -34,22 +39,22 @@ function AbsenceManagement(props) {
     /**
      * Retrieve the current token either from the supplied state or empty if we are in doc mode.
      */
-    const token = (props.docMode && props.docMode==='true') ? "" : location.state.token;
+    const token = (docMode && docMode==='true') ? "" : location.state.token;
 
     /**
      * Retrieve the company either from the supplied state or empty if we are in doc mode.
      */
-    const company = ( props.docMode && props.docMode==='true') ? "" : location.state.company;
+    const company = ( docMode && docMode==='true') ? "" : location.state.company;
 
     /**
      * Retrieve the year either from the supplied state or empty if we are in doc mode. 
      */
-    const year = ( props.docMode && props.docMode==='true') ? "" :  location.state.year ? location.state.year : new Date().getFullYear();
+    const year = ( docMode && docMode==='true') ? "" :  location.state.year ? location.state.year : new Date().getFullYear();
     
     /**
      * Retrieve the month either from the supplied state or empty if we are in doc mode.
      */
-    const month = ( props.docMode && props.docMode==='true') ? "" : location.state.month ? location.state.month : ((new Date().getMonth()) +1);
+    const month = ( docMode && docMode==='true') ? "" : location.state.month ? location.state.month : ((new Date().getMonth()) +1);
 
     /**
      * Load the absences from the REST API either for a particular username within a specific time period
@@ -85,7 +90,7 @@ function AbsenceManagement(props) {
      * @param year the year that should be taken into account.
      * @returns {number} the number of days that the month has in the supplied year.
      */
-    function daysInMonth (month, year) {
+    function daysInMonth (month: number, year: number): number {
         return new Date(year, month, 0).getDate();
     }
 
@@ -143,7 +148,7 @@ function AbsenceManagement(props) {
      * Set the start date that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function startDateChangeHandler(event) {
+    function startDateChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
         setStartDate(event.target.value);
     }
 
@@ -151,7 +156,7 @@ function AbsenceManagement(props) {
      * Set the end date that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function endDateChangeHandler(event) {
+    function endDateChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
         setEndDate(event.target.value);
     }
 
@@ -159,7 +164,7 @@ function AbsenceManagement(props) {
      * Set the reason that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function reasonChangeHandler(event) {
+    function reasonChangeHandler(event: React.ChangeEvent<HTMLSelectElement>) {
         setReason(event.target.value);
     }
 

@@ -1,12 +1,12 @@
-import React from "react";
 import {Col, Container, Image, Row} from "react-bootstrap";
 import logo from './../../../assets/personalman-logo.png';
+import * as React from "react";
 
 /**
  * This page is the error page which is displayed whenever the user visits an invalid url.
  * @returns {JSX.Element} to be displayed to the user.
  */
-function ErrorPage() {
+function ErrorPage(): React.JSX.Element {
 
     /**
      * Display the relevant elements and data to the user.

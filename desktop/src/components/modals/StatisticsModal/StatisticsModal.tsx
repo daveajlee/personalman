@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
 import {useTranslation} from "react-i18next";
+import * as React from "react";
 
 type StatisticsModalProps = {
     setShowStatisticsModal: Function;
@@ -21,7 +22,7 @@ type StatisticsModalProps = {
  * token - the current user access token of the admin user, year - the year that the statistics should be displayed for
  * @returns {JSX.Element} to be displayed to the user.
  */
-function StatisticsModal ({setShowStatisticsModal, year, company, username, token, showStatisticsModal}: StatisticsModalProps) {
+function StatisticsModal ({setShowStatisticsModal, year, company, username, token, showStatisticsModal}: StatisticsModalProps): React.JSX.Element {
 
     const [statisticsMap, setStatisticsMap] = useState<{[key: string]: string}>({});
     const [leaveEntitlement, setLeaveEntitlement] = useState(0);

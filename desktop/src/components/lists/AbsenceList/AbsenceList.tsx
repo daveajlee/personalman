@@ -4,6 +4,7 @@ import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import PropTypes from "prop-types";
 import {useTranslation} from "react-i18next";
+import * as React from "react";
 
 type AbsenceListProps = {
     startDate: string;
@@ -31,7 +32,7 @@ type Absence = {
  * month - the month to display absences, year - the year to display absences.
  * @returns {JSX.Element} to be displayed to the user.
  */
-function AbsenceList ({startDate, endDate, username, company, token, month, year}: AbsenceListProps) {
+function AbsenceList ({startDate, endDate, username, company, token, month, year}: AbsenceListProps): React.JSX.Element {
 
     const [absences, setAbsences] = useState([]);
 
@@ -48,23 +49,16 @@ function AbsenceList ({startDate, endDate, username, company, token, month, year
      */
     useEffect(() => {
         if ( startDate && endDate ) {
-            if ( username ) {
-                axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token)
-                    .then(res => {
-                        const result = res.data;
-                        setAbsences(result['absenceResponseList']);
-                    }).catch(error => {
-                        console.error(error);
+            const url = (username)
+                ? import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token
+                : import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' +  token;
+            axios.get(url)
+                .then(res => {
+                    const result = res.data;
+                    setAbsences(result['absenceResponseList']);
+                }).catch(error => {
+                    console.error(error);
                 })
-            } else {
-                axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' +  token)
-                    .then(res => {
-                        const result = res.data;
-                        setAbsences(result['absenceResponseList']);
-                    }).catch(error => {
-                        console.error(error);
-                })
-            }
         } else {
             let startDate = '01-'+ month.toLocaleString('en-US', {
                 minimumIntegerDigits: 2,
@@ -133,19 +127,11 @@ function AbsenceList ({startDate, endDate, username, company, token, month, year
             } else {
                 month -= 1;
             }
+            const navigationUrl = (username) ? "/absences" : "/allAbsences";
             if ( year ) {
-                if ( username ) {
-                    navigate("/absences", {state:{token: token, month: month, year: year, company: company }})
-                } else {
-                    navigate("/allAbsences", {state:{token: token, month: month, year: year, company: company }})
-                }
+                navigate(navigationUrl, {state:{token: token, month: month, year: year, company: company }})
             } else {
-                if ( username ) {
-                    navigate("/absences", {state:{token: token, month: month, year: new Date().getFullYear(), company: company }})
-                } else {
-                    navigate("/allAbsences", {state:{token: token, month: month, year: new Date().getFullYear(), company: company }})
-                }
-
+                navigate(navigationUrl, {state:{token: token, month: month, year: new Date().getFullYear(), company: company }})
             }
         } else {
             let month = new Date().getMonth() + 1;
@@ -281,7 +267,7 @@ function AbsenceList ({startDate, endDate, username, company, token, month, year
                         <h4 className="text-center">{t('absenceListAbsence', { startDate: d.startDate, endDate: d.endDate, category: translateCategory(d.category), username: d.username })}</h4>
                     </Col>
                     <Col >
-                        <Button variant="danger" size='sm' onClick={deleteAbsence.bind(this, d)}>{t('absenceListDeleteButton')}</Button>
+                        <Button variant="danger" size='sm' onClick={deleteAbsence.bind(null, d)}>{t('absenceListDeleteButton')}</Button>
                     </Col>
                 </Row>))}
             </Container>

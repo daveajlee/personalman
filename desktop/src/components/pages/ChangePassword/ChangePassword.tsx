@@ -1,17 +1,22 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import {Button, Col, Container, Form, Image, Row} from "react-bootstrap";
 import axios from "axios";
 import {useLocation, useNavigate} from "react-router-dom";
 import Header from "../../layout/Header/Header";
 import {useTranslation} from "react-i18next";
 import logo from './../../../assets/personalman-logo.png';
+import * as React from "react";
+
+type ChangePasswordProps = {
+    docMode: string;
+}
 
 /**
  * This is the page which allows the user to change their password assuming they known their old password. Otherwise,
  * they must request an admin user to reset their password.
  * @returns {JSX.Element} to be displayed to the user.
  */
-function ChangePassword (props) {
+function ChangePassword ({docMode}: ChangePasswordProps): React.JSX.Element {
 
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
@@ -26,7 +31,7 @@ function ChangePassword (props) {
      * @returns the current token as a string.
      */
     function getToken() {
-        if ( props.docMode && props.docMode==='true') {
+        if ( docMode && docMode==='true') {
             return " - ";
         } else {
             return location.state.token;
@@ -38,7 +43,7 @@ function ChangePassword (props) {
      * @returns the current company as a string.
      */
     function getCompany() {
-        if ( props.docMode && props.docMode==='true') {
+        if ( docMode && docMode==='true') {
             return "";
         } else {
             return location.state.company;
@@ -49,7 +54,7 @@ function ChangePassword (props) {
      * Set the current password that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function currentPasswordChangeHandler(event) {
+    function currentPasswordChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
         setCurrentPassword(event.target.value);
     }
 
@@ -57,7 +62,7 @@ function ChangePassword (props) {
      * Set the new password that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function newPasswordChangeHandler(event) {
+    function newPasswordChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
         setNewPassword(event.target.value);
     }
 
@@ -65,7 +70,7 @@ function ChangePassword (props) {
      * Set the confirmed password that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function confirmedPasswordChangeHandler(event) {
+    function confirmedPasswordChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
         setConfirmedPassword(event.target.value)
     }
 
@@ -99,7 +104,7 @@ function ChangePassword (props) {
                 navigate("/")
             }
         }).catch(function (error) {
-            alert(t('changePasswordError'));
+            alert(t('changePasswordError' + error));
         });
     }
 

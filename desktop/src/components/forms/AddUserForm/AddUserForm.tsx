@@ -5,6 +5,7 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import Header from "../../layout/Header/Header";
 import {useTranslation} from "react-i18next";
+import * as React from "react";
 
 type AddUserFormProps = {
     companyName: string;
@@ -17,7 +18,7 @@ type AddUserFormProps = {
  * @param props company - create a new user for this particular company name (optional).
  * @returns {JSX.Element} to be displayed to the user.
  */
-function AddUserForm ({companyName, handleAddUserClose}: AddUserFormProps) {
+function AddUserForm ({companyName, handleAddUserClose}: AddUserFormProps): React.JSX.Element {
 
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");

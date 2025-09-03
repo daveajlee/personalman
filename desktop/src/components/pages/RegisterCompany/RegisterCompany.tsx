@@ -4,12 +4,13 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import logo from './../../../assets/personalman-logo.png';
+import * as React from "react";
 
 /**
  * This is the page which allows the user to register a new company in PersonalMan.
  * @returns {JSX.Element} to be displayed to the user.
  */
-function RegisterCompany () {
+function RegisterCompany (): React.JSX.Element {
 
     const [name, setName] = useState("");
     const [annualLeave, setAnnualLeave] = useState(20);

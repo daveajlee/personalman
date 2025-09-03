@@ -4,11 +4,12 @@ import axios from 'axios';
 import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import logo from './../../../assets/personalman-logo.png';
+import * as React from "react";
 
 /**
  * This component represents the login screen to allow users to login to PersonalMan.
  */
-function Login() {
+function Login(): React.JSX.Element {
 
     const [companies, setCompanies] = useState([]);
     const [company, setCompany] = useState("");

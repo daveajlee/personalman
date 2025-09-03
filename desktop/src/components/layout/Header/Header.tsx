@@ -6,6 +6,7 @@ import {useState} from "react";
 import axios from "axios";
 import PropTypes from 'prop-types';
 import {useTranslation} from "react-i18next";
+import * as React from "react";
 
 type HeaderProps = {
     company: string;
@@ -17,7 +18,7 @@ type HeaderProps = {
  * @param props company - the company that the user belongs to, token - the user access token for the currently logged in user.
  * @returns {JSX.Element} to be displayed to the user.
  */
-function Header({company, token}: HeaderProps) {
+function Header({company, token}: HeaderProps): React.JSX.Element {
 
     const [name, setName] = useState("");
     const [role, setRole] = useState("");
