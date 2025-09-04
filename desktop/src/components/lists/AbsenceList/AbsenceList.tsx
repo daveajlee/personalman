@@ -50,8 +50,8 @@ function AbsenceList ({startDate, endDate, username, company, token, month, year
     useEffect(() => {
         if ( startDate && endDate ) {
             const url = (username)
-                ? import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token
-                : import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' +  token;
+                ? import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token
+                : import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' +  token;
             axios.get(url)
                 .then(res => {
                     const result = res.data;
@@ -69,7 +69,7 @@ function AbsenceList ({startDate, endDate, username, company, token, month, year
                 useGrouping: false
             }) + '-' + year
             if ( username ) {
-                axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token)
+                axios.get(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token)
                     .then(res => {
                         const result = res.data;
                         setAbsences(result['absenceResponseList']);
@@ -78,7 +78,7 @@ function AbsenceList ({startDate, endDate, username, company, token, month, year
                         console.error(error);
                     })
             } else {
-                axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token)
+                axios.get(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token)
                     .then(res => {
                         const result = res.data;
                         setAbsences(result['absenceResponseList']);
@@ -223,7 +223,7 @@ function AbsenceList ({startDate, endDate, username, company, token, month, year
      * @param absence the absence to delete
      */
     function deleteAbsence(absence: Absence) {
-        axios.delete(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + company + '&username=' + absence.username
+        axios.delete(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + absence.username
             + '&startDate=' + absence.startDate + '&endDate=' + absence.endDate + '&token=' + token)
             .then(function (response) {
                 if ( response.status === 200 ) {

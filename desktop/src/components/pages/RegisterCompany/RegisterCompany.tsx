@@ -60,7 +60,7 @@ function RegisterCompany (): React.JSX.Element {
         console.log('*****');
         const userAgent = navigator.userAgent.toLowerCase();
         console.log(userAgent);
-        axios.post(import.meta.env.REACT_APP_SERVER_URL  + '/company/', {
+        axios.post(import.meta.env.VITE_SERVER_URL  + '/company/', {
             name: name,
             defaultAnnualLeaveInDays: annualLeave,
             country: country
@@ -90,7 +90,7 @@ function RegisterCompany (): React.JSX.Element {
                 <Container className="d-flex flex-row align-items-center justify-content-center mb-3">
                     <Row>
                         <Col>
-                            <h3>Test {t('registerCompanyTitle')}</h3>
+                            <h3>{t('registerCompanyTitle')}</h3>
                         </Col>
                     </Row>
                 </Container>

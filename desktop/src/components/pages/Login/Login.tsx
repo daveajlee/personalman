@@ -64,7 +64,7 @@ function Login(): React.JSX.Element {
      * display a simple alert.
      */
     function login() {
-        axios.post(import.meta.env.REACT_APP_SERVER_URL + '/user/login', {
+        axios.post(import.meta.env.VITE_SERVER_URL + '/user/login', {
             company: company,
             username: username,
             password: password,

@@ -24,7 +24,7 @@ function Logout({docMode}: LogoutProps): React.JSX.Element {
      * Logout of the system via the REST API.
      */
     useEffect(() => {
-        axios.post(import.meta.env.REACT_APP_SERVER_URL + `/user/logout`, {
+        axios.post(import.meta.env.VITE_SERVER_URL + `/user/logout`, {
             token: token
         })
             .then(res => {

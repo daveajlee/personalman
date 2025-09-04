@@ -44,7 +44,7 @@ function StatisticsModal ({setShowStatisticsModal, year, company, username, toke
         if ( username === '') {
             username = token.split("-")[0];
         }
-        axios.get(import.meta.env.REACT_APP_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startYearDate + '&endDate=' + endYearDate + '&onlyCount=false&token=' + token)
+        axios.get(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startYearDate + '&endDate=' + endYearDate + '&onlyCount=false&token=' + token)
             .then(res => {
                 const result = res.data;
                 setStatisticsMap(result['statisticsMap']);
@@ -52,7 +52,7 @@ function StatisticsModal ({setShowStatisticsModal, year, company, username, toke
                 console.error(error);
         })
         // Get the leave entitlement for this user.
-        axios.get(import.meta.env.REACT_APP_SERVER_URL  + '/user/?company=' + company + '&username=' + username + '&token=' + token)
+        axios.get(import.meta.env.VITE_SERVER_URL  + '/user/?company=' + company + '&username=' + username + '&token=' + token)
             .then(res => {
                 const result = res.data;
                 setLeaveEntitlement(result['leaveEntitlementPerYear']);

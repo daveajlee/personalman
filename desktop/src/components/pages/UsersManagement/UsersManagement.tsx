@@ -62,7 +62,7 @@ function UsersManagement({docMode}: UsersManagementProps): React.JSX.Element {
      * token is valid.
      */
     useEffect(() => {
-        axios.get(import.meta.env.REACT_APP_SERVER_URL + '/users/?company=' + company + '&token=' + token)
+        axios.get(import.meta.env.VITE_SERVER_URL + '/users/?company=' + company + '&token=' + token)
             .then(res => {
                 const result = res.data;
                 setUsers(result['userResponses']);
@@ -77,7 +77,7 @@ function UsersManagement({docMode}: UsersManagementProps): React.JSX.Element {
      */
     function deleteUser(username: string) {
         if(window.confirm(t('usersManagementDeleteUser', { username: username }))) {
-            axios.delete(import.meta.env.REACT_APP_SERVER_URL + '/user/?company=' + company + '&username=' + username +
+            axios.delete(import.meta.env.VITE_SERVER_URL + '/user/?company=' + company + '&username=' + username +
                 '&token=' + token)
                 .then(function (response) {
                     if ( response.status === 200 ) {

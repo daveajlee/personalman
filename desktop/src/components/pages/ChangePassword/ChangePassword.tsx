@@ -92,7 +92,7 @@ function ChangePassword ({docMode}: ChangePasswordProps): React.JSX.Element {
             alert(t('changePasswordNotIdentical'));
             return;
         }
-        axios.patch(import.meta.env.REACT_APP_SERVER_URL + '/user/password', {
+        axios.patch(import.meta.env.VITE_SERVER_URL + '/user/password', {
             company: getCompany(),
             username: getUsername(),
             token: getToken(),

@@ -29,7 +29,7 @@ function Header({company, token}: HeaderProps): React.JSX.Element {
      * Load the first name, surname and role of the currently logged in user to be displayed as part of the header bar.
      */
     useEffect(() => {
-        axios.get(import.meta.env.REACT_APP_SERVER_URL + '/user/?company=' + company + '&username=' + token.split("-")[0] + '&token=' +  token)
+        axios.get(import.meta.env.VITE_SERVER_URL + '/user/?company=' + company + '&username=' + token.split("-")[0] + '&token=' +  token)
             .then(res => {
                 const result = res.data;
                 setName(result['firstName'] + ' ' + result['surname']);

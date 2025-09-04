@@ -126,7 +126,7 @@ function AbsenceManagement({docMode}: AbsenceManagementProps): React.JSX.Element
             alert(t('absenceManagementAddAbsenceFail'));
             return;
         }
-        axios.post(import.meta.env.REACT_APP_SERVER_URL + '/absences/', {
+        axios.post(import.meta.env.VITE_SERVER_URL + '/absences/', {
             company: company,
             username: getUsername(),
             startDate: startDateSplit[2] + '-' + startDateSplit[1] + '-' + startDateSplit[0],

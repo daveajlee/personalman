@@ -56,7 +56,7 @@ function ResetModal ({setShowResetModal, company, username, token, showResetModa
             alert(t('resetPasswordNotIdentical'));
             return;
         }
-        axios.patch(import.meta.env.REACT_APP_SERVER_URL + '/user/reset', {
+        axios.patch(import.meta.env.VITE_SERVER_URL + '/user/reset', {
             company: company,
             username: username,
             token: token,
