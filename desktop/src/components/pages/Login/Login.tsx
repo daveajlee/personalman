@@ -1,14 +1,15 @@
-import React, {useEffect, useState} from "react";
+import {type ChangeEvent, useEffect, useState} from "react";
 import {Container, Col, Row, Form, Button, Image} from "react-bootstrap";
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import logo from './../../../assets/personalman-logo.png';
+import * as React from "react";
 
 /**
  * This component represents the login screen to allow users to login to PersonalMan.
  */
-function Login() {
+function Login(): React.JSX.Element {
 
     const [companies, setCompanies] = useState([]);
     const [company, setCompany] = useState("");
@@ -22,8 +23,8 @@ function Login() {
      * Load the list of available companies via the REST API.
      */
     useEffect(() => {
-        console.log(import.meta.env.REACT_APP_SERVER_URL);
-        axios.get(import.meta.env.REACT_APP_SERVER_URL + `/companies/`)
+        console.log(import.meta.env.VITE_SERVER_URL);
+        axios.get(import.meta.env.VITE_SERVER_URL + `/companies/`)
             .then(res => {
                 console.log(res);
                 const companies = res.data;
@@ -38,7 +39,7 @@ function Login() {
      * Set the company that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function handleCompanyChange(event) {
+    function handleCompanyChange(event: ChangeEvent<HTMLSelectElement>) {
         setCompany(event.target.value);
     }
 
@@ -46,7 +47,7 @@ function Login() {
      * Set the username that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function handleUsernameChange(event) {
+    function handleUsernameChange(event: ChangeEvent<HTMLInputElement>) {
         setUsername(event.target.value);
     }
 
@@ -54,7 +55,7 @@ function Login() {
      * Set the password that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function handlePasswordChange(event) {
+    function handlePasswordChange(event: ChangeEvent<HTMLInputElement>) {
         setPassword(event.target.value)
     }
 
@@ -63,7 +64,7 @@ function Login() {
      * display a simple alert.
      */
     function login() {
-        axios.post(import.meta.env.REACT_APP_SERVER_URL + '/user/login', {
+        axios.post(import.meta.env.VITE_SERVER_URL + '/user/login', {
             company: company,
             username: username,
             password: password,

@@ -1,15 +1,16 @@
-import React, {useState} from "react";
+import {type ChangeEvent, useState} from "react";
 import {Button, Col, Container, Form, Image, Row} from "react-bootstrap";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import logo from './../../../assets/personalman-logo.png';
+import * as React from "react";
 
 /**
  * This is the page which allows the user to register a new company in PersonalMan.
  * @returns {JSX.Element} to be displayed to the user.
  */
-function RegisterCompany () {
+function RegisterCompany (): React.JSX.Element {
 
     const [name, setName] = useState("");
     const [annualLeave, setAnnualLeave] = useState(20);
@@ -23,7 +24,7 @@ function RegisterCompany () {
      * Set the name that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function nameChangeHandler(event) {
+    function nameChangeHandler(event: ChangeEvent<HTMLInputElement>) {
         setName(event.target.value);
     }
 
@@ -31,15 +32,15 @@ function RegisterCompany () {
      * Set the annual leave that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function annualLeaveChangeHandler(event) {
-        setAnnualLeave(event.target.value);
+    function annualLeaveChangeHandler(event: ChangeEvent<HTMLInputElement>) {
+        setAnnualLeave(parseInt(event.target.value));
     }
 
     /**
      * Set the country that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function countryChangeHandler(event) {
+    function countryChangeHandler(event: ChangeEvent<HTMLSelectElement>) {
         setCountry(event.target.value)
     }
 
@@ -59,7 +60,7 @@ function RegisterCompany () {
         console.log('*****');
         const userAgent = navigator.userAgent.toLowerCase();
         console.log(userAgent);
-        axios.post(import.meta.env.REACT_APP_SERVER_URL  + '/company/', {
+        axios.post(import.meta.env.VITE_SERVER_URL  + '/company/', {
             name: name,
             defaultAnnualLeaveInDays: annualLeave,
             country: country
@@ -89,7 +90,7 @@ function RegisterCompany () {
                 <Container className="d-flex flex-row align-items-center justify-content-center mb-3">
                     <Row>
                         <Col>
-                            <h3>Test {t('registerCompanyTitle')}</h3>
+                            <h3>{t('registerCompanyTitle')}</h3>
                         </Col>
                     </Row>
                 </Container>

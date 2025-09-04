@@ -1,8 +1,17 @@
 import {Button, Col, Form, Modal, Row} from "react-bootstrap";
-import React, {useState} from "react";
+import {useState} from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
 import {useTranslation} from "react-i18next";
+import * as React from "react";
+
+type ResetModalProps = {
+    setShowResetModal: Function;
+    company: string;
+    username: string;
+    token: string;
+    showResetModal: boolean;
+}
 
 /**
  * This is the modal window to show the reset password form. The modal is used for admin users who want to reset
@@ -12,12 +21,12 @@ import {useTranslation} from "react-i18next";
  * token - the current user access token of the admin user.
  * @returns {JSX.Element} to be displayed to the user.
  */
-function ResetModal (props) {
+function ResetModal ({setShowResetModal, company, username, token, showResetModal}: ResetModalProps): React.JSX.Element {
 
     /**
      * Function to handle the case that the user clicks on the close button in the modal.
      */
-    const handleResetClose = () => props.setShowResetModal(false);
+    const handleResetClose = () => setShowResetModal(false);
 
     const [newPassword, setNewPassword] = useState("");
     const [confirmedPassword, setConfirmedPassword] = useState("");
@@ -27,7 +36,7 @@ function ResetModal (props) {
      * Set the new password that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function newPasswordChangeHandler(event) {
+    function newPasswordChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
         setNewPassword(event.target.value);
     }
 
@@ -35,7 +44,7 @@ function ResetModal (props) {
      * Set the confirmed password that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function confirmedPasswordChangeHandler(event) {
+    function confirmedPasswordChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
         setConfirmedPassword(event.target.value)
     }
 
@@ -47,18 +56,18 @@ function ResetModal (props) {
             alert(t('resetPasswordNotIdentical'));
             return;
         }
-        axios.patch(import.meta.env.REACT_APP_SERVER_URL + '/user/reset', {
-            company: props.company,
-            username: props.username,
-            token: props.token,
+        axios.patch(import.meta.env.VITE_SERVER_URL + '/user/reset', {
+            company: company,
+            username: username,
+            token: token,
             password: newPassword
         }).then(function (response) {
             if ( response.status === 200 ) {
                 alert(t('resetPasswordSuccess'));
-                props.setShowResetModal(false);
+                setShowResetModal(false);
             }
         }).catch(function (error) {
-            alert(t('resetPasswordError'));
+            alert(t('resetPasswordError: ' + error));
         });
 
     }
@@ -67,9 +76,9 @@ function ResetModal (props) {
      * Display the relevant elements and data to the user.
      */
     return (
-        <Modal show={props.showResetModal} onHide={handleResetClose}>
+        <Modal show={showResetModal} onHide={handleResetClose}>
             <Modal.Header closeButton>
-                <Modal.Title>{t('resetPasswordTitle')} - {props.username}</Modal.Title>
+                <Modal.Title>{t('resetPasswordTitle')} - {username}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form>

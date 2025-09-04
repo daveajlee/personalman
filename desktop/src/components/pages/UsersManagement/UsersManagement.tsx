@@ -1,5 +1,5 @@
 import {useLocation, useNavigate} from "react-router-dom";
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import Header from "../../layout/Header/Header";
 import {Button, Col, Container, Row} from "react-bootstrap";
 import axios from "axios";
@@ -7,12 +7,23 @@ import StatisticsModal from "../../modals/StatisticsModal/StatisticsModal";
 import ResetModal from "../../modals/ResetModal/ResetModal";
 import AddUserModal from "../../modals/AddUserModal/AddUserModal";
 import {useTranslation} from "react-i18next";
+import * as React from "react";
+
+type UsersManagementProps = {
+    docMode: string;
+}
+
+type User = {
+    username: string;
+    firstName: string;
+    surname: string;
+}
 
 /**
  * This is the page which allows an admin user to manage users in their company.
  * @returns {JSX.Element} to be displayed to the user.
  */
-function UsersManagement(props) {
+function UsersManagement({docMode}: UsersManagementProps): React.JSX.Element {
 
     const location = useLocation();
     const [users, setUsers] = useState([]);
@@ -27,19 +38,19 @@ function UsersManagement(props) {
     /**
      * Retrieve the current token either from the supplied state or empty if we are in doc mode.
      */
-    const token = (props.docMode && props.docMode==='true') ? "" : location.state.token;
+    const token = (docMode && docMode==='true') ? "" : location.state.token;
 
     /**
      * Retrieve the company either from the supplied state or empty if we are in doc mode.
      */
-    const company = ( props.docMode && props.docMode==='true') ? "" : location.state.company;
+    const company = ( docMode && docMode==='true') ? "" : location.state.company;
 
     /**
      * Retrieve the year either from the supplied state or empty if we are in doc mode.
      * @returns the current year as a number.
      */
     function getYear() {
-        if ( props.docMode && props.docMode==='true') {
+        if ( docMode && docMode==='true') {
             return "";
         } else {
             return location.state.year ? location.state.year : new Date().getFullYear()
@@ -51,7 +62,7 @@ function UsersManagement(props) {
      * token is valid.
      */
     useEffect(() => {
-        axios.get(import.meta.env.REACT_APP_SERVER_URL + '/users/?company=' + company + '&token=' + token)
+        axios.get(import.meta.env.VITE_SERVER_URL + '/users/?company=' + company + '&token=' + token)
             .then(res => {
                 const result = res.data;
                 setUsers(result['userResponses']);
@@ -64,9 +75,9 @@ function UsersManagement(props) {
      * This function deletes the user with the specified username assuming the user confirms that this is what they want to do.
      * @param username the username of the user to delete
      */
-    function deleteUser(username) {
+    function deleteUser(username: string) {
         if(window.confirm(t('usersManagementDeleteUser', { username: username }))) {
-            axios.delete(import.meta.env.REACT_APP_SERVER_URL + '/user/?company=' + company + '&username=' + username +
+            axios.delete(import.meta.env.VITE_SERVER_URL + '/user/?company=' + company + '&username=' + username +
                 '&token=' + token)
                 .then(function (response) {
                     if ( response.status === 200 ) {
@@ -82,7 +93,7 @@ function UsersManagement(props) {
      * This function shows the statistics of the user with the specified username.
      * @param username the username that the user wants to view statistics for.
      */
-    function statisticsUser(username) {
+    function statisticsUser(username: string) {
         setSelectedUsername(username);
         setShowStatisticsModal(true);
     }
@@ -91,7 +102,7 @@ function UsersManagement(props) {
      * This function enables a new password to be set for the user with the specified username.
      * @param username the username that the user wants to reset the password for.
      */
-    function resetUser(username) {
+    function resetUser(username: string) {
         setSelectedUsername(username);
         setShowResetModal(true);
     }
@@ -113,6 +124,7 @@ function UsersManagement(props) {
     /**
      * Display the relevant elements and data to the user.
      */
+    // @ts-ignore
     return (
         <Container fluid>
             <Header token={token} company={company}/>
@@ -123,15 +135,15 @@ function UsersManagement(props) {
                         <h1 className="text-center">{t('usersManagementTitle')} {company}</h1>
                     </Col>
                 </Row>
-            {users.map(d => (<Row className="align-items-center justify-content-center mt-3" key={d.username}>
+            {users.map((d: User) => (<Row className="align-items-center justify-content-center mt-3" key={d.username}>
 
                 <Col xs={12} sm={12} md={6} lg={8}>
                     <h4 className="text-center">{d.firstName} {d.surname} ({d.username}) </h4>
                 </Col>
                 <Col xs={12} sm={12} md={6} lg={4} className="align-items-center justify-content-center mt-3">
-                    <Button className="me-2 align-items-center justify-content-center" variant="info" size='lg' onClick={statisticsUser.bind(this, d.username)}>{t('usersManagementStatisticsButton')}</Button>
-                    <Button className="me-2 align-items-center justify-content-center" variant="warning" size='lg' onClick={resetUser.bind(this, d.username)}>{t('usersManagementResetButton')}</Button>
-                    <Button className="me-2 align-items-center justify-content-center" variant="danger" size='lg' onClick={deleteUser.bind(this, d.username)}>{t('usersManagementDeleteButton')}</Button>
+                    <Button className="me-2 align-items-center justify-content-center" variant="info" size='lg' onClick={statisticsUser.bind(null, d.username)}>{t('usersManagementStatisticsButton')}</Button>
+                    <Button className="me-2 align-items-center justify-content-center" variant="warning" size='lg' onClick={resetUser.bind(null, d.username)}>{t('usersManagementResetButton')}</Button>
+                    <Button className="me-2 align-items-center justify-content-center" variant="danger" size='lg' onClick={deleteUser.bind(null, d.username)}>{t('usersManagementDeleteButton')}</Button>
                 </Col>
             </Row>))}
             </Container>

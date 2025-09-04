@@ -1,23 +1,30 @@
 import {Button, Col, Container, Form, Row} from "react-bootstrap";
-import React, {useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 import PropTypes from "prop-types";
 import Header from "../../layout/Header/Header";
 import {useTranslation} from "react-i18next";
+import * as React from "react";
+
+type AddUserFormProps = {
+    companyName: string;
+    token: string;
+    handleAddUserClose: Function;
+}
 
 /**
  * This is the form to display when the user wishes to create a new user for a particular company.
  * @param props company - create a new user for this particular company name (optional).
  * @returns {JSX.Element} to be displayed to the user.
  */
-function AddUserForm (props) {
+function AddUserForm ({companyName, handleAddUserClose}: AddUserFormProps): React.JSX.Element {
 
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [company, setCompany] = useState("");
     const [position, setPosition] = useState("");
-    const [workingDays, setWorkingDays] = useState([]);
+    const [workingDays, setWorkingDays] = useState<string[]>([]);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -26,7 +33,7 @@ function AddUserForm (props) {
     const [role, setRole] = useState("Employee");
     const navigate = useNavigate();
 
-    const [companies, setCompanies] = useState([]);
+    const [companies, setCompanies] = useState<string[]>([]);
 
     const {t} = useTranslation();
 
@@ -35,8 +42,8 @@ function AddUserForm (props) {
      * in the parameters.
      */
     useEffect(() => {
-        if ( !props.company || props.company === '' ) {
-            axios.get(import.meta.env.REACT_APP_SERVER_URL + `/companies/`)
+        if ( !companyName || companyName === '' ) {
+            axios.get(import.meta.env.VITE_SERVER_URL + `/companies/`)
                 .then(res => {
                     const companies = res.data;
                     setCompanies(companies);
@@ -45,16 +52,18 @@ function AddUserForm (props) {
                     console.error(error);
             })
         } else {
-            setCompanies(new Array(props.company));
-            setCompany(props.company);
+            const companies: string[] = [];
+            companies.push(company);
+            setCompanies(companies);
+            setCompany(company);
         }
-    }, [props.company]);
+    }, [companyName]);
 
     /**
      * Set the first name that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function firstNameChangeHandler(event) {
+    function firstNameChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
         setFirstName(event.target.value);
     }
 
@@ -62,7 +71,7 @@ function AddUserForm (props) {
      * Set the last name that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function lastNameChangeHandler(event) {
+    function lastNameChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
         setLastName(event.target.value);
     }
 
@@ -70,7 +79,7 @@ function AddUserForm (props) {
      * Set the company that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function companyChangeHandler(event) {
+    function companyChangeHandler(event: React.ChangeEvent<HTMLSelectElement>) {
         setCompany(event.target.value);
     }
 
@@ -78,7 +87,7 @@ function AddUserForm (props) {
      * Set the position that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function positionChangeHandler(event) {
+    function positionChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
         setPosition(event.target.value);
     }
 
@@ -86,7 +95,7 @@ function AddUserForm (props) {
      * Set the role that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function roleChangeHandler(event) {
+    function roleChangeHandler(event: React.ChangeEvent<HTMLSelectElement>) {
         setRole(event.target.value);
     }
 
@@ -94,7 +103,7 @@ function AddUserForm (props) {
      * Set the selected working day and add it to the array if it is not already added.
      * @param event the event triggered by the user.
      */
-    function workingDaysHandler(event) {
+    function workingDaysHandler(event: React.ChangeEvent<HTMLInputElement>) {
         switch (event.target.id) {
             case 'checkbox-mo':
                 if ( event.target.checked ) {
@@ -154,7 +163,7 @@ function AddUserForm (props) {
      * Set the username that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function usernameChangeHandler(event) {
+    function usernameChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
         setUsername(event.target.value);
     }
 
@@ -162,7 +171,7 @@ function AddUserForm (props) {
      * Set the password that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function passwordChangeHandler(event) {
+    function passwordChangeHandler(event:React.ChangeEvent<HTMLInputElement>) {
         setPassword(event.target.value);
     }
 
@@ -170,7 +179,7 @@ function AddUserForm (props) {
      * Set the confirm password that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function confirmPasswordChangeHandler(event) {
+    function confirmPasswordChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
         setConfirmPassword(event.target.value);
     }
 
@@ -178,7 +187,7 @@ function AddUserForm (props) {
      * Set the date of birth that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function dateOfBirthChangeHandler(event) {
+    function dateOfBirthChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
         setDateOfBirth(event.target.value);
     }
 
@@ -186,7 +195,7 @@ function AddUserForm (props) {
      * Set the start date that the user entered to the state for later.
      * @param event the event triggered by the user.
      */
-    function startDateChangeHandler(event) {
+    function startDateChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
         setStartDate(event.target.value)
     }
 
@@ -204,13 +213,20 @@ function AddUserForm (props) {
         setStartDate("");
         setDateOfBirth("");
         setRole("Employee");
-        document.getElementById("checkbox-mo").checked = false;
-        document.getElementById("checkbox-tu").checked = false;
-        document.getElementById("checkbox-we").checked = false;
-        document.getElementById("checkbox-th").checked = false;
-        document.getElementById("checkbox-fr").checked = false;
-        document.getElementById("checkbox-sa").checked = false;
-        document.getElementById("checkbox-su").checked = false;
+        const mondayCheck = document.getElementById("checkbox-mo")! as HTMLInputElement;
+        mondayCheck.checked = false;
+        const tuesdayCheck = document.getElementById("checkbox-tu")! as HTMLInputElement;
+        tuesdayCheck.checked = false;
+        const wednesdayCheck = document.getElementById("checkbox-we")! as HTMLInputElement;
+        wednesdayCheck.checked = false;
+        const thursdayCheck = document.getElementById("checkbox-th")! as HTMLInputElement;
+        thursdayCheck.checked = false;
+        const fridayCheck = document.getElementById("checkbox-fr")! as HTMLInputElement;
+        fridayCheck.checked = false;
+        const saturdayCheck = document.getElementById("checkbox-sa")! as HTMLInputElement;
+        saturdayCheck.checked = false;
+        const sundayCheck = document.getElementById("checkbox-su")! as HTMLInputElement;
+        sundayCheck.checked = false;
         setWorkingDays([]);
     }
 
@@ -225,7 +241,7 @@ function AddUserForm (props) {
         else {
             let startDateSplit = startDate.split("-");
             let dateOfBirthSplit = dateOfBirth.split("-");
-            axios.post(import.meta.env.REACT_APP_SERVER_URL + '/user/', {
+            axios.post(import.meta.env.VITE_SERVER_URL + '/user/', {
                 firstName: firstName,
                 surname: lastName,
                 username: username,
@@ -238,11 +254,11 @@ function AddUserForm (props) {
                 dateOfBirth: dateOfBirthSplit[2] + '-' + dateOfBirthSplit[1] + '-' + dateOfBirthSplit[0]
             }).then(function (response) {
                 if ( response.status === 201 ) {
-                    if ( !props.company || props.company === '' ) {
+                    if ( !companyName || companyName === '' ) {
                         alert(t('addUserFormSuccess'))
                         navigate("/")
                     } else {
-                        props.handleAddUserClose();
+                        handleAddUserClose();
                         window.location.reload();
                     }
                 }
@@ -256,10 +272,10 @@ function AddUserForm (props) {
      * Cancel the request to add a new user and move back to the home page.
      */
     function cancelRegistration() {
-        if ( props.company === '' ) {
+        if ( companyName === '' ) {
             navigate("/");
         } else {
-            props.handleAddUserClose();
+            handleAddUserClose();
         }
     }
 
@@ -294,7 +310,7 @@ function AddUserForm (props) {
                 </Col>
             </Form.Group>
 
-            { ( props.company ==='' ) ? <p className="small text-center fw-bold mt-2 pt-1 mb-4">{t('loginRegisterCompanyTeaser')} <a href="/#/registerCompany"
+            { ( companyName ==='' ) ? <p className="small text-center fw-bold mt-2 pt-1 mb-4">{t('loginRegisterCompanyTeaser')} <a href="/#/registerCompany"
                 className="link-danger">{t('loginRegisterCompanyLink')}</a>
                 </p> : <p></p> }
 
@@ -417,7 +433,7 @@ function AddUserForm (props) {
             <Row>
                 <Col className="text-center">
                     <Button className="mb-0 px-5 me-2" size='lg' onClick={registerUser}>{t('addUserFormRegisterButton')}</Button>
-                    { ( props.company ==='' ) ? <Button className="mb-0 px-5 me-2" size='lg' onClick={resetForm}>{t('addUserFormResetButton')}</Button> : <p></p> }
+                    { ( companyName ==='' ) ? <Button className="mb-0 px-5 me-2" size='lg' onClick={resetForm}>{t('addUserFormResetButton')}</Button> : <p></p> }
                     <Button className="mb-0 px-5 me-2" size='lg' onClick={cancelRegistration}>{t('addUserFormCancelButton')}</Button>
                 </Col>
             </Row>
@@ -437,6 +453,7 @@ AddUserForm.propTypes = {
 }
 
 Header.defaultProps = {
-    company: 'Optional'
+    company: 'Optional',
+    token: '',
 };
 

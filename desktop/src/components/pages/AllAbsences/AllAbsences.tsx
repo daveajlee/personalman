@@ -1,16 +1,21 @@
-import React, {useEffect} from "react";
+import {useEffect} from "react";
 import {useLocation} from "react-router-dom";
 import {Container} from "react-bootstrap";
 import Header from "../../layout/Header/Header";
 import {useState} from "react";
 import axios from "axios";
 import AbsenceList from "../../lists/AbsenceList/AbsenceList";
+import * as React from "react";
+
+type AllAbsencesProps = {
+    docMode: string;
+}
 
 /**
  * This is the page which displays the list of absences for all users for an admin user within a particular company.
  * @returns {JSX.Element} to be displayed to the user.
  */
-function AllAbsences(props) {
+function AllAbsences({docMode}: AllAbsencesProps): React.JSX.Element {
 
     const location = useLocation();
 
@@ -21,22 +26,22 @@ function AllAbsences(props) {
     /**
      * Retrieve the current token either from the supplied state or empty if we are in doc mode.
      */
-    const token = (props.docMode && props.docMode==='true') ? "" : location.state.token;
+    const token = (docMode && docMode==='true') ? "" : location.state.token;
 
     /**
      * Retrieve the company either from the supplied state or empty if we are in doc mode.
      */
-    const company = ( props.docMode && props.docMode==='true') ? "" : location.state.company;
+    const company = ( docMode && docMode==='true') ? "" : location.state.company;
 
     /**
      * Retrieve the year either from the supplied state or empty if we are in doc mode.
      */
-    const year = ( props.docMode && props.docMode==='true') ? "" :  location.state.year ? location.state.year : new Date().getFullYear();
+    const year = ( docMode && docMode==='true') ? "" :  location.state.year ? location.state.year : new Date().getFullYear();
 
     /**
      * Retrieve the month either from the supplied state or empty if we are in doc mode.
      */
-    const month = ( props.docMode && props.docMode==='true') ? "" : location.state.month ? location.state.month : ((new Date().getMonth()) +1);
+    const month = ( docMode && docMode==='true') ? "" : location.state.month ? location.state.month : ((new Date().getMonth()) +1);
 
     /**
      * Load the absences from the REST API either for all users within a specific time period
@@ -44,7 +49,7 @@ function AllAbsences(props) {
      */
     useEffect(() => {
         // Ensure that the user is actually admin, otherwise they cannot view the page.
-        axios.get(import.meta.env.REACT_APP_SERVER_URL + '/user/?company=' + company + '&username=' + token.split("-")[0] + '&token=' + token)
+        axios.get(import.meta.env.VITE_SERVER_URL + '/user/?company=' + company + '&username=' + token.split("-")[0] + '&token=' + token)
                 .then(res => {
                     const result = res.data;
                     setRole(result['role']);
@@ -80,7 +85,7 @@ function AllAbsences(props) {
      * @param year the year that should be taken into account.
      * @returns {number} the number of days that the month has in the supplied year.
      */
-    function daysInMonth (month, year) {
+    function daysInMonth (month: number, year: number): number {
         return new Date(year, month, 0).getDate();
     }
 
