@@ -61,7 +61,7 @@ public class UsersController {
         //Now retrieve the user based on the username.
         List<User> users = userService.findByCompany(company);
         //If users is empty then return 204.
-        if ( users.size() == 0 ) {
+        if ( users.isEmpty() ) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         //Convert to UserResponse object and return 200.
@@ -101,7 +101,7 @@ public class UsersController {
         //Now retrieve the user based on the username.
         List<User> users = userService.findByCompany(company);
         //If users is empty then return 204.
-        if ( users.size() == 0 ) {
+        if ( users.isEmpty() ) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         //Now go through each user if they have worked during the date range and then calculate pay.
@@ -110,7 +110,7 @@ public class UsersController {
             BigDecimal sumToBePaid = new BigDecimal(0);
             LocalDate startLocalDate = DateUtils.convertDateToLocalDate(startDate);
             LocalDate endLocalDate = DateUtils.convertDateToLocalDate(endDate);
-            while ( startLocalDate.isBefore(endLocalDate) || startLocalDate.isEqual(endLocalDate) ) {
+            while ( startLocalDate != null && endLocalDate != null && (startLocalDate.isBefore(endLocalDate) || startLocalDate.isEqual(endLocalDate)) ) {
                 sumToBePaid = sumToBePaid.add(new BigDecimal(userService.getHoursForDate(user, startLocalDate)).multiply(user.getHourlyWage()));
                 startLocalDate = startLocalDate.plusDays(1);
             }
@@ -130,7 +130,7 @@ public class UsersController {
      * @return a <code>ResponseEntity</code> confirming operation was successful.
      */
     @Operation(summary = "Mark users as paid for a company", description="Mark users as paid for a company within a specific date range.")
-    @GetMapping(value="/paid")
+    @PostMapping(value="/paid")
     @ApiResponses(value = {@ApiResponse(responseCode = "200",description="Successfully found user(s) and their pay"), @ApiResponse(responseCode = "204",description="Successful but no users found")})
     public ResponseEntity<Void> paidUsers (@RequestBody final PaidUserRequest paidUserRequest) {
         //Verify that user is logged in.
