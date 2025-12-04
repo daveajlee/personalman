@@ -41,3 +41,6 @@ desktop/node_modules/
 
 # Environment files
 */.env
+
+# Android App Bundles (Release)
+*.aab
