@@ -4,6 +4,12 @@
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Appearance, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
+type NavigationStackParams = {
+  navigate: Function;
+  setOptions: Function;
+}
 
 export default function LoginScreen() {
 
@@ -15,6 +21,8 @@ export default function LoginScreen() {
 
     const logoImage = require('./../assets/images/logo-1024.png');
     
+    const navigation = useNavigation<NavigationStackParams>();
+
     /**
      * Set the username that the user entered.
      * @param {string} enteredText the text that the user entered in the username field.
@@ -43,7 +51,7 @@ export default function LoginScreen() {
      * Attempt to login the user with the credentials supplied.
      */
     function loginHandler() {
-        console.log('Login button pressed');
+        navigation.navigate("MainMenuScreen", { username: username });
     }
 
     /**
