@@ -80,7 +80,7 @@
     "react-styleguidist": "^13.1.4",
     "react-test-renderer": "^19.1.1",
     "vite": "^7.1.11",
-    "webpack": "^5.101.3"
+    "webpack": "^5.105.0"
   },
   "config": {
     "forge": "./forge.config.js"
