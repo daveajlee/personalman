@@ -49,7 +49,6 @@ function App() {
           })}/>
           <Stack.Screen name="MainMenuScreen" component={MainMenuScreen} options={{
           title: 'PersonalMan',
-          headerBackVisible: false,
           }}/>
           <Stack.Screen name="AbsenceScreen" component={AbsenceScreen} options={{
           title: 'Absences',
