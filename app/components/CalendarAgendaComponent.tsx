@@ -2,17 +2,19 @@ import { AgendaList, CalendarProvider, ExpandableCalendar } from "react-native-c
 import { useCallback, useRef } from "react";
 import testIDs from './calendar/testIDs';
 import {agendaItems} from './calendar/mocks/personalmandata';
-import {getTheme, themeColor, lightThemeColor} from './calendar/mocks/theme';
-import { StyleSheet, View } from "react-native";
+import {getLightTheme, getDarkTheme, themeColor, lightThemeColor} from './calendar/mocks/theme';
+import { Appearance, StyleSheet, View } from "react-native";
 import AgendaItem from './calendar/mocks/AgendaItem';
 
 function CalendarAgendaComponent() {
+
+    const colorScheme = Appearance.getColorScheme();
 
     const ITEMS: any[] = agendaItems;
     const todayBtnTheme = useRef({
         todayButtonTextColor: themeColor
     });
-    const theme = useRef(getTheme());
+    const theme = useRef(colorScheme === 'dark' ? getDarkTheme() : getLightTheme());
 
     const leftArrowIcon = require('../img/previous.png');
     const rightArrowIcon = require('../img/next.png');
