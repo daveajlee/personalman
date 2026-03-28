@@ -12,7 +12,8 @@ function CalendarAgendaComponent() {
 
     const ITEMS: any[] = agendaItems;
     const todayBtnTheme = useRef({
-        todayButtonTextColor: themeColor
+        todayButtonTextColor: themeColor,
+        backgroundColor: '#000000'
     });
     const theme = useRef(colorScheme === 'dark' ? getDarkTheme() : getLightTheme());
 

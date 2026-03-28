@@ -1,7 +1,9 @@
-import {Platform} from 'react-native';
+import {Appearance, Platform} from 'react-native';
 
-export const themeColor = '#00AAAF';
-export const lightThemeColor = '#f2f7f7';
+const colorScheme = Appearance.getColorScheme();
+
+export const themeColor = '#185f92ff' /*'#00AAAF';*/
+export const lightThemeColor = colorScheme === 'dark' ? '#000000' :'#f2f7f7';
 
 export function getLightTheme() {
   const disabledColor = 'grey';
@@ -75,7 +77,7 @@ export function getDarkTheme() {
     textDisabledColor: disabledColor,
     // dot (marked date)
     dotColor: themeColor,
-    selectedDotColor: 'white',
+    selectedDotColor: 'black',
     disabledDotColor: disabledColor,
     dotStyle: {marginTop: -2}
   };
