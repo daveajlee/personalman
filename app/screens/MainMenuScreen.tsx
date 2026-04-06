@@ -1,6 +1,8 @@
 import { Alert, Appearance, StyleSheet, Text, View } from "react-native";
 import IconTextButton from "../components/IconTextButton";
 import { useNavigation } from "@react-navigation/native";
+import { useEffect } from "react";
+import IconButton from "../components/IconButton";
 
 type MainMenuScreenProps = {
   route: any;
@@ -16,6 +18,18 @@ export default function MainMenuScreen({route}: MainMenuScreenProps) {
     const colorScheme = Appearance.getColorScheme();
 
     const navigation = useNavigation<NavigationStackParams>();
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerRight: () => <View style={{marginLeft: 10, flexDirection: 'row'}}>             
+                <IconButton icon="log-out-outline" size={24} color={colorScheme === 'dark' ? 'white' : 'black'} onPress={onLogoutPress}/>
+                </View>,
+        });
+    });
+
+    function onLogoutPress() {
+        navigation.navigate("LoginScreen");
+    }
 
     function onAbsencePress() {
         navigation.navigate("AbsenceScreen", { username: route.params.username });

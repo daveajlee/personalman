@@ -1,7 +1,8 @@
 import isEmpty from 'lodash/isEmpty';
-import React, {useCallback} from 'react';
-import {StyleSheet, Appearance, View, Text, TouchableOpacity, Button} from 'react-native';
+import React from 'react';
+import {Alert, StyleSheet, Appearance, View, Text} from 'react-native';
 import testIDs from '../testIDs';
+import IconButton from '../../IconButton';
 
 interface ItemProps {
   item: any;
@@ -11,6 +12,10 @@ const AgendaItem = (props: ItemProps) => {
   const {item} = props;
 
   const colorScheme = Appearance.getColorScheme();
+
+  function onDeleteAbsencePress() {
+      Alert.alert("Coming Soon!", "Not yet available!");
+  }
 
   /*const buttonPressed = useCallback(() => {
     Alert.alert(item.title);
@@ -35,9 +40,9 @@ const AgendaItem = (props: ItemProps) => {
         <Text style={colorScheme === 'dark' ? styles.itemDurationTextDark : styles.itemDurationText}>{item.duration}</Text>
       </View>
       <Text style={colorScheme === 'dark' ? styles.itemTitleTextDark : styles.itemTitleText}>{item.title}</Text>
-      {/*<View style={styles.itemButtonContainer}>
-        <Button color={'grey'} title={'Info'} onPress={buttonPressed}/>
-      </View>*/}
+      <View style={styles.itemButtonContainer}>
+        <IconButton icon="trash-outline" size={24} color={colorScheme === 'dark' ? 'white' : 'black'} onPress={onDeleteAbsencePress}/>
+      </View>
     </View>
   );
 };

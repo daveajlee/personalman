@@ -21,10 +21,11 @@ export default function AbsenceScreen({route}: AbsenceScreenProps) {
 
     useEffect(() => {
         navigation.setOptions({
-            title: route.params.username + ' - Absences',
+            title: 'Absences',
             headerRight: () => <View style={{marginLeft: 10, flexDirection: 'row'}}>             
                 <IconButton icon="add" size={24} color={colorScheme === 'dark' ? 'white' : 'black'} onPress={onAddAbsencePress}/>
                 <IconButton icon="bar-chart-outline" size={24} color={colorScheme === 'dark' ? 'white' : 'black'} onPress={onViewStatisticsPress}/>
+                <IconButton icon="log-out-outline" size={24} color={colorScheme === 'dark' ? 'white' : 'black'} onPress={onLogoutPress}/>
                 </View>,
         });
     });
@@ -35,6 +36,10 @@ export default function AbsenceScreen({route}: AbsenceScreenProps) {
     
     function onViewStatisticsPress() {
         Alert.alert("Coming Soon!", "Not yet available!");
+    }
+
+    function onLogoutPress() {
+        navigation.navigate("LoginScreen");
     }
     
     return (
