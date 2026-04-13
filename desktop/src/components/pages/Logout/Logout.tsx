@@ -1,5 +1,4 @@
 import {useEffect} from "react";
-import axios from "axios";
 import {useLocation, useNavigate} from "react-router-dom";
 import * as React from "react";
 
@@ -24,8 +23,14 @@ function Logout({docMode}: LogoutProps): React.JSX.Element {
      * Logout of the system via the REST API.
      */
     useEffect(() => {
-        axios.post(import.meta.env.VITE_SERVER_URL + `/user/logout`, {
-            token: token
+        fetch(import.meta.env.VITE_SERVER_URL + `/user/logout`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: token
+            })
         })
             .then(res => {
                 if ( res.status === 200 ) {

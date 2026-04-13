@@ -3,7 +3,6 @@ import {useLocation} from "react-router-dom";
 import {Container, Row, Col, Button, Modal, Form} from "react-bootstrap";
 import Header from "../../layout/Header/Header";
 import {useState} from "react";
-import axios from "axios";
 import StatisticsModal from "../../modals/StatisticsModal/StatisticsModal";
 import AbsenceList from "../../lists/AbsenceList/AbsenceList";
 import {useTranslation} from "react-i18next";
@@ -119,29 +118,31 @@ function AbsenceManagement({docMode}: AbsenceManagementProps): React.JSX.Element
     /**
      * Add the actual absence.
      */
-    function addAbsence() {
+    async function addAbsence() {
         let startDateSplit = startDate.split("-");
         let endDateSplit = endDate.split("-");
         if ( endDateSplit[2] < startDateSplit[2] && endDateSplit[1] <= startDateSplit[1] && endDateSplit[0] <= startDateSplit[0] ) {
             alert(t('absenceManagementAddAbsenceFail'));
             return;
         }
-        axios.post(import.meta.env.VITE_SERVER_URL + '/absences/', {
-            company: company,
-            username: getUsername(),
-            startDate: startDateSplit[2] + '-' + startDateSplit[1] + '-' + startDateSplit[0],
-            endDate: endDateSplit[2] + '-' + endDateSplit[1] + '-' + endDateSplit[0],
-            category: reason,
-            token: token,
-        }).then((response) => {
-            if ( response.status === 201 ) {
-                alert(t('absenceManagementAddAbsenceSuccess'));
-                setShowAddModal(false);
-                window.location.reload();
-            }
-        }).catch((error) => {
-            console.error(error);
-        });
+        const response = await fetch(import.meta.env.VITE_SERVER_URL + '/absences/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                company: company,
+                username: getUsername(),
+                startDate: startDateSplit[2] + '-' + startDateSplit[1] + '-' + startDateSplit[0],
+                endDate: endDateSplit[2] + '-' + endDateSplit[1] + '-' + endDateSplit[0],
+                category: reason,
+            token: token
+        })});
+        if ( response.status === 201 ) {
+            alert(t('absenceManagementAddAbsenceSuccess'));
+            setShowAddModal(false);
+            window.location.reload();
+        }
     }
 
     /**
