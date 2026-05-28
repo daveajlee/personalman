@@ -2,7 +2,6 @@ import {useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import Header from "../../layout/Header/Header";
 import {Button, Col, Container, Row} from "react-bootstrap";
-import axios from "axios";
 import StatisticsModal from "../../modals/StatisticsModal/StatisticsModal";
 import ResetModal from "../../modals/ResetModal/ResetModal";
 import AddUserModal from "../../modals/AddUserModal/AddUserModal";
@@ -62,13 +61,13 @@ function UsersManagement({docMode}: UsersManagementProps): React.JSX.Element {
      * token is valid.
      */
     useEffect(() => {
-        axios.get(import.meta.env.VITE_SERVER_URL + '/users/?company=' + company + '&token=' + token)
-            .then(res => {
-                const result = res.data;
-                setUsers(result['userResponses']);
+        fetch(import.meta.env.VITE_SERVER_URL + '/users/?company=' + company + '&token=' + token)
+            .then(res => res.json()
+            .then(data => {
+                setUsers(data['userResponses']);
             }).catch(error => {
                 console.error(error);
-        })
+        }))
     }, [token, company]);
 
     /**
@@ -77,8 +76,10 @@ function UsersManagement({docMode}: UsersManagementProps): React.JSX.Element {
      */
     function deleteUser(username: string) {
         if(window.confirm(t('usersManagementDeleteUser', { username: username }))) {
-            axios.delete(import.meta.env.VITE_SERVER_URL + '/user/?company=' + company + '&username=' + username +
-                '&token=' + token)
+            fetch(import.meta.env.VITE_SERVER_URL + '/user/?company=' + company + '&username=' + username +
+                '&token=' + token, {
+                    method: 'DELETE'
+                })
                 .then(function (response) {
                     if ( response.status === 200 ) {
                         alert(t('usersManagementDeleteUserSuccess'));

@@ -41,6 +41,7 @@ desktop/node_modules/
 
 # Environment files
 */.env
+server/src/main/resources/application-live.yml
 
 # Android App Bundles (Release)
 *.aab
