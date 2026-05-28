@@ -2,6 +2,7 @@
   "name": "personalman-desktop",
   "version": "0.1.2",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@electron/osx-sign": "^2.2.0",
     "@testing-library/jest-dom": "^6.8.0",
@@ -20,23 +21,24 @@
     "react-dom": "^19.1.1",
     "react-i18next": "^15.7.3",
     "react-icons": "^5.5.0",
-    "react-router-dom": "^7.8.2"
+    "react-router-dom": "^7.11.0"
   },
   "homepage": "./",
-  "main": "src/electron-starter.js",
+  "main": "src/electron-starter.cjs",
   "scripts": {
     "start": "electron-forge start",
     "start:react": "vite serve",
-    "build": "vite build",
-    "serve": "vite preview",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
     "electron": "electron .",
-    "dev": "nf start -p 3000",
+    "dev": "vite",
     "docs": "jsdoc -c jsdoc.conf.json",
     "styleguide": "styleguidist server",
     "styleguide:build": "styleguidist build",
     "package": "electron-forge package",
     "make": "electron-forge make --platform darwin & electron-forge make --platform linux & electron-forge make --platform win32",
-    "make-pkg": "dotenv -- electron-forge make --arch=universal --platform mas"
+    "make-pkg": "dotenv -- electron-forge make --arch=universal --platform mas",
+    "lint": "eslint"
   },
   "eslintConfig": {
     "extends": [
@@ -69,15 +71,24 @@
     "@electron-forge/maker-squirrel": "^7.8.3",
     "@electron-forge/maker-zip": "^7.8.3",
     "@electron-forge/plugin-auto-unpack-natives": "^7.8.3",
+    "@eslint/js": "^10.0.1",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.0.2",
     "babel-jest": "^30.1.2",
     "babel-loader": "^10.0.0",
     "electron": "^37.4.0",
+    "eslint": "^10.4.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
     "foreman": "^3.0.1",
+    "globals": "^17.6.0",
     "jest": "^30.1.3",
     "jsdoc": "^4.0.4",
     "react-styleguidist": "^13.1.4",
     "react-test-renderer": "^19.1.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.59.4",
     "vite": "^7.1.11",
     "webpack": "^5.101.3"
   },
