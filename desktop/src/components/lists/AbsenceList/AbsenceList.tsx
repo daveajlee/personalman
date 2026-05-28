@@ -1,6 +1,5 @@
 import {Button, Col, Container, Row} from "react-bootstrap";
 import {useEffect, useState} from "react";
-import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import PropTypes from "prop-types";
 import {useTranslation} from "react-i18next";
@@ -52,11 +51,11 @@ function AbsenceList ({startDate, endDate, username, company, token, month, year
             const url = (username)
                 ? import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token
                 : import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' +  token;
-            axios.get(url)
-                .then(res => {
-                    const result = res.data;
-                    setAbsences(result['absenceResponseList']);
-                }).catch(error => {
+            fetch(url)
+                .then(res => res.json()
+                .then(data => {
+                    setAbsences(data['absenceResponseList']);
+                })).catch(error => {
                     console.error(error);
                 })
         } else {
@@ -69,20 +68,21 @@ function AbsenceList ({startDate, endDate, username, company, token, month, year
                 useGrouping: false
             }) + '-' + year
             if ( username ) {
-                axios.get(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token)
-                    .then(res => {
-                        const result = res.data;
-                        setAbsences(result['absenceResponseList']);
+                fetch(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token)
+                    .then(res => res.json())
+                    .then(data =>  {
+                        setAbsences(data['absenceResponseList']);
                     })
                     .catch(error => {
                         console.error(error);
                     })
             } else {
-                axios.get(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token)
-                    .then(res => {
-                        const result = res.data;
-                        setAbsences(result['absenceResponseList']);
-                    }).catch(error => {
+                fetch(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token)
+                    .then(res => res.json()
+                    .then(data => {
+                        setAbsences(data['absenceResponseList']);
+                        setAbsences(data['absenceResponseList']);
+                    })).catch(error => {
                         console.error(error);
                 } )
             }
@@ -222,9 +222,11 @@ function AbsenceList ({startDate, endDate, username, company, token, month, year
      * Delete the supplied absence.
      * @param absence the absence to delete
      */
-    function deleteAbsence(absence: Absence) {
-        axios.delete(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + absence.username
-            + '&startDate=' + absence.startDate + '&endDate=' + absence.endDate + '&token=' + token)
+    async function deleteAbsence(absence: Absence) {
+        fetch(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + absence.username
+            + '&startDate=' + absence.startDate + '&endDate=' + absence.endDate + '&token=' + token, {
+                method: 'DELETE'
+            })
             .then(function (response) {
                 if ( response.status === 200 ) {
                     alert(t('absenceListDeleteConfirmation'));

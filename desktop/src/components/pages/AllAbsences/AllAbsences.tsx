@@ -3,7 +3,6 @@ import {useLocation} from "react-router-dom";
 import {Container} from "react-bootstrap";
 import Header from "../../layout/Header/Header";
 import {useState} from "react";
-import axios from "axios";
 import AbsenceList from "../../lists/AbsenceList/AbsenceList";
 import * as React from "react";
 
@@ -49,9 +48,10 @@ function AllAbsences({docMode}: AllAbsencesProps): React.JSX.Element {
      */
     useEffect(() => {
         // Ensure that the user is actually admin, otherwise they cannot view the page.
-        axios.get(import.meta.env.VITE_SERVER_URL + '/user/?company=' + company + '&username=' + token.split("-")[0] + '&token=' + token)
-                .then(res => {
-                    const result = res.data;
+        fetch(import.meta.env.VITE_SERVER_URL + '/user/?company=' + company + '&username=' + token.split("-")[0] + '&token=' + token)
+                .then(res => res.json())
+                .then(data => {
+                    const result = data;
                     setRole(result['role']);
                 }).catch(error => {
                     console.error(error);
