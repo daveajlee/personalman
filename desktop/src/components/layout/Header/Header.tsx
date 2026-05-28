@@ -3,7 +3,6 @@ import {useEffect} from "react";
 import logo from '../../../assets/personalmanlogo-icon.png';
 import { Link } from 'react-router-dom';
 import {useState} from "react";
-import axios from "axios";
 import PropTypes from 'prop-types';
 import {useTranslation} from "react-i18next";
 import * as React from "react";
@@ -29,12 +28,12 @@ function Header({company, token}: HeaderProps): React.JSX.Element {
      * Load the first name, surname and role of the currently logged in user to be displayed as part of the header bar.
      */
     useEffect(() => {
-        axios.get(import.meta.env.VITE_SERVER_URL + '/user/?company=' + company + '&username=' + token.split("-")[0] + '&token=' +  token)
-            .then(res => {
-                const result = res.data;
-                setName(result['firstName'] + ' ' + result['surname']);
-                setRole(result['role']);
-            }).catch(error => {
+        fetch(import.meta.env.VITE_SERVER_URL + '/user/?company=' + company + '&username=' + token.split("-")[0] + '&token=' +  token)
+            .then(res => res.json()
+                .then(data => {  
+                    setName(data['firstName'] + ' ' + data['surname']);
+                    setRole(data['role']); } ))
+            .catch(error => {
                 console.error(error);
         })
     }, [ company, token]);

@@ -3,7 +3,6 @@ import './css/App.css'
 import Login from "./components/pages/Login/Login";
 import RegisterCompany from "./components/pages/RegisterCompany/RegisterCompany";
 import {useEffect, useState} from "react";
-import axios from "axios";
 import {Route, Routes} from "react-router-dom";
 import RegisterUser from "./components/pages/RegisterUser/RegisterUser";
 import AbsenceManagement from "./components/pages/AbsenceManagement/AbsenceManagement";
@@ -27,11 +26,11 @@ function App(): React.JSX.Element {
      * Load the current list of companies that are available on the REST API server.
      */
   useEffect(() => {
-    axios.get(import.meta.env.VITE_SERVER_URL + `/companies/`)
-        .then(res => {
+    fetch(import.meta.env.VITE_SERVER_URL + `/companies/`)
+        .then(res => res.json())
+        .then(data => {
           setLoading(false);
-          const companies = res.data;
-          setCompanies(companies);
+          setCompanies(data);
         }).catch(error => {
             console.log('No connection to API available: ', error);
     })
