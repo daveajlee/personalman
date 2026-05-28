@@ -1,6 +1,5 @@
 import {Button, Col, Form, Modal, Row} from "react-bootstrap";
 import {useState} from "react";
-import axios from "axios";
 import PropTypes from "prop-types";
 import {useTranslation} from "react-i18next";
 import * as React from "react";
@@ -56,11 +55,17 @@ function ResetModal ({setShowResetModal, company, username, token, showResetModa
             alert(t('resetPasswordNotIdentical'));
             return;
         }
-        axios.patch(import.meta.env.VITE_SERVER_URL + '/user/reset', {
-            company: company,
-            username: username,
-            token: token,
-            password: newPassword
+        fetch(import.meta.env.VITE_SERVER_URL + '/user/reset', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                company: company,
+                username: username,
+                token: token,
+                password: newPassword
+            })
         }).then(function (response) {
             if ( response.status === 200 ) {
                 alert(t('resetPasswordSuccess'));
