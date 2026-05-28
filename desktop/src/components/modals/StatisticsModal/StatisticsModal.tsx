@@ -1,6 +1,5 @@
 import {Button, Modal} from "react-bootstrap";
 import {useEffect, useState} from "react";
-import axios from "axios";
 import PropTypes from "prop-types";
 import {useTranslation} from "react-i18next";
 import * as React from "react";
@@ -44,17 +43,19 @@ function StatisticsModal ({setShowStatisticsModal, year, company, username, toke
         if ( username === '') {
             username = token.split("-")[0];
         }
-        axios.get(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startYearDate + '&endDate=' + endYearDate + '&onlyCount=false&token=' + token)
-            .then(res => {
-                const result = res.data;
+        fetch(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startYearDate + '&endDate=' + endYearDate + '&onlyCount=false&token=' + token)
+            .then(res => res.json())
+            .then(data => {
+                const result = data;
                 setStatisticsMap(result['statisticsMap']);
             }).catch(error => {
                 console.error(error);
         })
         // Get the leave entitlement for this user.
-        axios.get(import.meta.env.VITE_SERVER_URL  + '/user/?company=' + company + '&username=' + username + '&token=' + token)
-            .then(res => {
-                const result = res.data;
+        fetch(import.meta.env.VITE_SERVER_URL  + '/user/?company=' + company + '&username=' + username + '&token=' + token)
+            .then(res => res.json())
+            .then(data => {
+                const result = data;
                 setLeaveEntitlement(result['leaveEntitlementPerYear']);
             }).catch(error => {
                 console.error(error);
