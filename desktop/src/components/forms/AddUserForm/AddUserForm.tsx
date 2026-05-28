@@ -1,7 +1,6 @@
 import {Button, Col, Container, Form, Row} from "react-bootstrap";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import axios from "axios";
 import PropTypes from "prop-types";
 import Header from "../../layout/Header/Header";
 import {useTranslation} from "react-i18next";
@@ -42,20 +41,22 @@ function AddUserForm ({companyName, handleAddUserClose}: AddUserFormProps): Reac
      * in the parameters.
      */
     useEffect(() => {
+        console.log('Company name in add user form: ' + companyName);
         if ( !companyName || companyName === '' ) {
-            axios.get(import.meta.env.VITE_SERVER_URL + `/companies/`)
-                .then(res => {
-                    const companies = res.data;
-                    setCompanies(companies);
-                    setCompany(companies[0]);
-                }).catch(error => {
+            fetch(import.meta.env.VITE_SERVER_URL + `/companies/`)
+                .then(res => res.json()
+                .then(data => {
+                    console.log(data);
+                    setCompanies(data);
+                    setCompany(data[0]);
+                })).catch(error => {
                     console.error(error);
             })
         } else {
             const companies: string[] = [];
-            companies.push(company);
+            companies.push(companyName);
             setCompanies(companies);
-            setCompany(company);
+            setCompany(companyName);
         }
     }, [companyName]);
 
@@ -233,7 +234,7 @@ function AddUserForm ({companyName, handleAddUserClose}: AddUserFormProps): Reac
     /**
      * Register the new user by sending the request to the API. Display an alert and then move back to the home page.
      */
-    function registerUser() {
+    async function registerUser() {
         // Check that the passwords were identical, otherwise do nothing and show error message.
         if ( password !== confirmPassword ) {
             alert('The two passwords did not match. Please check the passwords and try again');
@@ -241,30 +242,32 @@ function AddUserForm ({companyName, handleAddUserClose}: AddUserFormProps): Reac
         else {
             let startDateSplit = startDate.split("-");
             let dateOfBirthSplit = dateOfBirth.split("-");
-            axios.post(import.meta.env.VITE_SERVER_URL + '/user/', {
-                firstName: firstName,
-                surname: lastName,
-                username: username,
-                password: password,
-                company: company,
-                workingDays: workingDays.join(","),
+            const response = await fetch(import.meta.env.VITE_SERVER_URL + '/user/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    firstName: firstName,
+                    surname: lastName,
+                    username: username,
+                    password: password,
+                    company: company,
+                    workingDays: workingDays.join(","),
                 position: position,
                 startDate: startDateSplit[2] + '-' + startDateSplit[1] + '-' + startDateSplit[0],
                 role: role,
                 dateOfBirth: dateOfBirthSplit[2] + '-' + dateOfBirthSplit[1] + '-' + dateOfBirthSplit[0]
-            }).then(function (response) {
-                if ( response.status === 201 ) {
-                    if ( !companyName || companyName === '' ) {
-                        alert(t('addUserFormSuccess'))
-                        navigate("/")
-                    } else {
-                        handleAddUserClose();
-                        window.location.reload();
-                    }
+            })});
+            if ( response.status === 201 ) {
+                if ( !companyName || companyName === '' ) {
+                    alert(t('addUserFormSuccess'))
+                    navigate("/")
+                } else {
+                    handleAddUserClose();
+                    window.location.reload();
                 }
-            }).catch(function (error) {
-                console.log(error);
-            });
+            }
         }
     }
 

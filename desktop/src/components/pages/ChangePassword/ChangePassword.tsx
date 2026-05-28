@@ -1,6 +1,5 @@
 import {useState} from "react";
 import {Button, Col, Container, Form, Image, Row} from "react-bootstrap";
-import axios from "axios";
 import {useLocation, useNavigate} from "react-router-dom";
 import Header from "../../layout/Header/Header";
 import {useTranslation} from "react-i18next";
@@ -92,12 +91,18 @@ function ChangePassword ({docMode}: ChangePasswordProps): React.JSX.Element {
             alert(t('changePasswordNotIdentical'));
             return;
         }
-        axios.patch(import.meta.env.VITE_SERVER_URL + '/user/password', {
-            company: getCompany(),
-            username: getUsername(),
-            token: getToken(),
-            currentPassword: currentPassword,
-            newPassword: newPassword
+        fetch(import.meta.env.VITE_SERVER_URL + '/user/password', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                company: getCompany(),
+                username: getUsername(),
+                token: getToken(),
+                currentPassword: currentPassword,
+                newPassword: newPassword
+            })
         }).then(function (response) {
             if ( response.status === 200 ) {
                 alert(t('changePasswordSuccess'));

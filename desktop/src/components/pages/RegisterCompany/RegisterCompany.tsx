@@ -1,6 +1,5 @@
 import {type ChangeEvent, useState} from "react";
 import {Button, Col, Container, Form, Image, Row} from "react-bootstrap";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import logo from './../../../assets/personalman-logo.png';
@@ -60,10 +59,16 @@ function RegisterCompany (): React.JSX.Element {
         console.log('*****');
         const userAgent = navigator.userAgent.toLowerCase();
         console.log(userAgent);
-        axios.post(import.meta.env.VITE_SERVER_URL  + '/company/', {
-            name: name,
-            defaultAnnualLeaveInDays: annualLeave,
-            country: country
+        fetch(import.meta.env.VITE_SERVER_URL  + '/company/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: name,
+                defaultAnnualLeaveInDays: annualLeave,
+                country: country
+            })
         }).then(function (response) {
             if ( response.status === 201 ) {
                 alert('Thank you for registering for PersonalMan. You can now create users on the login page.')
