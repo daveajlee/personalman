@@ -90,7 +90,7 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.59.4",
     "vite": "^7.1.11",
-    "webpack": "^5.101.3"
+    "webpack": "^5.105.0"
   },
   "config": {
     "forge": "./forge.config.js"
