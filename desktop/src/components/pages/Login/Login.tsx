@@ -1,6 +1,5 @@
 import {type ChangeEvent, useEffect, useState} from "react";
 import {Container, Col, Row, Form, Button, Image} from "react-bootstrap";
-import axios from 'axios';
 import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import logo from './../../../assets/personalman-logo.png';
@@ -24,10 +23,10 @@ function Login(): React.JSX.Element {
      */
     useEffect(() => {
         console.log(import.meta.env.VITE_SERVER_URL);
-        axios.get(import.meta.env.VITE_SERVER_URL + `/companies/`)
-            .then(res => {
-                console.log(res);
-                const companies = res.data;
+        fetch(import.meta.env.VITE_SERVER_URL + `/companies/`)
+            .then(res => res.json())
+            .then(data => {
+                const companies = data;
                 setCompanies(companies);
                 setCompany(companies[0]);
             }).catch(error => {
@@ -64,13 +63,21 @@ function Login(): React.JSX.Element {
      * display a simple alert.
      */
     function login() {
-        axios.post(import.meta.env.VITE_SERVER_URL + '/user/login', {
-            company: company,
-            username: username,
-            password: password,
+        fetch(import.meta.env.VITE_SERVER_URL + '/user/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                company: company,
+                username: username,
+                password: password,
+            })
         }).then(function (response) {
             if ( response.status === 200 ) {
-                navigate("/absences", {state:{token: response.data.token, company: company}})
+                response.json().then(function (data) {
+                    navigate("/absences", {state:{token: data.token, company: company}})
+                });
             }
         }).catch(function (error) {
             alert('Please verify that the username, password and company are correct and try again.');
