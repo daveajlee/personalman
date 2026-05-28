@@ -36,7 +36,7 @@
 	</distributionManagement>
 
 	<modules>
-    	<module>server</module>
+    	<module>java-server</module>
   	</modules>
 
 </project>

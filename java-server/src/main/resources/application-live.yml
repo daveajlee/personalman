@@ -3,7 +3,7 @@ mongo:
   url: ${MONGODB_URI:mongodb://mongoadmin:mymongodb@localhost:27017}
 
 server:
-  port: 8150
+  port: 8170
 #eureka:
 #  client:
 #    serviceUrl:
