@@ -5,41 +5,59 @@
  * @format
  */
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
 import {
   SafeAreaProvider,
-  useSafeAreaInsets,
 } from 'react-native-safe-area-context';
+import AbsenceScreen from './screens/AbsenceScreen';
+import LoginScreen from './screens/LoginScreen';
+import MainMenuScreen from './screens/MainMenuScreen';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { Appearance } from 'react-native';
+
+// Define stack navigation
+const Stack = createNativeStackNavigator();
+
+const colorScheme = Appearance.getColorScheme();
+
+const MyDefaultTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: '#F0F0F0',
+    primary: 'black',
+  },
+};
+
+const MyDarkTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: 'black',
+    primary: 'white',
+  },
+};
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
 
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
+      <NavigationContainer theme={colorScheme === 'dark' ? MyDarkTheme : MyDefaultTheme}>
+        <Stack.Navigator initialRouteName='LoginScreen'>
+          <Stack.Screen name="LoginScreen" component={LoginScreen} options={() => ({
+            headerShown: false
+          })}/>
+          <Stack.Screen name="MainMenuScreen" component={MainMenuScreen} options={{
+          title: 'PersonalMan',
+           headerBackVisible: false,
+          }}/>
+          <Stack.Screen name="AbsenceScreen" component={AbsenceScreen} options={{
+          title: 'Absences',
+          }}/>
+        </Stack.Navigator>
+      </NavigationContainer>
     </SafeAreaProvider>
   );
 }
-
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default App;
