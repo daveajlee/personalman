@@ -30,7 +30,7 @@ hs_err_pid*
 server/personalman_server.iml
 
 #Build files
-server/target/
+java-server/target/
 /target/
 
 docs/build/
