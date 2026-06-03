@@ -7,7 +7,7 @@ import { UsersResponse } from './responses/users.response';
 @Controller('users')
 export class UsersController {
   @Post('paid')
-  @ApiOperation({ summary: 'Mark users as paid for a company' })
+  @ApiOperation({ summary: 'Mark users as paid for a company', description: 'Mark users as paid for a company within a specific date range.' })
   @ApiResponse({ status: 200, description: 'Successfully found user(s) and their pay'})
   @ApiResponse({ status: 204, description: 'Successful but no users found'})
   markUsersPaid(@Body() paidUserRequest: PaidUserRequest): void {
@@ -15,7 +15,7 @@ export class UsersController {
   }
 
   @Get('pay')
-  @ApiOperation({ summary: 'Pay all users for a company' })
+  @ApiOperation({ summary: 'Pay all users for a company', description: 'Pay all users for a company within a specific date range.' })
   @ApiOkResponse({
     description: 'Successfully found user(s) and their pay',
     type: PayUsersResponse,
@@ -26,7 +26,7 @@ export class UsersController {
   }
 
   @Get('/')
-  @ApiOperation({ summary: 'Find all users for a company' })
+  @ApiOperation({ summary: 'Find all users for a company', description:'Find all users for a company to the system.' })
   @ApiOkResponse({
     description: 'Successfully found user(s)',
     type: UsersResponse,

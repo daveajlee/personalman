@@ -1,35 +1,53 @@
-import { Controller, Delete, Get, Patch, Post } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiOkResponse } from '@nestjs/swagger';
+import { LogoutRequest } from './requests/logout.request';
+import { LoginResponse } from './responses/login.response';
+import { LoginRequest } from './requests/login.request';
+import { UserResponse } from './responses/user.response';
+import { UserRequest } from './requests/user.request';
 
 @Controller('user')
 export class UserController {
   @Post('logout')
-  @ApiOperation({ summary: 'Logout' })
-  logout(): void {
+  @ApiOperation({ summary: 'Logout', description: 'Logout from the system' })
+  @ApiResponse({ status: 200, description: 'Successfully processed logout request'})
+  logout(@Body() logoutRequest: LogoutRequest): void {
     //TODO: implement logout
   }
 
   @Post('login')
-  @ApiOperation({ summary: 'Login' })
-  login(): void {
+  @ApiOperation({ summary: 'Login', description: 'Login to the system' })
+  @ApiOkResponse({
+      description: 'Successfully processed login request',
+      type: LoginResponse,
+  })
+  login(@Body() loginRequest: LoginRequest): void {
     //TODO: implement login
   }
 
   @Get('/')
-  @ApiOperation({ summary: 'Find a user' })
-  findUser(): void {
+  @ApiOperation({ summary: 'Find a user', description: 'Find a user in the system.' })
+  @ApiOkResponse({
+      description: 'Successfully found user',
+      type: UserResponse,
+  })
+  @ApiResponse({ status: 204, description: 'Successful but no user found'})
+  findUser(@Param('company') company: string, @Param('username') username: string, @Param('token') token: string): void {
     //TODO: find user.
   }
 
   @Post('/')
-  @ApiOperation({ summary: 'Add a user' })
-  addUser(): void {
+  @ApiOperation({ summary: 'Add a user', description: 'Add a user to the system.' })
+  @ApiResponse({ status: 201, description: 'Successfully created user'})
+  addUser(@Body() userRequest: UserRequest): void {
     //TODO: add user.
   }
 
   @Delete('/')
-  @ApiOperation({ summary: 'Delete a user' })
-  deleteUser(): void {
+  @ApiOperation({ summary: 'Delete a user', description: 'Delete a user from the system.' })
+  @ApiResponse({ status: 200, description: 'Successfully delete user'})
+  @ApiResponse({ status: 204, description: 'Successful but no user found'})
+  deleteUser(@Param('company') company: string, @Param('username') username: string, @Param('token') token: string): void {
     //TODO: delete user.
   }
 
