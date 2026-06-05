@@ -4,6 +4,7 @@ import { AddHistoryRequest } from './requests/addhistory.request';
 import { AddTimesheetHoursRequest } from './requests/addtimesheethours.request';
 import { AddTrainingRequest } from './requests/addtraining.request';
 import { ChangePasswordRequest } from './requests/changepassword.request';
+import { DeactivateUserRequest } from './requests/deactivateuser.request';
 import { LogoutRequest } from './requests/logout.request';
 import { LoginResponse } from './responses/login.response';
 import { LoginRequest } from './requests/login.request';
@@ -115,14 +116,21 @@ export class UserController {
   }
 
   @Patch('/deactivate')
-  @ApiOperation({ summary: 'Deactivate user' })
-  deactivate(): void {
+  @ApiOperation({ summary: 'Deactivate user', description: 'Deactivate a user from the system' })
+  @ApiResponse({ status: 200, description: 'Successfully deactivated user' })
+  @ApiResponse({ status: 204, description: 'Successful but no user found' })
+  deactivate(@Body() deactivateUserRequest: DeactivateUserRequest): void {
     //TODO: deactivate user.
   }
 
   @Patch('/getUser')
-  @ApiOperation({ summary: 'Get user' })
-  getUser(): void {
+  @ApiOperation({ summary: 'Get user', description: 'Method to get a users details by name and date of birth.' })
+  @ApiOkResponse({
+    description: 'Successfully retrieved user details',
+    type: UserResponse
+  })
+  @ApiResponse({ status: 500, description: 'Database not available' })
+  getUser(@Param('name') name: string, @Param('dateOfBirth') dateOfBirth: string, @Param('company') company: string, @Param('token') token: string): void {
     //TODO: get user by name and date of birth.
   }
 }
