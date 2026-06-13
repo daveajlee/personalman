@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiOkResponse } from '@nestjs/swagger';
 import { AddHistoryRequest } from './requests/addhistory.request';
 import { AddTimesheetHoursRequest } from './requests/addtimesheethours.request';
@@ -19,7 +19,10 @@ export class UserController {
   @ApiOperation({ summary: 'Logout', description: 'Logout from the system' })
   @ApiResponse({ status: 200, description: 'Successfully processed logout request'})
   logout(@Body() logoutRequest: LogoutRequest): void {
-    //TODO: implement logout
+    //Remove the token from the authenticated tokens.
+        userService.removeAuthToken(logoutRequest.getToken());
+        //Return 200.
+        return ResponseEntity.status(200).build();
   }
 
   @Post('login')
@@ -29,7 +32,13 @@ export class UserController {
       type: LoginResponse,
   })
   login(@Body() loginRequest: LoginRequest): void {
-    //TODO: implement login
+    var user: User = userService.findByCompanyAndUserName(loginRequest.getCompany(), loginRequest.getUsername());
+        if ( user != null && user.getAccountStatus()== UserAccountStatus.ACTIVE && user.getPassword().contentEquals(loginRequest.getPassword()) ) {
+            return ResponseEntity.ok().body(LoginResponse.builder().token(userService.generateAuthToken(loginRequest.getUsername())).build());
+        } else if ( user != null ) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(LoginResponse.builder().errorMessage("Password was incorrect!").build());
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(LoginResponse.builder().errorMessage("User was not found").build());
   }
 
   @Get('/')
@@ -40,14 +49,46 @@ export class UserController {
   })
   @ApiResponse({ status: 204, description: 'Successful but no user found'})
   findUser(@Param('company') company: string, @Param('username') username: string, @Param('token') token: string): void {
-    //TODO: find user.
+    //Check valid request including authentication
+        var status: HttpStatus = validateAndAuthenticateRequest(company, username, token);
+        //If the status is not null then produce response and return.
+        if ( status != null ) {
+            return new ResponseEntity<>(status);
+        }
+        //Now retrieve the user based on the username.
+        var user: User = userService.findByCompanyAndUserName(company, username);
+        //If user is null then return 204.
+        if ( user == null ) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        //Convert to UserResponse object and return 200.
+        return ResponseEntity.ok(UserUtils.convertUserToUserResponse(user));
   }
 
   @Post('/')
   @ApiOperation({ summary: 'Add a user', description: 'Add a user to the system.' })
   @ApiResponse({ status: 201, description: 'Successfully created user'})
   addUser(@Body() userRequest: UserRequest): void {
-    //TODO: add user.
+    //First of all, check if any of the fields are empty or null, then return bad request.
+        if (StringUtils.isBlank(userRequest.getFirstName()) || StringUtils.isBlank(userRequest.getSurname())
+                || StringUtils.isBlank(userRequest.getPosition()) || StringUtils.isBlank(userRequest.getStartDate())
+                || StringUtils.isBlank(userRequest.getUsername()) || StringUtils.isBlank(userRequest.getWorkingDays())
+                || StringUtils.isBlank(userRequest.getCompany()) ) {
+            return ResponseEntity.badRequest().build();
+        }
+        // If the leave entitlement is 0 then set it to company default.
+        if ( userRequest.getLeaveEntitlementPerYear() <= 0 ) {
+            userRequest.setLeaveEntitlementPerYear(companyService.getCompany(userRequest.getCompany()).getDefaultAnnualLeaveInDays());
+        }
+        //Now convert the dates to LocalDate. If end date is before start date then return bad request.
+        var startLocalDate: Date = DateUtils.convertDateToLocalDate(userRequest.getStartDate());
+        if ( startLocalDate == null ) {
+            return ResponseEntity.badRequest().build();
+        }
+        //Now convert to user object.
+        var user: User = UserUtils.convertUserRequestToUser(userRequest, startLocalDate);
+        //Return 201 if saved successfully.
+        return userService.save(user) ? ResponseEntity.status(201).build() : ResponseEntity.status(500).build();
   }
 
   @Delete('/')
@@ -55,7 +96,22 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Successfully delete user'})
   @ApiResponse({ status: 204, description: 'Successful but no user found'})
   deleteUser(@Param('company') company: string, @Param('username') username: string, @Param('token') token: string): void {
-    //TODO: delete user.
+    //Check valid request including authentication
+        var status: HttpStatus = validateAndAuthenticateRequest(company, username, token);
+        //If the status is not null then produce response and return.
+        if ( status != null ) {
+            return new ResponseEntity<>(status);
+        }
+        //Now retrieve the user based on the username.
+        var user: User = userService.findByCompanyAndUserName(company, username);
+        //If user is null then return 204.
+        if ( user == null ) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        //Now delete the user based on the username.
+        userService.delete(user);
+        //Return 200.
+        return ResponseEntity.status(200).build();
   }
 
   @Patch('/training')
@@ -63,7 +119,21 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Successfully added training course'})
   @ApiResponse({ status: 204, description: 'No user found'})
   addTraining(@Body() addTrainingRequest: AddTrainingRequest): void {
-    //TODO: add training course.
+    //Check valid request including authentication
+        var status: HttpStatus = validateAndAuthenticateRequest(addTrainingRequest.getCompany(), addTrainingRequest.getUsername(), addTrainingRequest.getToken());
+        //If the status is not null then produce response and return.
+        if ( status != null ) {
+            return new ResponseEntity<>(status);
+        }
+        //Now retrieve the user based on the username.
+        var user: User = userService.findByCompanyAndUserName(addTrainingRequest.getCompany(), addTrainingRequest.getUsername());
+        //If user is null then return 204.
+        if ( user == null ) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        //Now add training course and return 200 or 500 depending on DB success.
+        return userService.addTrainingCourse(user, addTrainingRequest.getTrainingCourse()) ?
+                ResponseEntity.status(200).build() : ResponseEntity.status(500).build();
   }
 
   @Get('/timesheet')
@@ -74,7 +144,27 @@ export class UserController {
   })
   @ApiResponse({ status: 204, description: 'No user found'})
   retrieveTimesheet(@Param('company') company: string, @Param('username') username: string, @Param('token') token: string, @Param('startDate') startDate: string, @Param('endDate') endDate: string): void {
-    //TODO: retrieve timesheet.
+    //Check valid request including authentication
+        var status: HttpStatus = validateAndAuthenticateRequest(company, username, token);
+        //If the status is not null then produce response and return.
+        if ( status != null ) {
+            return new ResponseEntity<>(status);
+        }
+        //Now retrieve the user based on the username.
+        var user: User = userService.findByCompanyAndUserName(company, username);
+        //If user is null then return 204.
+        if ( user == null ) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        //Convert dates to LocalDates.
+        var localStartDate: Date = DateUtils.convertDateToLocalDate(startDate);
+        var localEndDate: Date = DateUtils.convertDateToLocalDate(endDate);
+        //Perform either date range or single date.
+        if ( localStartDate != null && localEndDate != null && localStartDate.isEqual(localEndDate) ) {
+            return ResponseEntity.ok(userService.getHoursForDate(user, localStartDate));
+        } else {
+            return ResponseEntity.ok(userService.getHoursForDateRange(user, localStartDate, localEndDate));
+        }
   }
 
   @Patch('/timesheet')
@@ -82,7 +172,21 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Successfully added hours'})
   @ApiResponse({ status: 204, description: 'No user found'})
   addHours(@Body() addHoursRequest: AddTimesheetHoursRequest): void {
-    //TODO: add hours.
+    //Check valid request including authentication
+        var status: HttpStatus = validateAndAuthenticateRequest(addTimeSheetHoursRequest.getCompany(), addTimeSheetHoursRequest.getUsername(), addTimeSheetHoursRequest.getToken());
+        //If the status is not null then produce response and return.
+        if ( status != null ) {
+            return new ResponseEntity<>(status);
+        }
+        //Now retrieve the user based on the username.
+        var user: User = userService.findByCompanyAndUserName(addTimeSheetHoursRequest.getCompany(), addTimeSheetHoursRequest.getUsername());
+        //If user is null then return 204.
+        if ( user == null ) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        //Now add the hours and return 200 or 500 depending on DB success.
+        return userService.addHoursForDate(user, addTimeSheetHoursRequest.getHours(), DateUtils.convertDateToLocalDate(addTimeSheetHoursRequest.getDate())) ?
+                ResponseEntity.status(200).build() : ResponseEntity.status(500).build();
   }
 
   @Patch('/salary')
@@ -90,21 +194,50 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Successfully updated salary information'})
   @ApiResponse({ status: 204, description: 'No user found'})
   updateSalary(@Body() updateSalaryRequest: UpdateSalaryRequest): void {
-    //TODO: update salary information.
+    //Check valid request including authentication
+        var status: HttpStatus = validateAndAuthenticateRequest(updateSalaryRequest.getCompany(), updateSalaryRequest.getUsername(), updateSalaryRequest.getToken());
+        //If the status is not null then produce response and return.
+        if ( status != null ) {
+            return new ResponseEntity<>(status);
+        }
+        //Now retrieve the user based on the username.
+        var user: User = userService.findByCompanyAndUserName(updateSalaryRequest.getCompany(), updateSalaryRequest.getUsername());
+        //If user is null then return 204.
+        if ( user == null ) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        //Now update salary information and return 200 or 500 depending on DB success.
+        return userService.updateSalaryInformation(user, BigDecimal.valueOf(updateSalaryRequest.getHourlyWage()), updateSalaryRequest.getContractedHoursPerWeek() ) ?
+            ResponseEntity.status(200).build() : ResponseEntity.status(500).build();
   }
 
   @Patch('/reset')
   @ApiOperation({ summary: 'Reset user', description: 'Reset password for a user' })
   @ApiResponse({ status: 200, description: 'Successfully processed reset user request'})
   resetUser(@Body() resetUserRequest: ResetUserRequest): void {
-    //TODO: reset user.
+    //Verify that user is logged in.
+        if ( resetUserRequest.getToken() == null || !userService.checkAuthToken(resetUserRequest.getToken()) ) {
+            return ResponseEntity.status(403).build();
+        }
+        var result: boolean= userService.resetUserPassword(resetUserRequest.getCompany(), resetUserRequest.getUsername(), resetUserRequest.getPassword());
+        //If result is true, then return 200 otherwise return 404 to indicate user not found.
+        return result ? ResponseEntity.status(200).build() : ResponseEntity.status(404).build();
   }
 
   @Patch('/password')
   @ApiOperation({ summary: 'Change Password', description: 'Change password for a user' })
   @ApiResponse({ status: 200, description: 'Successfully processed change password request'})
   changePassword(@Body() changePasswordRequest: ChangePasswordRequest): void {
-    //TODO: change password.
+    //Check valid request including authentication
+        var status: HttpStatus = validateAndAuthenticateRequest(changePasswordRequest.getCompany(), changePasswordRequest.getUsername(), changePasswordRequest.getToken());
+        //If the status is not null then produce response and return.
+        if ( status != null ) {
+            return new ResponseEntity<>(status);
+        }
+        var result: boolean = userService.changePassword(changePasswordRequest.getCompany(), changePasswordRequest.getUsername(),
+                changePasswordRequest.getCurrentPassword(), changePasswordRequest.getNewPassword());
+        //If result is true, then return 200 otherwise return 404 to indicate user not found.
+        return result ? ResponseEntity.status(200).build() : ResponseEntity.status(404).build();
   }
 
   @Patch('/history')
@@ -112,7 +245,22 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Successfully added history entry'})
   @ApiResponse({ status: 204, description: 'No user found'})
   addHistoryEntry(@Body() addHistoryRequest: AddHistoryRequest): void {
-    //TODO: add a new history entry.
+    //Check valid request including authentication
+        var status: HttpStatus = validateAndAuthenticateRequest(addHistoryEntryRequest.getCompany(), addHistoryEntryRequest.getUsername(), addHistoryEntryRequest.getToken());
+        //If the status is not null then produce response and return.
+        if ( status != null ) {
+            return new ResponseEntity<>(status);
+        }
+        //Now retrieve the user based on the username.
+        var user: User = userService.findByCompanyAndUserName(addHistoryEntryRequest.getCompany(), addHistoryEntryRequest.getUsername());
+        //If user is null then return 204.
+        if ( user == null ) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        //Now add training course and return 200 or 500 depending on DB success.
+        return userService.addUserHistoryEntry(user, DateUtils.convertDateToLocalDate(addHistoryEntryRequest.getDate()),
+                UserHistoryReason.valueOf(addHistoryEntryRequest.getReason()), addHistoryEntryRequest.getComment()) ?
+                ResponseEntity.status(200).build() : ResponseEntity.status(500).build();
   }
 
   @Patch('/deactivate')
@@ -120,7 +268,23 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Successfully deactivated user' })
   @ApiResponse({ status: 204, description: 'Successful but no user found' })
   deactivate(@Body() deactivateUserRequest: DeactivateUserRequest): void {
-    //TODO: deactivate user.
+    //Check valid request including authentication
+        var status: HttpStatus = validateAndAuthenticateRequest(deactivateUserRequest.getCompany(), deactivateUserRequest.getUsername(), deactivateUserRequest.getToken());
+        //If the status is not null then produce response and return.
+        if ( status != null ) {
+            return new ResponseEntity<>(status);
+        }
+        //Now retrieve the user based on the username.
+        var user: User = userService.findByCompanyAndUserName(deactivateUserRequest.getCompany(), deactivateUserRequest.getUsername());
+        //If user is null then return 204.
+        if ( user == null ) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        //Now deactivate the user based on the username and return the result.
+        return ResponseEntity.ok(DeactivateUserResponse.builder()
+                .leaveEntitlementForThisYear(userService.deactivate(user, DateUtils.convertDateToLocalDate(deactivateUserRequest.getLeavingDate()),
+                        deactivateUserRequest.isResigned(), deactivateUserRequest.getReason()))
+                .build());
   }
 
   @Patch('/getUser')
@@ -131,6 +295,42 @@ export class UserController {
   })
   @ApiResponse({ status: 500, description: 'Database not available' })
   getUser(@Param('name') name: string, @Param('dateOfBirth') dateOfBirth: string, @Param('company') company: string, @Param('token') token: string): void {
-    //TODO: get user by name and date of birth.
+    //Check valid request including authentication
+        if ( token == null || !userService.checkAuthToken(token) ) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        //If name or date of birth is null then bad request.
+        if ( name == null || dateOfBirth == null || StringUtils.isBlank(company) ) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } else {
+            //Now retrieve the user based on the information provided.
+            var user: User = userService.findUserByDateOfBirthAndNameAndCompany(LocalDate.parse(dateOfBirth), name.split(" ")[0], name.split(" ")[1], company);
+            //If user is null then return 204.
+            if ( user == null ) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            //Convert to UserResponse object and return 200.
+            return ResponseEntity.ok(UserUtils.convertUserToUserResponse(user));
+        }
   }
+
+  /**
+     * Private helper method to verify that at least username, company and token are all supplied and valid.
+     * @param company a <code>String</code> containing the name of the company.
+     * @param username a <code>String</code> containing the username.
+     * @param token a <code>String</code> containing the token to verify that the user is logged in.
+     * @return a <code>HttpStatus</code> which is either filled if it was not authenticated or null if authenticated and valid.
+     */
+    private validateAndAuthenticateRequest ( company: string, username: string, token: string ): HttpStatus {
+        //First of all, check if the username field is empty or null, then return bad request.
+        if (StringUtils.isBlank(username) || StringUtils.isBlank(company)) {
+            return HttpStatus.BAD_REQUEST;
+        }
+        //Verify that user is logged in.
+        if ( token == null || !userService.checkAuthToken(token) ) {
+            return HttpStatus.FORBIDDEN;
+        }
+        //If everything was ok then return null.
+        return null;
+    }
 }

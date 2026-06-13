@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { UserHistoryResponse } from './userhistory.response';
+import { UsersController } from '../users.controller';
 
 export class UserResponse {
 
@@ -62,5 +63,26 @@ export class UserResponse {
     //list of entries in the log history of this user
     @ApiProperty({ type: [UserHistoryResponse] })
     userHistory: UserHistoryResponse[];
+
+    constructor(firstName:string, surname:string, username:string, company:string, leaveEntitlementPerYear: number,
+        workingDays:string, position:string, startDate:string, endDate:string, role:string, dateOfBirth:string, hourlyWage:number,
+        contractedHoursPerWeek:number, trainings: string[], userHistory: UserHistoryResponse[]) {
+            this.firstName = firstName;
+            this.surname = surname;
+            this.username = username;
+            this.company = company;
+            this.leaveEntitlementPerYear = leaveEntitlementPerYear;
+            this.workingDays = workingDays;
+            this.position = position;
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.role = role;
+            this.dateOfBirth = dateOfBirth;
+            this.hourlyWage = hourlyWage;
+            this.contractedHoursPerWeek = contractedHoursPerWeek;
+            this.trainings = trainings;
+            this.userHistory = userHistory;
+
+    }
 
 }
