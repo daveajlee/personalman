@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Res } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiOkResponse } from '@nestjs/swagger';
 import { AddHistoryRequest } from './requests/addhistory.request';
 import { AddTimesheetHoursRequest } from './requests/addtimesheethours.request';
@@ -12,9 +12,14 @@ import { ResetUserRequest } from './requests/resetuser.request';
 import { UpdateSalaryRequest } from './requests/updatesalary.request';
 import { UserResponse } from './responses/user.response';
 import { UserRequest } from './requests/user.request';
+import { UsersService } from './users.service';
+import type { Response } from 'express';
 
 @Controller('user')
 export class UserController {
+
+    constructor(private readonly userService: UsersService) {}
+
   @Post('logout')
   @ApiOperation({ summary: 'Logout', description: 'Logout from the system' })
   @ApiResponse({ status: 200, description: 'Successfully processed logout request'})
@@ -294,20 +299,20 @@ export class UserController {
     type: UserResponse
   })
   @ApiResponse({ status: 500, description: 'Database not available' })
-  getUser(@Param('name') name: string, @Param('dateOfBirth') dateOfBirth: string, @Param('company') company: string, @Param('token') token: string): void {
+  getUser(@Param('name') name: string, @Param('dateOfBirth') dateOfBirth: string, @Param('company') company: string, @Param('token') token: string, @Res() res: Response): void {
     //Check valid request including authentication
-        if ( token == null || !userService.checkAuthToken(token) ) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        if ( token == null || !this.userService.checkAuthToken(token) ) {
+            res.status(HttpStatus.FORBIDDEN).send();
         }
         //If name or date of birth is null then bad request.
-        if ( name == null || dateOfBirth == null || StringUtils.isBlank(company) ) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if ( name == null || dateOfBirth == null || company === '' ) {
+            res.status(HttpStatus.BAD_REQUEST).send();
         } else {
             //Now retrieve the user based on the information provided.
-            var user: User = userService.findUserByDateOfBirthAndNameAndCompany(LocalDate.parse(dateOfBirth), name.split(" ")[0], name.split(" ")[1], company);
+            var user: User = this.userService.findUserByDateOfBirthAndNameAndCompany(Date.parse(dateOfBirth), name.split(" ")[0], name.split(" ")[1], company);
             //If user is null then return 204.
             if ( user == null ) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                res.status(HttpStatus.NO_CONTENT).send();
             }
             //Convert to UserResponse object and return 200.
             return ResponseEntity.ok(UserUtils.convertUserToUserResponse(user));
@@ -323,14 +328,14 @@ export class UserController {
      */
     private validateAndAuthenticateRequest ( company: string, username: string, token: string ): HttpStatus {
         //First of all, check if the username field is empty or null, then return bad request.
-        if (StringUtils.isBlank(username) || StringUtils.isBlank(company)) {
+        if (username === '' || company === '') {
             return HttpStatus.BAD_REQUEST;
         }
         //Verify that user is logged in.
-        if ( token == null || !userService.checkAuthToken(token) ) {
+        if ( token == null || !this.userService.checkAuthToken(token) ) {
             return HttpStatus.FORBIDDEN;
         }
         //If everything was ok then return null.
-        return null;
+        return HttpStatus.OK;
     }
 }

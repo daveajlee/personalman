@@ -35,7 +35,7 @@ export class User {
     /**
      * The names of the working days that the user is normally expected to work.
      */
-    private workingDays: DayOfWeek[];
+    private workingDays: string[];
 
     /**
      * The current job title of the user.
@@ -324,6 +324,13 @@ export class User {
      */
     public getCompany() {
         return this.company;
+    }
+
+    /**
+     * Get the working days.
+     */
+    public getWorkingDays() {
+        return this.workingDays;
     }
 
 }

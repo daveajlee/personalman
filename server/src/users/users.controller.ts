@@ -5,9 +5,9 @@ import { PayUsersResponse } from './responses/payusers.response';
 import { UsersResponse } from './responses/users.response';
 import { UserResponse } from './responses/user.response';
 import { User } from './models/user.model';
-import {Response} from 'express';
-import { Inject } from '@nestjs/common';
+import type { Response } from 'express';
 import { UsersService } from './users.service';
+import { UserHistoryReason } from './models/userhistoryreason.enum';
 
 @Controller('users')
 export class UsersController {
@@ -18,28 +18,28 @@ export class UsersController {
   @ApiOperation({ summary: 'Mark users as paid for a company', description: 'Mark users as paid for a company within a specific date range.' })
   @ApiResponse({ status: 200, description: 'Successfully found user(s) and their pay'})
   @ApiResponse({ status: 204, description: 'Successful but no users found'})
-  markUsersPaid(@Body() paidUserRequest: PaidUserRequest): void {
+  async markUsersPaid(@Body() paidUserRequest: PaidUserRequest, @Res() res: Response): Promise<void> {
     //Verify that user is logged in.
-        if ( paidUserRequest.getToken() == null || !this.userService.checkAuthToken(paidUserRequest.getToken()) ) {
-            return ResponseEntity.status(403).build();
+        if ( paidUserRequest.token == null || !this.userService.checkAuthToken(paidUserRequest.token) ) {
+            res.status(HttpStatus.FORBIDDEN).send();
         }
         //First of all, check if the compny field is empty or null, then return bad request.
-        if ( StringUtils.isBlank(paidUserRequest.getCompany())) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if ( paidUserRequest.company === '' ) {
+            res.status(HttpStatus.BAD_REQUEST).send();
         }
         //For each user in the supplied map.
-        var usernameSet: String[] = paidUserRequest.getEmployeePayTable().keySet();
-        usernameSet.forEach((username) => {
+        var usernameSet: () => MapIterator<string> = paidUserRequest.employeePayTable.keys;
+        usernameSet.forEach(user => {
             //Find the relevant user.
-            var user: User = userService.findByCompanyAndUserName(paidUserRequest.getCompany(), username);
-            if ( !userService.addUserHistoryEntry(user, LocalDate.now(), UserHistoryReason.PAID,
-                    "Paid " + paidUserRequest.getEmployeePayTable().get(username) + " for date range " +
-                    paidUserRequest.getStartDate() + " - " + paidUserRequest.getEndDate())) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            var user: Promise<User | null> = this.userService.findByCompanyAndUserName(paidUserRequest.company, username);
+            if ( !this.userService.addUserHistoryEntry(user, new Date(), UserHistoryReason.PAID,
+                    "Paid " + paidUserRequest.employeePayTable.get(username) + " for date range " +
+                    paidUserRequest.startDate + " - " + paidUserRequest.endDate)) {
+                        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
             }
         });
         //Return empty ok response if no exceptions.
-        return ResponseEntity.ok().build();
+        res.status(HttpStatus.OK).send();
   }
 
   @Get('pay')
@@ -49,40 +49,38 @@ export class UsersController {
     type: PayUsersResponse,
   })
   @ApiResponse({ status: 204, description: 'Successful but no users found'})
-  payUsers(@Param('company') company: string, @Param('token') token: string, @Param('startDate') startDate: string, @Param('endDate') endDate: string): void {
+  async payUsers(@Param('company') company: string, @Param('token') token: string, @Param('startDate') startDate: string, @Param('endDate') endDate: string, @Res() res: Response): Promise<PayUsersResponse> {
     //Verify that user is logged in.
-        if ( token == null || !userService.checkAuthToken(token) ) {
-            return ResponseEntity.status(403).build();
+        if ( token == null || !this.userService.checkAuthToken(token) ) {
+            res.status(HttpStatus.FORBIDDEN).send();
         }
         //First of all, check if the compny field is empty or null, then return bad request.
-        if ( StringUtils.isBlank(company)) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if ( company === '' ) {
+            res.sendStatus(HttpStatus.BAD_REQUEST).send();
         }
         //Now retrieve the user based on the username.
-        var users: User[] = userService.findByCompany(company);
+        var users: User[] = await this.userService.findByCompany(company);
         //If users is empty then return 204.
-        if ( users.isEmpty() ) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        if ( users.length === 0 ) {
+            res.status(HttpStatus.NO_CONTENT).send();
         }
         //Now go through each user if they have worked during the date range and then calculate pay.
         var totalSum: number = 0; 
-        var employeePayTable = new Map<String, number>();
+        var employeePayTable = new Map<string, number>();
         users.forEach((user) => {
             var sumToBePaid: number = 0;
-            var startLocalDate: Date = DateUtils.convertDateToLocalDate(startDate);
-            var endLocalDate: Date = DateUtils.convertDateToLocalDate(endDate);
-            while ( startLocalDate != null && endLocalDate != null && (startLocalDate.isBefore(endLocalDate) || startLocalDate.isEqual(endLocalDate)) ) {
-                sumToBePaid = sumToBePaid.add(new BigDecimal(userService.getHoursForDate(user, startLocalDate)).multiply(user.getHourlyWage()));
-                startLocalDate = startLocalDate.plusDays(1);
+            var startDateObj = new Date(startDate);
+            var endDateObj = new Date(endDate);
+            while ( startDateObj != null && endDateObj != null && (startDateObj <= endDateObj) ) {
+                sumToBePaid += (this.userService.getHoursForDate(user, startDateObj) * user.getHourlyWage());
+                startDateObj.setDate(startDateObj.getDate() + 1);
             }
-            employeePayTable.put(user.getUserName(), sumToBePaid.doubleValue());
-            totalSum = totalSum.add(sumToBePaid);
+            employeePayTable.set(user.getUsername(), sumToBePaid);
+            totalSum += sumToBePaid;
         });
         //Return response.
-        return ResponseEntity.ok(PayUsersResponse.builder()
-                .employeePayTable(employeePayTable)
-                .totalSum(totalSum)
-                .build());
+        res.status(HttpStatus.OK).send();
+        return new PayUsersResponse(employeePayTable, totalSum);
   }
 
   @Get('/')
@@ -92,7 +90,7 @@ export class UsersController {
     type: UsersResponse,
   })
   @ApiResponse({ status: 204, description: 'Successful but no users found'})
-  async findAllUsers(@Res() res: Response, @Param('company') company: string, @Param('token') token: string): Promise<UsersResponse> {
+  async findAllUsers(@Param('company') company: string, @Param('token') token: string, @Res() res: Response): Promise<UsersResponse> {
     //Verify that user is logged in.
         if ( token == null || !this.userService.checkAuthToken(token) ) {
             res.status(HttpStatus.FORBIDDEN).send();
@@ -111,7 +109,7 @@ export class UsersController {
         var userResponses: UserResponse[] = new UserResponse[users.length];
         for ( var i = 0; i < users.length; i++ ) {
             userResponses[i] = new UserResponse(users[i].getFirstName(), users[i].getLastName(), users[i].getUsername(), 
-                users[i].getCompany(), users[i].getLeaveEntitlementPerYear(), users[i].workingDays, users[i].getPosition(),
+                users[i].getCompany(), users[i].getLeaveEntitlementPerYear(), users[i].getWorkingDays().toString(), users[i].getPosition(),
                 users[i].getStartDate(), users[i].getEndDate(), users[i].getRole(), users[i].getDateOfBirth(), users[i].getHourlyWage(),
                 users[i].getContractedHoursPerWeek(), users[i].getTrainingsList(), users[i].getUserHistoryEntryList());
         }
