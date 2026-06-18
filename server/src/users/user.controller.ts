@@ -14,6 +14,8 @@ import { UserResponse } from './responses/user.response';
 import { UserRequest } from './requests/user.request';
 import { UsersService } from './users.service';
 import type { Response } from 'express';
+import { User } from './models/user.model';
+import { UserUtils } from './utils/user.utils';
 
 @Controller('user')
 export class UserController {
@@ -23,11 +25,11 @@ export class UserController {
   @Post('logout')
   @ApiOperation({ summary: 'Logout', description: 'Logout from the system' })
   @ApiResponse({ status: 200, description: 'Successfully processed logout request'})
-  logout(@Body() logoutRequest: LogoutRequest): void {
+  logout(@Body() logoutRequest: LogoutRequest, @Res() res: Response): void {
     //Remove the token from the authenticated tokens.
-        userService.removeAuthToken(logoutRequest.getToken());
+        this.userService.removeAuthToken(logoutRequest.getToken());
         //Return 200.
-        return ResponseEntity.status(200).build();
+        res.status(HttpStatus.OK).send();
   }
 
   @Post('login')
@@ -37,7 +39,7 @@ export class UserController {
       type: LoginResponse,
   })
   login(@Body() loginRequest: LoginRequest): void {
-    var user: User = userService.findByCompanyAndUserName(loginRequest.getCompany(), loginRequest.getUsername());
+    var user: User = this.userService.findByCompanyAndUserName(loginRequest.getCompany(), loginRequest.getUsername());
         if ( user != null && user.getAccountStatus()== UserAccountStatus.ACTIVE && user.getPassword().contentEquals(loginRequest.getPassword()) ) {
             return ResponseEntity.ok().body(LoginResponse.builder().token(userService.generateAuthToken(loginRequest.getUsername())).build());
         } else if ( user != null ) {
@@ -55,9 +57,10 @@ export class UserController {
   @ApiResponse({ status: 204, description: 'Successful but no user found'})
   findUser(@Param('company') company: string, @Param('username') username: string, @Param('token') token: string): void {
     //Check valid request including authentication
-        var status: HttpStatus = validateAndAuthenticateRequest(company, username, token);
+        var status: HttpStatus = this.validateAndAuthenticateRequest(company, username, token);
         //If the status is not null then produce response and return.
         if ( status != null ) {
+            
             return new ResponseEntity<>(status);
         }
         //Now retrieve the user based on the username.
@@ -287,7 +290,7 @@ export class UserController {
         }
         //Now deactivate the user based on the username and return the result.
         return ResponseEntity.ok(DeactivateUserResponse.builder()
-                .leaveEntitlementForThisYear(userService.deactivate(user, DateUtils.convertDateToLocalDate(deactivateUserRequest.getLeavingDate()),
+                .leaveEntitlementForThisYear(this.userService.deactivate(user, new Date(deactivateUserRequest.getLeavingDate()),
                         deactivateUserRequest.isResigned(), deactivateUserRequest.getReason()))
                 .build());
   }
@@ -299,23 +302,26 @@ export class UserController {
     type: UserResponse
   })
   @ApiResponse({ status: 500, description: 'Database not available' })
-  getUser(@Param('name') name: string, @Param('dateOfBirth') dateOfBirth: string, @Param('company') company: string, @Param('token') token: string, @Res() res: Response): void {
+  getUser(@Param('name') name: string, @Param('dateOfBirth') dateOfBirth: string, @Param('company') company: string, @Param('token') token: string, @Res() res: Response): UserResponse | null {
     //Check valid request including authentication
         if ( token == null || !this.userService.checkAuthToken(token) ) {
             res.status(HttpStatus.FORBIDDEN).send();
+            return null;
         }
         //If name or date of birth is null then bad request.
         if ( name == null || dateOfBirth == null || company === '' ) {
             res.status(HttpStatus.BAD_REQUEST).send();
+            return null;
         } else {
             //Now retrieve the user based on the information provided.
-            var user: User = this.userService.findUserByDateOfBirthAndNameAndCompany(Date.parse(dateOfBirth), name.split(" ")[0], name.split(" ")[1], company);
+            var user: User = this.userService.findUserByDateOfBirthAndNameAndCompany(new Date(dateOfBirth), name.split(" ")[0], name.split(" ")[1], company);
             //If user is null then return 204.
             if ( user == null ) {
                 res.status(HttpStatus.NO_CONTENT).send();
             }
             //Convert to UserResponse object and return 200.
-            return ResponseEntity.ok(UserUtils.convertUserToUserResponse(user));
+            res.status(HttpStatus.OK).send();
+            return UserUtils.convertUserToUserResponse(user);
         }
   }
 

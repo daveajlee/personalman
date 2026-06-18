@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
 import { ApiOperation, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
 import { CompanyResponse } from './responses/company.response';
 import { RegisterCompanyRequest } from './requests/registercompany.request';
+import type { Response } from 'express';
 
 @Controller('company')
 export class CompanyController {
@@ -75,16 +76,16 @@ export class CompanyController {
      * @param token a <code>String</code> containing the token to verify that the user is logged in.
      * @return a <code>HttpStatus</code> which is either filled if it was not authenticated or null if authenticated and valid.
      */
-    private validateAndAuthenticateRequest ( name: string, token: string ) : HttpStatus {
+    private validateAndAuthenticateRequest ( name: string, token: string, @Res() res: Response ) : void {
         //First of all, check if the name field is empty or null, then return bad request.
-        if (StringUtils.isBlank(name) ) {
-            return HttpStatus.BAD_REQUEST;
+        if (name === '') {
+            res.status(HttpStatus.BAD_REQUEST).send();
         }
         //Verify that user is logged in.
-        if ( token == null || !userService.checkAuthToken(token) ) {
-            return HttpStatus.FORBIDDEN;
+        if ( token == null || !this.userService.checkAuthToken(token) ) {
+            res.status(HttpStatus.FORBIDDEN).send();
         }
         //If everything was ok then return null.
-        return null;
+        
     }
 }

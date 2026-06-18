@@ -20,4 +20,12 @@ export class LoginRequest {
         this.password = password;
     }
 
+    getCompany(): string {
+        return this.company;
+    }
+
+    getUsername(): string {
+        return this.username;
+    }
+
 }

@@ -10,4 +10,8 @@ export class LogoutRequest {
         this.token = token;
     }
 
+    getToken(): string {
+        return this.token;
+    }
+
 }

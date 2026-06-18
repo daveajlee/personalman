@@ -20,4 +20,10 @@ export class UserHistoryResponse {
     @ApiProperty()
     comment: string;
 
+    constructor(date: string, userHistoryReason: string, comment: string) {
+        this.date = date;
+        this.userHistoryReason = userHistoryReason;
+        this.comment = comment;
+    }
+
 }

@@ -1,4 +1,6 @@
-import { UserAccountStatus } from "./useraccountstatus.enum";
+import type {UserAccountStatus} from "./useraccountstatus.enum";
+import { UserHistoryEntry } from "./userhistory.entry";
+import { UserHistoryReason } from "./userhistoryreason.enum";
 
 export class User {
 
@@ -45,22 +47,22 @@ export class User {
     /**
      * The date that the person started at the company.
      */
-    private startDate: LocalDate;
+    private startDate: Date;
 
     /**
      * The date that the person stopped working for the company.
      */
-    private endDate: LocalDate;
+    private endDate: Date;
 
     /**
      * The status of this user's account.
      */
-    private accountStatus: UserAccountStatus;
+    private accountStatus: typeof UserAccountStatus;
 
     /**
      * The person's date of birth.
      */
-    private dateOfBirth: LocalDate;
+    private dateOfBirth: Date;
 
     /**
      * The role that the user has in PersonalMan for this company.
@@ -70,7 +72,7 @@ export class User {
     /**
      * The hourly wage that the user is paid.
      */
-    private hourlyWage: BigDecimal;
+    private hourlyWage: number;
 
     /**
      * The number of contracted hours that the user works per week.
@@ -85,12 +87,29 @@ export class User {
     /**
      * The number of hours that a user has worked on a particular day.
      */
-    private timesheet: Map<LocalDate, number>;
+    private timesheet: Map<Date, number>;
 
     /**
      * A log of entries representing the history of this user whilst working for this company.
      */
     private userHistoryEntryList: UserHistoryEntry[];
+
+    constructor(firstName: string, surname: string, leaveEntitlementPerYear: number, position: string, startDate: Date,
+        username: string, password: string, company: string, workingDays: string, role: string, dateOfBirth: string,
+        accountStatus: typeof UserAccountStatus) {
+            this.firstName = firstName;
+            this.lastName = surname;
+            this.leaveEntitlementPerYear = leaveEntitlementPerYear;
+            this.position = position;
+            this.startDate = startDate;
+            this.userName = username;
+            this.password = password;
+            this.company = company;
+            this.workingDays = workingDays.split(",");
+            this.role = role;
+            this.dateOfBirth = new Date(dateOfBirth);
+            this.accountStatus = accountStatus;
+    }
 
     /**
      * Add a new training to the list.
@@ -105,13 +124,13 @@ export class User {
      * @param hours a <code>int</code> with the number of hours to add.
      * @param date a <code>LocalDate</code> object containing the day to add the hours to.
      */
-    public addHoursForDate ( hours: number, date: LocalDate ) : void {
+    public addHoursForDate ( hours: number, date: Date ) : void {
         //If the date already exists then add the hours to the hours already there.
-        if ( timesheet.get(date) != null ) {
-            timesheet.put(date, timesheet.get(date).intValue() + hours);
+        if ( this.timesheet.get(date) != null ) {
+            this.timesheet.set(date, this.timesheet.get(date)! + hours);
         } else {
             //If no hours are present then just add it as first entry.
-            timesheet.put(date, hours);
+            this.timesheet.set(date, hours);
         }
     }
 
@@ -120,13 +139,13 @@ export class User {
      * @param date a <code>LocalDate</code> object containing the day to retrieve hours for.
      * @return a <code>int</code> with the number of hours.
      */
-    public getHoursForDate ( date: LocalDate ) : number {
+    public getHoursForDate ( date: Date ) : number | undefined {
         //If the date is null then return 0.
-        if ( timesheet.get(date) == null ) {
+        if ( this.timesheet.get(date) == null ) {
             return 0;
         }
         //Otherwise return the number of hours.
-        return timesheet.get(date);
+        return this.timesheet.get(date);
     }
 
     /**
@@ -135,15 +154,11 @@ export class User {
      * @param userHistoryReason a <code>UserHistoryReason</code> containing the reason that the entry/event took place.
      * @param comment a <code>String</code> containing the comment about the entry/event.
      */
-    public addUserHistoryEntry ( date: LocalDate, userHistoryReason: UserHistoryReason, comment: string ) : void {
-        if ( userHistoryEntryList == null ) {
-            userHistoryEntryList = new ArrayList<>();
+    public addUserHistoryEntry ( date: Date, userHistoryReason: typeof UserHistoryReason, comment: string ) : void {
+        if ( this.userHistoryEntryList == null ) {
+            this.userHistoryEntryList = [];
         }
-        userHistoryEntryList.add(UserHistoryEntry.builder()
-                .date(date)
-                .userHistoryReason(userHistoryReason)
-                .comment(comment)
-                .build());
+        this.userHistoryEntryList.push(new UserHistoryEntry(date, userHistoryReason, comment));
     }
 
     /**
@@ -238,7 +253,7 @@ export class User {
      * Set the account status for this user.
      * @param accountStatus
      */
-    public setAccountStatus(accountStatus: UserAccountStatus) {
+    public setAccountStatus(accountStatus: typeof UserAccountStatus) {
         this.accountStatus = accountStatus;
     }
 
@@ -294,7 +309,7 @@ export class User {
     /**
      * Get the position of this user.
      */
-    public getPosition() {
+    getPosition(): string {
         return this.position;
     }
 

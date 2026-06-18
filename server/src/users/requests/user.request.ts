@@ -46,4 +46,44 @@ export class UserRequest {
     @ApiProperty()
     dateOfBirth: string;
 
+    getDateOfBirth(): string {
+        return this.dateOfBirth;
+    }
+
+    getRole(): string {
+        return this.role;
+    }
+
+    getWorkingDays(): string {
+        return this.workingDays;
+    }
+
+    getCompany(): string {
+        return this.company;
+    }
+
+    getPassword(): string {
+        return this.password;
+    }
+
+    getUsername(): string {
+        return this.username;
+    }
+
+    getPosition(): string {
+        return this.position;
+    }
+
+    getLeaveEntitlementPerYear(): number {
+        return this.leaveEntitlementPerYear;
+    }
+
+    getSurname(): string {
+        return this.surname;
+    }
+
+    getFirstName(): string {
+        return this.firstName;
+    }
+
 }

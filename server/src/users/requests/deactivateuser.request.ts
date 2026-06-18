@@ -26,4 +26,16 @@ export class DeactivateUserRequest {
     @ApiProperty()
     private reason: string;
 
+    getReason(): string {
+        return this.reason;
+    }
+
+    isResigned(): boolean {
+        return this.resigned;
+    }
+
+    getLeavingDate(): string {
+        return this.leavingDate;
+    }
+
 }
