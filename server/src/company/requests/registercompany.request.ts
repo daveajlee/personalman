@@ -14,4 +14,16 @@ export class RegisterCompanyRequest {
     @ApiProperty()
     private country: string;
 
+    getCountry(): string {
+        return this.country;
+    }
+
+    getDefaultAnnualLeaveInDays(): number {
+        return this.defaultAnnualLeaveInDays;
+    }
+
+    getName(): string {
+        return this.name;
+    }
+
 }

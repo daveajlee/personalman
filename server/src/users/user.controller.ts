@@ -55,22 +55,23 @@ export class UserController {
       type: UserResponse,
   })
   @ApiResponse({ status: 204, description: 'Successful but no user found'})
-  findUser(@Param('company') company: string, @Param('username') username: string, @Param('token') token: string): void {
+  async findUser(@Param('company') company: string, @Param('username') username: string, @Param('token') token: string, @Res() res: Response): Promise<UserResponse | null> {
     //Check valid request including authentication
         var status: HttpStatus = this.validateAndAuthenticateRequest(company, username, token);
         //If the status is not null then produce response and return.
         if ( status != null ) {
-            
-            return new ResponseEntity<>(status);
+            res.send();
         }
         //Now retrieve the user based on the username.
-        var user: User = userService.findByCompanyAndUserName(company, username);
+        var user: User | null = await this.userService.findByCompanyAndUserName(company, username);
         //If user is null then return 204.
         if ( user == null ) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            res.status(HttpStatus.NO_CONTENT).send();
+            return null;
         }
         //Convert to UserResponse object and return 200.
-        return ResponseEntity.ok(UserUtils.convertUserToUserResponse(user));
+        res.status(HttpStatus.OK).send();
+        return UserUtils.convertUserToUserResponse(user);
   }
 
   @Post('/')
@@ -78,10 +79,10 @@ export class UserController {
   @ApiResponse({ status: 201, description: 'Successfully created user'})
   addUser(@Body() userRequest: UserRequest): void {
     //First of all, check if any of the fields are empty or null, then return bad request.
-        if (StringUtils.isBlank(userRequest.getFirstName()) || StringUtils.isBlank(userRequest.getSurname())
-                || StringUtils.isBlank(userRequest.getPosition()) || StringUtils.isBlank(userRequest.getStartDate())
-                || StringUtils.isBlank(userRequest.getUsername()) || StringUtils.isBlank(userRequest.getWorkingDays())
-                || StringUtils.isBlank(userRequest.getCompany()) ) {
+        if (userRequest.getFirstName() === "" || userRequest.getSurname() === ""
+                || userRequest.getPosition() === "" || userRequest.getStartDate() === ""
+                || userRequest.getUsername() === "" || userRequest.getWorkingDays() === ""
+                || userRequest.getCompany() === "" ) {
             return ResponseEntity.badRequest().build();
         }
         // If the leave entitlement is 0 then set it to company default.
@@ -201,73 +202,74 @@ export class UserController {
   @ApiOperation({ summary: 'Update salary information', description: "Update salary information for a particular user." })
   @ApiResponse({ status: 200, description: 'Successfully updated salary information'})
   @ApiResponse({ status: 204, description: 'No user found'})
-  updateSalary(@Body() updateSalaryRequest: UpdateSalaryRequest): void {
+  async updateSalary(@Body() updateSalaryRequest: UpdateSalaryRequest, @Res() res: Response): Promise<void> {
     //Check valid request including authentication
-        var status: HttpStatus = validateAndAuthenticateRequest(updateSalaryRequest.getCompany(), updateSalaryRequest.getUsername(), updateSalaryRequest.getToken());
+        var status: HttpStatus = this.validateAndAuthenticateRequest(updateSalaryRequest.getCompany(), updateSalaryRequest.getUsername(), updateSalaryRequest.getToken());
         //If the status is not null then produce response and return.
         if ( status != null ) {
-            return new ResponseEntity<>(status);
+            res.send();
         }
         //Now retrieve the user based on the username.
-        var user: User = userService.findByCompanyAndUserName(updateSalaryRequest.getCompany(), updateSalaryRequest.getUsername());
+        var user: User | null = await this.userService.findByCompanyAndUserName(updateSalaryRequest.getCompany(), updateSalaryRequest.getUsername());
         //If user is null then return 204.
         if ( user == null ) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            res.status(HttpStatus.NO_CONTENT).send();
         }
         //Now update salary information and return 200 or 500 depending on DB success.
-        return userService.updateSalaryInformation(user, BigDecimal.valueOf(updateSalaryRequest.getHourlyWage()), updateSalaryRequest.getContractedHoursPerWeek() ) ?
-            ResponseEntity.status(200).build() : ResponseEntity.status(500).build();
+        this.userService.updateSalaryInformation(user, updateSalaryRequest.getHourlyWage(), updateSalaryRequest.getContractedHoursPerWeek() ) ?
+            res.status(HttpStatus.OK).send() : res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
   }
 
   @Patch('/reset')
   @ApiOperation({ summary: 'Reset user', description: 'Reset password for a user' })
   @ApiResponse({ status: 200, description: 'Successfully processed reset user request'})
-  resetUser(@Body() resetUserRequest: ResetUserRequest): void {
+  async resetUser(@Body() resetUserRequest: ResetUserRequest, @Res() res: Response): Promise<void> {
     //Verify that user is logged in.
-        if ( resetUserRequest.getToken() == null || !userService.checkAuthToken(resetUserRequest.getToken()) ) {
-            return ResponseEntity.status(403).build();
+        if ( resetUserRequest.getToken() == null || !this.userService.checkAuthToken(resetUserRequest.getToken()) ) {
+            res.status(HttpStatus.FORBIDDEN).send();
         }
-        var result: boolean= userService.resetUserPassword(resetUserRequest.getCompany(), resetUserRequest.getUsername(), resetUserRequest.getPassword());
+        var result: boolean= await this.userService.resetUserPassword(resetUserRequest.getCompany(), resetUserRequest.getUsername(), resetUserRequest.getPassword());
         //If result is true, then return 200 otherwise return 404 to indicate user not found.
-        return result ? ResponseEntity.status(200).build() : ResponseEntity.status(404).build();
+        result ? res.status(HttpStatus.OK).send() : res.status(HttpStatus.NOT_FOUND).send();
   }
 
   @Patch('/password')
   @ApiOperation({ summary: 'Change Password', description: 'Change password for a user' })
   @ApiResponse({ status: 200, description: 'Successfully processed change password request'})
-  changePassword(@Body() changePasswordRequest: ChangePasswordRequest): void {
+  async changePassword(@Body() changePasswordRequest: ChangePasswordRequest, @Res() res: Response): Promise<void> {
     //Check valid request including authentication
-        var status: HttpStatus = validateAndAuthenticateRequest(changePasswordRequest.getCompany(), changePasswordRequest.getUsername(), changePasswordRequest.getToken());
+        var status: HttpStatus = this.validateAndAuthenticateRequest(changePasswordRequest.getCompany(), changePasswordRequest.getUsername(), changePasswordRequest.getToken());
         //If the status is not null then produce response and return.
         if ( status != null ) {
-            return new ResponseEntity<>(status);
+            res.send();
         }
-        var result: boolean = userService.changePassword(changePasswordRequest.getCompany(), changePasswordRequest.getUsername(),
+        var result: boolean = await this.userService.changePassword(changePasswordRequest.getCompany(), changePasswordRequest.getUsername(),
                 changePasswordRequest.getCurrentPassword(), changePasswordRequest.getNewPassword());
         //If result is true, then return 200 otherwise return 404 to indicate user not found.
-        return result ? ResponseEntity.status(200).build() : ResponseEntity.status(404).build();
+        result ? res.status(HttpStatus.OK).send() : res.status(HttpStatus.NOT_FOUND).send();
   }
 
   @Patch('/history')
   @ApiOperation({ summary: 'Add a new history entry', description: 'Add a new history entry for a particular user.' })
   @ApiResponse({ status: 200, description: 'Successfully added history entry'})
   @ApiResponse({ status: 204, description: 'No user found'})
-  addHistoryEntry(@Body() addHistoryRequest: AddHistoryRequest): void {
+  addHistoryEntry(@Body() addHistoryRequest: AddHistoryRequest, @Res() res: Response): void {
     //Check valid request including authentication
-        var status: HttpStatus = validateAndAuthenticateRequest(addHistoryEntryRequest.getCompany(), addHistoryEntryRequest.getUsername(), addHistoryEntryRequest.getToken());
+        var status: HttpStatus = this.validateAndAuthenticateRequest(addHistoryRequest.getCompany(), addHistoryRequest.getUsername(), addHistoryRequest.getToken());
         //If the status is not null then produce response and return.
         if ( status != null ) {
-            return new ResponseEntity<>(status);
+            res.send();
         }
         //Now retrieve the user based on the username.
-        var user: User = userService.findByCompanyAndUserName(addHistoryEntryRequest.getCompany(), addHistoryEntryRequest.getUsername());
+        var user: User = this.userService.findByCompanyAndUserName(addHistoryRequest.getCompany(), addHistoryRequest.getUsername());
         //If user is null then return 204.
         if ( user == null ) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            res.status(HttpStatus.NO_CONTENT).send();
+            return null;
         }
         //Now add training course and return 200 or 500 depending on DB success.
-        return userService.addUserHistoryEntry(user, DateUtils.convertDateToLocalDate(addHistoryEntryRequest.getDate()),
-                UserHistoryReason.valueOf(addHistoryEntryRequest.getReason()), addHistoryEntryRequest.getComment()) ?
+        return this.userService.addUserHistoryEntry(user, DateUtils.convertDateToLocalDate(addHistoryRequest.getDate()),
+                UserHistoryReason.valueOf(addHistoryRequest.getReason()), addHistoryRequest.getComment()) ?
                 ResponseEntity.status(200).build() : ResponseEntity.status(500).build();
   }
 
@@ -275,24 +277,26 @@ export class UserController {
   @ApiOperation({ summary: 'Deactivate user', description: 'Deactivate a user from the system' })
   @ApiResponse({ status: 200, description: 'Successfully deactivated user' })
   @ApiResponse({ status: 204, description: 'Successful but no user found' })
-  deactivate(@Body() deactivateUserRequest: DeactivateUserRequest): void {
+  deactivate(@Body() deactivateUserRequest: DeactivateUserRequest, @Res() res: Response): void {
     //Check valid request including authentication
-        var status: HttpStatus = validateAndAuthenticateRequest(deactivateUserRequest.getCompany(), deactivateUserRequest.getUsername(), deactivateUserRequest.getToken());
+        var status: HttpStatus = this.validateAndAuthenticateRequest(deactivateUserRequest.getCompany(), deactivateUserRequest.getUsername(), deactivateUserRequest.getToken());
         //If the status is not null then produce response and return.
         if ( status != null ) {
-            return new ResponseEntity<>(status);
+            res.send();
         }
         //Now retrieve the user based on the username.
-        var user: User = userService.findByCompanyAndUserName(deactivateUserRequest.getCompany(), deactivateUserRequest.getUsername());
+        var user: User = this.userService.findByCompanyAndUserName(deactivateUserRequest.getCompany(), deactivateUserRequest.getUsername());
         //If user is null then return 204.
         if ( user == null ) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            res.status(HttpStatus.NO_CONTENT).send();
+            return null;
         }
         //Now deactivate the user based on the username and return the result.
-        return ResponseEntity.ok(DeactivateUserResponse.builder()
+        res.status(HttpStatus.OK).send();
+        return DeactivateUserResponse.builder()
                 .leaveEntitlementForThisYear(this.userService.deactivate(user, new Date(deactivateUserRequest.getLeavingDate()),
                         deactivateUserRequest.isResigned(), deactivateUserRequest.getReason()))
-                .build());
+                .build();
   }
 
   @Patch('/getUser')

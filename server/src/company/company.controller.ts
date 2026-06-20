@@ -3,9 +3,16 @@ import { ApiOperation, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
 import { CompanyResponse } from './responses/company.response';
 import { RegisterCompanyRequest } from './requests/registercompany.request';
 import type { Response } from 'express';
-
+import { CompanyService } from './company.service';
+import { UsersService } from 'src/users/users.service';
+import { AbsencesService } from 'src/absences/absences.service';
+import { Company } from './models/company.model';
 @Controller('company')
 export class CompanyController {
+
+    constructor(private readonly companyService: CompanyService, private readonly userService: UsersService, 
+        private readonly absenceService: AbsencesService) {}
+
   @Get('/')
   @ApiOperation({ summary: 'Retrieve a company', description: 'Retrieve a company from the system.' })
   @ApiOkResponse({
@@ -13,60 +20,57 @@ export class CompanyController {
     type: CompanyResponse
   })
   @ApiResponse({ status: 404, description: 'Company not found'})
-  retrieve(@Param('name') name: string, @Param('token') token: string): void {
+  retrieve(@Param('name') name: string, @Param('token') token: string, @Res() res: Response): CompanyResponse | null {
     //Check valid request including authentication
-        var status: HttpStatus = this.validateAndAuthenticateRequest(name, token);
+        var status: Response = this.validateAndAuthenticateRequest(name, token, res);
         //If the status is not null then produce response and return.
         if ( status != null ) {
-            return new ResponseEntity<>(status);
+            res.send();
         }
-        var company: Company= companyService.getCompany(name);
+        var company: Company = this.companyService.getCompany(name);
         if ( company != null ) {
-            return ResponseEntity.ok(CompanyResponse.builder()
-                    .name(company.getName())
-                    .defaultAnnualLeaveInDays(company.getDefaultAnnualLeaveInDays())
-                    .country(company.getCountry())
-                    .build());
+            res.status(HttpStatus.OK).send();
+            return new CompanyResponse(company.getName(), company.getDefaultAnnualLeaveInDays(), company.getCountry());
         }
         //Otherwise 404 to indicate not found.
-        return ResponseEntity.status(404).build();
+        res.status(HttpStatus.NOT_FOUND).send();
+        return null;
   }
 
   @Post('/')
   @ApiOperation({ summary: 'Add a company', description: 'Add a company to the system.' })
   @ApiResponse({ status: 201, description: 'Successfully created company'})
-  add(@Body() registerCompanyRequest: RegisterCompanyRequest): void {
-    companyService.save(Company.builder()
-                .id(new ObjectId())
-                .name(registerCompanyRequest.getName())
-                .defaultAnnualLeaveInDays(registerCompanyRequest.getDefaultAnnualLeaveInDays())
-                .country(registerCompanyRequest.getCountry())
-                .build());
+  add(@Body() registerCompanyRequest: RegisterCompanyRequest, @Res() res: Response): void {
+    this.companyService.save(new Company(registerCompanyRequest.getName(), registerCompanyRequest.getDefaultAnnualLeaveInDays(),
+        registerCompanyRequest.getCountry()));
         //Return 201 if saved successfully.
-        return ResponseEntity.status(201).build();
+        res.status(HttpStatus.CREATED).send();
   }
 
   @Delete('/')
   @ApiOperation({ summary: 'Delete a company', description: 'Delete a company from the system.' })
   @ApiResponse({ status: 200, description: 'Successfully deleted company'})
   @ApiResponse({ status: 404, description: 'Company not found'})
-  delete(@Param('name') name: string, @Param('token') token: string): void {
+  async delete(@Param('name') name: string, @Param('token') token: string, @Res() res: Response): Promise<void> {
     //Check valid request including authentication
-        var status: HttpStatus = this.validateAndAuthenticateRequest(name, token);
+        var status: Response = this.validateAndAuthenticateRequest(name, token, res);
         //If the status is not null then produce response and return.
         if ( status != null ) {
-            return new ResponseEntity<>(status);
+            res.send();
         }
         //First of all, delete all users and absences belonging to this company.
-        absenceService.delete(name);
-        userService.delete(name);
+        this.absenceService.delete(name, "", new Date(), new Date());
+        var user = await this.userService.findByCompanyAndUserName(name, "");
+        if ( user ) {
+            this.userService.delete(user);
+        }
         //Now delete the company.
-        if ( companyService.delete(name) ) {
+        if ( this.companyService.delete(name) ) {
             //Return 200 if successful delete.
-            return ResponseEntity.status(200).build();
+            res.status(HttpStatus.OK).send();
         } else {
             //Otherwise 404.
-            return ResponseEntity.status(404).build();
+            res.status(HttpStatus.NOT_FOUND).send();
         }
   }
 
@@ -76,7 +80,7 @@ export class CompanyController {
      * @param token a <code>String</code> containing the token to verify that the user is logged in.
      * @return a <code>HttpStatus</code> which is either filled if it was not authenticated or null if authenticated and valid.
      */
-    private validateAndAuthenticateRequest ( name: string, token: string, @Res() res: Response ) : void {
+    private validateAndAuthenticateRequest ( name: string, token: string, @Res() res: Response ) : Response {
         //First of all, check if the name field is empty or null, then return bad request.
         if (name === '') {
             res.status(HttpStatus.BAD_REQUEST).send();
@@ -86,6 +90,6 @@ export class CompanyController {
             res.status(HttpStatus.FORBIDDEN).send();
         }
         //If everything was ok then return null.
-        
+        return res;
     }
 }

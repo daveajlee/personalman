@@ -22,4 +22,24 @@ export class UpdateSalaryRequest {
     @ApiProperty()
     private contractedHoursPerWeek: number;
 
+    getCompany(): string {
+        return this.company;
+    }
+
+    getUsername(): string {
+        return this.username;
+    }
+
+    getToken(): string {
+        return this.token;
+    }
+
+    getHourlyWage(): number {
+        return this.hourlyWage;
+    }
+
+    getContractedHoursPerWeek(): number {
+        return this.contractedHoursPerWeek;
+    }
+
 }

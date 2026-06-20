@@ -14,4 +14,10 @@ export class CompanyResponse {
     @ApiProperty()
     private country: string;
 
+    constructor(name: string, defaultAnnualLeaveInDays: number, country: string) {
+        this.name = name;
+        this.defaultAnnualLeaveInDays = defaultAnnualLeaveInDays;
+        this.country = country;
+    }
+
 }

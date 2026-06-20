@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { Company } from './models/company.model';
 
 @Injectable()
 export class CompanyService {
-
-    private companyRepository: CompanyRepository;
 
     /**
      * Save the specified company object in the database.

@@ -86,4 +86,8 @@ export class UserRequest {
         return this.firstName;
     }
 
+    getStartDate(): string {
+        return this.startDate;
+    }
+
 }

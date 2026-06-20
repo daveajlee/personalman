@@ -99,16 +99,12 @@ export class AbsencesService {
      * Find absences taking place within the specified date range.
      * @param company a <code>String</code> with the company to retrieve absences for.
      * @param username a <code>String</code> with the username to retrieve absences for.
-     * @param startDate a <code>LocalDate</code> with the specified start date (inclusive).
-     * @param endDate a <code>LocalDate</code> with the specified start date (inclusive).
+     * @param startDate a <code>Date</code> with the specified start date (inclusive).
+     * @param endDate a <code>Date</code> with the specified start date (inclusive).
      * @return a <code>List</code> of <code>Absence</code> objects containing all absences for the specified date.
      */
-    public findAbsences ( company: string, username: string, startDate: LocalDate,
-                                        endDate: LocalDate ): Absence[] {
-        //If the mongo template is empty return an empty list. (This only happens in JUnit tests).
-        if ( mongoTemplate == null ) {
-            return List.of();
-        }
+    public findAbsences ( company: string, username: string, startDate: Date,
+                                        endDate: Date ): Absence[] {
         //Call the appropriate DB method depending on whether a specified username is supplied.
         var query: Query = new Query();
         if ( username == null ) {
@@ -123,19 +119,19 @@ export class AbsencesService {
      * Count absences taking place within the specified date range.
      * @param company a <code>String</code> with the company to retrieve absences for.
      * @param username a <code>String</code> with the username to retrieve absences for.
-     * @param startDate a <code>LocalDate</code> with the specified start date (inclusive).
-     * @param endDate a <code>LocalDate</code> with the specified start date (inclusive).
+     * @param startDate a <code>Date</code> with the specified start date (inclusive).
+     * @param endDate a <code>Date</code> with the specified start date (inclusive).
      * @param absenceCategory a <code>AbsenceCategory</code> object representing the category of absences which should be retrieved.
      * @return a <code>Long</code> object containing the count of absences for the specified date.
      */
-    public countAbsences ( company: string, username: string, startDate: LocalDate,
-                                endDate: LocalDate, absenceCategory: AbsenceCategory): number {
+    public countAbsences ( company: string, username: string, startDate: Date,
+                                endDate: Date, absenceCategory: AbsenceCategory): number {
         var count: number = 0;
-        var matchingAbsences: Absence[] = findAbsences (company, username, startDate, endDate);
+        var matchingAbsences: Absence[] = this.findAbsences (company, username, startDate, endDate);
         for ( var i = 0; i < matchingAbsences.length; i++ ) {
             var matchingAbsence: Absence = matchingAbsences[i];
             if ( matchingAbsence.getCategory() == absenceCategory ) {
-                count = Period.between(matchingAbsence.getStartDate(), matchingAbsence.getEndDate()).getDays() + 1;
+                count = (new Date(matchingAbsence.getEndDate()).getDay() - new Date(matchingAbsence.getStartDate()).getDay()) + 1;
             }
         }
         return count;
@@ -145,12 +141,12 @@ export class AbsencesService {
      * Delete absences taking place within the specified date range.
      * @param company a <code>String</code> with the company to retrieve absences for.
      * @param username a <code>String</code> with the username to retrieve absences for.
-     * @param startDate a <code>LocalDate</code> with the specified start date (inclusive).
-     * @param endDate a <code>LocalDate</code> with the specified start date (inclusive).
+     * @param startDate a <code>Date</code> with the specified start date (inclusive).
+     * @param endDate a <code>Date</code> with the specified start date (inclusive).
      */
-    public delete ( company: string, username: string, startDate: LocalDate,
-                         endDate: LocalDate ): void {
-        var absencesToDelete: Absence[] = findAbsences(company, username, startDate, endDate);
+    public delete ( company: string, username: string, startDate: Date,
+                         endDate: Date ): void {
+        var absencesToDelete: Absence[] = this.findAbsences(company, username, startDate, endDate);
         absencesToDelete.forEach((absence) => {
             absenceModel.deleteOne(absence);
         });
@@ -161,7 +157,7 @@ export class AbsencesService {
      * @param company a <code>String</code> with the company to delete absences for.
      */
     public deleteAllForCompany ( company: string ): void {
-        var absencesToDelete: Absence[] = absenceRepository.findByCompany(company);
+        var absencesToDelete: Absence[] = absenceModel.findOne({company: company});
         absencesToDelete.forEach((absence) => {
             absenceModel.deleteOne(absence);
         });

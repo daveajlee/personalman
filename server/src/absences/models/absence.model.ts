@@ -14,4 +14,24 @@ export class Absence {
         this.endDate = endDate;
     }
 
+    getCategory(): string {
+        return this.category;
+    }
+
+    getStartDate(): string {
+        return this.startDate;
+    }
+
+    getEndDate(): string {
+        return this.endDate;
+    }
+
+    getCompany(): string {
+        return this.company;
+    }
+
+    getUsername(): string {
+        return this.username;
+    }
+
 }
