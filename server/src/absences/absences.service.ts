@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { Absence } from './models/absence.model';
 import { User } from '../users/models/user.model';
+import { AbsenceCategory } from './models/absencecategory.enum';
+import { AbsenceUtils } from './utils/absence.utils';
 
 @Injectable()
 export class AbsencesService {
@@ -17,27 +19,27 @@ export class AbsencesService {
         //Store result.
         let result: boolean = true;
         //Get the employee information.
-        var user: User = userService.findByCompanyAndUserName(absence.getCompany(), absence.getUsername());
+        var user: User = this.userService.findByCompanyAndUserName(absence.getCompany(), absence.getUsername());
         let absences: Absence[] = [];
         //Special processing for particular types of categories.
         if ( absence.getCategory() == AbsenceCategory.HOLIDAY ) {
-            if ( absence.getStartDate().getYear() != absence.getEndDate().getYear() &&
+            if ( new Date(absence.getStartDate()).getFullYear() != absence.getEndDate().getYear() &&
                     ChronoUnit.YEARS.between(absence.getStartDate(), absence.getEndDate()) < 2 ) {
                 //Generate absences according to free days excluding these from the actual absences - just for the start year.
                 absences.addAll(AbsenceUtils.generateAbsences(user, absence.getStartDate(),
                         LocalDate.of(absence.getStartDate().getYear(),12,31), absence.getCategory()));
-                result = controlAbsencesForYear ( absence.getCompany(), absence.getUsername(),
+                result = this.controlAbsencesForYear ( absence.getCompany(), absence.getUsername(),
                         absence.getStartDate().getYear(), absence.getCategory(), user, absences );
                 if ( result ) {
                     var absences2: Absence[] = AbsenceUtils.generateAbsences(user,
                             LocalDate.of(absence.getEndDate().getYear(),1,1), absence.getEndDate(), absence.getCategory());
-                    result = controlAbsencesForYear ( absence.getCompany(), absence.getUsername(),
+                    result = this.controlAbsencesForYear ( absence.getCompany(), absence.getUsername(),
                             absence.getEndDate().getYear(), absence.getCategory(), user, absences2 );
                     absences.addAll(absences2);
                 }
             } else if ( absence.getStartDate().getYear() == absence.getEndDate().getYear() ) {
                 absences.addAll(AbsenceUtils.generateAbsences(user, absence.getStartDate(), absence.getEndDate(), absence.getCategory()));
-                result = controlAbsencesForYear ( absence.getCompany(), absence.getUsername(),
+                result = this.controlAbsencesForYear ( absence.getCompany(), absence.getUsername(),
                         absence.getStartDate().getYear(), absence.getCategory(), user, absences );
             } else {
                 //Holiday absences of more than one year are automatically rejected because annual leave will be exhausted.
@@ -46,7 +48,7 @@ export class AbsencesService {
         } else if ( absence.getCategory()==AbsenceCategory.CONFERENCE || absence.getCategory()==AbsenceCategory.TRIP ) {
             //We save the absence for the whole length.
             let newAbsence = new Absence(absence.getCategory(), absence.getCompany(), absence.getUsername(), absence.getStartDate(), absence.getEndDate());
-            absences.add(newAbsence);
+            absences.push(newAbsence);
             //We then add days in lieu if applicable.
             absences.addAll(AbsenceUtils.generateDaysInLieu(user, absence.getStartDate(), absence.getEndDate()));
         } else if ( absence.getCategory()==AbsenceCategory.DAY_IN_LIEU ) {
@@ -54,10 +56,10 @@ export class AbsencesService {
             if ( absence.getStartDate().getYear()!=absence.getEndDate().getYear()) {
                 result = false;
             } else {
-                var numDayInLieuDaysRequests: number = countAbsences(absence.getCompany(), absence.getUsername(),
+                var numDayInLieuDaysRequests: number = this.countAbsences(absence.getCompany(), absence.getUsername(),
                         LocalDate.of(absence.getStartDate().getYear(),1,1), LocalDate.of(absence.getStartDate().getYear(),12,31),
                         AbsenceCategory.DAY_IN_LIEU_REQUEST);
-                var numDayInLieuDays: number = countAbsences(absence.getCompany(), absence.getUsername(),
+                var numDayInLieuDays: number = this.countAbsences(absence.getCompany(), absence.getUsername(),
                         LocalDate.of(absence.getStartDate().getYear(),1,1), LocalDate.of(absence.getStartDate().getYear(),12,31),
                         AbsenceCategory.DAY_IN_LIEU);
                 var numDayInLieuDaysAvailable: number = numDayInLieuDaysRequests - numDayInLieuDays;

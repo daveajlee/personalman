@@ -15,12 +15,19 @@ import {
   ApiOkResponse,
   ApiResponse,
 } from '@nestjs/swagger';
-import {Response} from 'express';
 import { AbsencesResponse } from './responses/absences.response';
 import { AbsenceRequest } from './requests/absence.request';
+import { AbsencesService } from './absences.service';
+import { AbsenceCategory } from './models/absencecategory.enum';
+import type { Response } from 'express';
+import { UsersService } from 'src/users/users.service';
+import { AbsenceUtils } from './utils/absence.utils';
 
 @Controller('absences')
 export class AbsencesController {
+
+  constructor(private readonly absenceService: AbsencesService, private readonly userService: UsersService) {}
+
   @Get('/')
   @ApiQuery({
     name: 'username',
@@ -59,7 +66,7 @@ export class AbsencesController {
     @Query('onlyCount') onlyCount?: string,
     @Query('category') category?: string,
     @Res() res: Response
-  ): void {
+  ): AbsenceResponse[] {
         //Verify request was valid and authenticated.
         var status: HttpStatus = this.validateAndAuthenticateRequest(startDate, endDate, token);
         if ( status != null ) {
@@ -78,20 +85,22 @@ export class AbsencesController {
                 res.status(HttpStatus.BAD_REQUEST).send();
             }
             //Now try and count absences.
-            var count: number = absenceService.countAbsences(company, username, DateUtils.convertDateToLocalDate(startDate),
-                    DateUtils.convertDateToLocalDate(endDate), absenceCategory);
-            //Set count.
-            absencesResponse.setCount(count);
+            if ( username != null ) {
+              var count: number = this.absenceService.countAbsences(company, username, new Date(startDate),
+                    new Date(endDate), absenceCategory);
+              //Set count.
+              absencesResponse.setCount(count);
+            }
         } else {
             //Now try and find absences. Convert the absences to a list of absence responses.
-            var absenceResponses: AbsenceResponse[] = AbsenceUtils.convertAbsencesToAbsenceResponses(absenceService.findAbsences(company, username,  DateUtils.convertDateToLocalDate(startDate),
-                    DateUtils.convertDateToLocalDate(endDate)));
+            var absenceResponses: AbsenceResponse[] = AbsenceUtils.convertAbsencesToAbsenceResponses(this.absenceService.findAbsences(company, username,  new Date(startDate),
+                    new Date(endDate)));
             absencesResponse.setCount(absenceResponses.length);
             absencesResponse.setAbsenceResponseList(absenceResponses);
             absencesResponse = AbsenceUtils.calculateAbsencesResponseStatistics(absencesResponse);
         }
         //Return 200 and results.
-        return ResponseEntity.ok(absencesResponse);
+        return absencesResponse;
   }
 
   @Post('/')
@@ -100,23 +109,23 @@ export class AbsencesController {
     description: 'Add an absence to the system.',
   })
   @ApiResponse({ status: 201, description: 'Successfully created absence' })
-  add(@Body() absenceRequest: AbsenceRequest): void {
+  add(@Body() absenceRequest: AbsenceRequest, @Res() res: Response): void {
     //Verify request was valid and authenticated.
         var status: HttpStatus = this.validateAndAuthenticateRequest(absenceRequest.getStartDate(), absenceRequest.getEndDate(), absenceRequest.getToken());
         if ( status != null ) {
-            return ResponseEntity.status(status).build();
+            res.send();
         }
         //First of all, check if any of the fields are empty or null, then return bad request.
-        if (StringUtils.isBlank(absenceRequest.getCategory()) || StringUtils.isBlank(absenceRequest.getCompany())
-                || StringUtils.isBlank(absenceRequest.getEndDate()) || StringUtils.isBlank(absenceRequest.getStartDate())
-                || StringUtils.isBlank(absenceRequest.getUsername()) ) {
-            return ResponseEntity.badRequest().build();
+        if (absenceRequest.getCategory() === "" || absenceRequest.getCompany() === ""
+                || absenceRequest.getEndDate() === "" || absenceRequest.getStartDate() === ""
+                || absenceRequest.getUsername() === "" ) {
+            res.status(HttpStatus.BAD_REQUEST).send();
         }
         //Now convert to absence object.
-        absenceService.save(AbsenceUtils.convertAbsenceRequestToAbsence(absenceRequest,
-                DateUtils.convertDateToLocalDate(absenceRequest.getStartDate()), DateUtils.convertDateToLocalDate(absenceRequest.getEndDate())));
+        this.absenceService.save(AbsenceUtils.convertAbsenceRequestToAbsence(absenceRequest,
+                new Date(absenceRequest.getStartDate()), new Date(absenceRequest.getEndDate())));
         //Return 201 if saved successfully.
-        return ResponseEntity.status(201).build();
+        res.status(HttpStatus.CREATED).send();
   }
 
   @Delete('/')
@@ -137,17 +146,20 @@ export class AbsencesController {
     @Param('startDate') startDate: string,
     @Param('endDate') endDate: string,
     @Param('token') token: string,
+    @Res() res: Response,
     @Query('username') username?: string,
   ): void {
     //Verify request was valid and authenticated.
-        var status: HttpStatus = validateAndAuthenticateRequest(startDate, endDate, token);
+        var status: HttpStatus | null = this.validateAndAuthenticateRequest(startDate, endDate, token);
         if ( status != null ) {
-            return ResponseEntity.status(status).build();
+            res.send();
         }
         //Now try and delete absences.
-        absenceService.delete(company, username, DateUtils.convertDateToLocalDate(startDate), DateUtils.convertDateToLocalDate(endDate));
+        if ( username != null ) {
+            this.absenceService.delete(company, username, new Date(startDate), new Date(endDate));
+        }
         //Return 200 if deleted successfully or nothing to delete.
-        return ResponseEntity.status(200).build();
+        res.status(HttpStatus.OK).send();
   }
 
   /**
@@ -157,18 +169,18 @@ export class AbsencesController {
      * @param token a <code>String</code> containing the token to verify that the user is logged in.
      * @return a <code>HttpStatus</code> which is either filled if it was not authenticated or null if authenticated and valid.
      */
-    private validateAndAuthenticateRequest ( startDate: string, endDate: string, token: string ): HttpStatus {
+    private validateAndAuthenticateRequest ( startDate: string, endDate: string, token: string ): HttpStatus | null {
         //First of all, check if the start and end date fields are valid. If not, then return bad request.
-        if ( StringUtils.isBlank(startDate) || StringUtils.isBlank(endDate) || StringUtils.isBlank(token) ) {
+        if ( startDate === "" || endDate === "" || token === "" ) {
             return HttpStatus.BAD_REQUEST;
         }
-        var startLocalDate: LocalDate = DateUtils.convertDateToLocalDate(startDate);
-        var endLocalDate: LocalDate = DateUtils.convertDateToLocalDate(endDate);
-        if ( startLocalDate == null || endLocalDate == null || endLocalDate.isBefore(startLocalDate) ) {
+        var startLocalDate: Date = new Date(startDate);
+        var endLocalDate: Date = new Date(endDate);
+        if ( startLocalDate == null || endLocalDate == null || endLocalDate < startLocalDate ) {
             return HttpStatus.BAD_REQUEST;
         }
         //Verify that user is logged in.
-        if ( token == null || !userService.checkAuthToken(token) ) {
+        if ( token == null || !this.userService.checkAuthToken(token) ) {
             return HttpStatus.FORBIDDEN;
         }
         //If everything was ok then return null.
@@ -180,7 +192,7 @@ export class AbsencesController {
      * @return a <code>AbsencesResponse</code> object containing the basic statistics map to.
      */
     private prepareAbsencesResponse ( ) : AbsencesResponse {
-        var statisticsMap: Map<String, number> = new Map<>();
+        let statisticsMap: Map<String, number> = new Map<String, number>();
         var absenceCategories: AbsenceCategory[] = AbsenceCategory.values();
         absenceCategories.forEach(absenceCategory => {
             statisticsMap.set(absenceCategory.toString(), 0);

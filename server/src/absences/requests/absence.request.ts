@@ -25,4 +25,28 @@ export class AbsenceRequest {
   @ApiProperty()
   private token: string;
 
+  getStartDate(): string {
+    return this.startDate;
+  }
+
+  getEndDate(): string {
+    return this.endDate;
+  }
+
+  getCompany(): string {
+    return this.company;
+  }
+
+  getCategory(): string {
+    return this.category;
+  }
+
+  getUsername(): string {
+    return this.username;
+  }
+
+  getToken(): string {
+    return this.token;
+  }
+
 }

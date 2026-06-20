@@ -38,4 +38,16 @@ export class DeactivateUserRequest {
         return this.leavingDate;
     }
 
+    getCompany(): string {
+        return this.company;
+    }
+
+    getUsername(): string {
+        return this.username;
+    }
+
+    getToken(): string {
+        return this.token;
+    }
+
 }

@@ -22,4 +22,32 @@ export class AbsenceResponse {
     @ApiProperty()
     private category: string;
 
+    constructor(company: string, username: string, startDate: string, endDate: string, category: string) {
+        this.company = company;
+        this.username = username;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.category = category;
+    }
+
+    getCompany(): string {
+        return this.company;
+    }
+
+    getUsername(): string {
+        return this.username;
+    }
+
+    getStartDate(): string {
+        return this.startDate;
+    }
+
+    getEndDate(): string {
+        return this.endDate;
+    }
+
+    getCategory(): string {
+        return this.category;
+    }
+
 }

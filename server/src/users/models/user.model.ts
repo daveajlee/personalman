@@ -57,7 +57,7 @@ export class User {
     /**
      * The status of this user's account.
      */
-    private accountStatus: typeof UserAccountStatus;
+    private accountStatus: UserAccountStatus;
 
     /**
      * The person's date of birth.
@@ -96,7 +96,7 @@ export class User {
 
     constructor(firstName: string, surname: string, leaveEntitlementPerYear: number, position: string, startDate: Date,
         username: string, password: string, company: string, workingDays: string, role: string, dateOfBirth: string,
-        accountStatus: typeof UserAccountStatus) {
+        accountStatus: UserAccountStatus) {
             this.firstName = firstName;
             this.lastName = surname;
             this.leaveEntitlementPerYear = leaveEntitlementPerYear;

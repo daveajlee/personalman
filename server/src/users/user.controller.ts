@@ -265,12 +265,11 @@ export class UserController {
         //If user is null then return 204.
         if ( user == null ) {
             res.status(HttpStatus.NO_CONTENT).send();
-            return null;
         }
         //Now add training course and return 200 or 500 depending on DB success.
-        return this.userService.addUserHistoryEntry(user, DateUtils.convertDateToLocalDate(addHistoryRequest.getDate()),
+        this.userService.addUserHistoryEntry(user, new Date(addHistoryRequest.getDate()),
                 UserHistoryReason.valueOf(addHistoryRequest.getReason()), addHistoryRequest.getComment()) ?
-                ResponseEntity.status(200).build() : ResponseEntity.status(500).build();
+                res.status(HttpStatus.OK).send() : res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
   }
 
   @Patch('/deactivate')
@@ -289,7 +288,6 @@ export class UserController {
         //If user is null then return 204.
         if ( user == null ) {
             res.status(HttpStatus.NO_CONTENT).send();
-            return null;
         }
         //Now deactivate the user based on the username and return the result.
         res.status(HttpStatus.OK).send();

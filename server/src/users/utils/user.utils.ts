@@ -43,7 +43,7 @@ export class UserUtils {
         }
         userHistoryEntryList.forEach(userHistoryEntry => {
             userHistoryResponses.push(new UserHistoryResponse(userHistoryEntry.getDate().toDateString(), userHistoryEntry.getComment(),
-                userHistoryEntry.getUserHistoryReason().getText()));
+                userHistoryEntry.getUserHistoryReason()));
         });
         return userHistoryResponses;
     }

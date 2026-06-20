@@ -25,4 +25,24 @@ export class AddHistoryRequest {
     //comment for the history entry
     @ApiProperty()
     private comment: string;
+
+    getCompany(): string {
+        return this.company;
+    }
+
+    getUsername(): string {
+        return this.username;
+    }
+
+    getDate(): string {
+        return this.date;
+    }
+
+    getReason(): string {
+        return this.reason;
+    }
+
+    getComment(): string {
+        return this.comment;
+    }
 }
