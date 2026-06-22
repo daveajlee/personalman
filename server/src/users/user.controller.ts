@@ -152,27 +152,30 @@ export class UserController {
       type: Number,
   })
   @ApiResponse({ status: 204, description: 'No user found'})
-  retrieveTimesheet(@Param('company') company: string, @Param('username') username: string, @Param('token') token: string, @Param('startDate') startDate: string, @Param('endDate') endDate: string): void {
+  async retrieveTimesheet(@Param('company') company: string, @Param('username') username: string, @Param('token') token: string, @Param('startDate') startDate: string, @Param('endDate') endDate: string, @Res() res: Response): Promise<number | undefined> {
     //Check valid request including authentication
-        var status: HttpStatus = validateAndAuthenticateRequest(company, username, token);
+        var status: HttpStatus = this.validateAndAuthenticateRequest(company, username, token);
         //If the status is not null then produce response and return.
         if ( status != null ) {
-            return new ResponseEntity<>(status);
+            res.send();
         }
         //Now retrieve the user based on the username.
-        var user: User = userService.findByCompanyAndUserName(company, username);
+        var user: User | null = await this.userService.findByCompanyAndUserName(company, username);
         //If user is null then return 204.
         if ( user == null ) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        //Convert dates to LocalDates.
-        var localStartDate: Date = DateUtils.convertDateToLocalDate(startDate);
-        var localEndDate: Date = DateUtils.convertDateToLocalDate(endDate);
-        //Perform either date range or single date.
-        if ( localStartDate != null && localEndDate != null && localStartDate.isEqual(localEndDate) ) {
-            return ResponseEntity.ok(userService.getHoursForDate(user, localStartDate));
+            res.status(HttpStatus.NO_CONTENT).send();
         } else {
-            return ResponseEntity.ok(userService.getHoursForDateRange(user, localStartDate, localEndDate));
+            //Convert dates to LocalDates.
+            var localStartDate: Date = new Date(startDate);
+            var localEndDate: Date = new Date(endDate);
+            //Perform either date range or single date.
+            if ( localStartDate != null && localEndDate != null && localStartDate == localEndDate ) {
+                res.status(HttpStatus.OK).send();
+                return this.userService.getHoursForDate(user, localStartDate);
+            } else {
+                res.status(HttpStatus.OK).send();
+                return this.userService.getHoursForDateRange(user, localStartDate, localEndDate);
+            }
         }
   }
 
@@ -180,22 +183,23 @@ export class UserController {
   @ApiOperation({ summary: "Add a number of hours to the user's timesheet", description: "Add a number of hours to a specified date for a specified user." })
   @ApiResponse({ status: 200, description: 'Successfully added hours'})
   @ApiResponse({ status: 204, description: 'No user found'})
-  addHours(@Body() addHoursRequest: AddTimesheetHoursRequest): void {
+  async addHours(@Body() addHoursRequest: AddTimesheetHoursRequest, @Res() res: Response): Promise<void> {
     //Check valid request including authentication
-        var status: HttpStatus = validateAndAuthenticateRequest(addTimeSheetHoursRequest.getCompany(), addTimeSheetHoursRequest.getUsername(), addTimeSheetHoursRequest.getToken());
+        var status: HttpStatus = this.validateAndAuthenticateRequest(addHoursRequest.getCompany(), addHoursRequest.getUsername(), addHoursRequest.getToken());
         //If the status is not null then produce response and return.
         if ( status != null ) {
-            return new ResponseEntity<>(status);
+            res.send()
         }
         //Now retrieve the user based on the username.
-        var user: User = userService.findByCompanyAndUserName(addTimeSheetHoursRequest.getCompany(), addTimeSheetHoursRequest.getUsername());
+        var user: User | null = await this.userService.findByCompanyAndUserName(addHoursRequest.getCompany(), addHoursRequest.getUsername());
         //If user is null then return 204.
         if ( user == null ) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+            res.status(HttpStatus.NO_CONTENT).send();
+        } else {
         //Now add the hours and return 200 or 500 depending on DB success.
-        return userService.addHoursForDate(user, addTimeSheetHoursRequest.getHours(), DateUtils.convertDateToLocalDate(addTimeSheetHoursRequest.getDate())) ?
-                ResponseEntity.status(200).build() : ResponseEntity.status(500).build();
+            this.userService.addHoursForDate(user, addHoursRequest.getHours(), new Date(addHoursRequest.getDate())) ?
+                res.status(HttpStatus.OK).send() : res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+        }
   }
 
   @Patch('/salary')

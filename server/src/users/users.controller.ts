@@ -110,7 +110,7 @@ export class UsersController {
         for ( var i = 0; i < users.length; i++ ) {
             userResponses[i] = new UserResponse(users[i].getFirstName(), users[i].getLastName(), users[i].getUsername(), 
                 users[i].getCompany(), users[i].getLeaveEntitlementPerYear(), users[i].getWorkingDays().toString(), users[i].getPosition(),
-                users[i].getStartDate().toDateString(), users[i].getEndDate().toDateString(), users[i].getRole(), users[i].getDateOfBirth(), users[i].getHourlyWage(),
+                users[i].getStartDate().toDateString(), users[i].getEndDate().toDateString(), users[i].getRole(), users[i].getDateOfBirth().toDateString(), users[i].getHourlyWage(),
                 users[i].getContractedHoursPerWeek(), users[i].getTrainingsList(), users[i].getUserHistoryEntryList());
         }
         res.status(HttpStatus.OK).send();

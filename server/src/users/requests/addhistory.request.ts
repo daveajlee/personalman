@@ -45,4 +45,8 @@ export class AddHistoryRequest {
     getComment(): string {
         return this.comment;
     }
+
+    getToken(): string {
+        return this.token;
+    }
 }

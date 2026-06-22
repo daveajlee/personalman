@@ -50,4 +50,8 @@ export class AbsenceResponse {
         return this.category;
     }
 
+    setCategory(category: string): void {
+        this.category = category;
+    }
+
 }

@@ -15,4 +15,20 @@ export class AbsencesResponse {
     @ApiProperty()
     private statisticsMap: Map<string, number>;
 
+    constructor(statisticsMap: Map<string, number>) {
+        this.statisticsMap = statisticsMap;
+    }
+
+    setCount(count: number): void {
+        this.count = count;
+    }
+
+    setAbsenceResponseList(absenceResponseList: AbsenceResponse[]) {
+        this.absenceResponseList = absenceResponseList;
+    }
+
+    getAbsenceResponseList(): AbsenceResponse[] {
+        return this.absenceResponseList;
+    }
+
 }

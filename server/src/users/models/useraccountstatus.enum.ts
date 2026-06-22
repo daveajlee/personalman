@@ -1,4 +1,4 @@
-export const UserAccountStatus = {
+export enum UserAccountStatus {
     /**
      * Account is active and can be used.
      */

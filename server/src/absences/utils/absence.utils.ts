@@ -1,6 +1,8 @@
 import { Absence } from "../models/absence.model";
 import { AbsenceRequest } from "../requests/absence.request";
 import { AbsenceResponse } from "../responses/absence.response";
+import { AbsenceCategory } from "../models/absencecategory.enum";
+import { AbsencesResponse } from "../responses/absences.response";
 
 export class AbsenceUtils {
 
@@ -12,14 +14,29 @@ export class AbsenceUtils {
      * @return a <code>Absence</code> object.
      */
     static convertAbsenceRequestToAbsence(absenceRequest: AbsenceRequest, startDate: Date, endDate: Date ): Absence{
-        return Absence.builder()
-                .id(new ObjectId())
-                .category(AbsenceCategory.fromString(absenceRequest.getCategory()))
-                .company(absenceRequest.getCompany())
-                .username(absenceRequest.getUsername())
-                .startDate(startDate)
-                .endDate(endDate)
-                .build();
+        return new Absence(absenceRequest.getCategory(), absenceRequest.getCompany(), 
+            absenceRequest.getUsername(), startDate.toDateString(), endDate.toDateString());
+    }
+
+    static absenceCategoryFromString(category: string) {
+        switch ( category ) {
+          case "Conference": 
+            return AbsenceCategory.CONFERENCE;
+          case "Day in Lieu":
+            return AbsenceCategory.DAY_IN_LIEU;
+          case "Day in Lieu Request":
+            return AbsenceCategory.DAY_IN_LIEU_REQUEST;
+          case "Federal Holiday":
+            return AbsenceCategory.FEDERAL_HOLIDAY;
+          case "Holiday":
+            return AbsenceCategory.HOLIDAY;
+          case "Illness":
+            return AbsenceCategory.ILLNESS;
+          case "Trip":
+            return AbsenceCategory.TRIP;
+          default:
+            return null;
+        }
     }
 
     /**
@@ -32,8 +49,8 @@ export class AbsenceUtils {
         let absenceResponses: AbsenceResponse[] = [];
         //Now convert each absence to an absence response.
         absences.forEach((absence) => {
-            let absenceResponse = new AbsenceResponse(absence.getCompany(), absence.getUsername(), 
-                    new Date(absence.getStartDate()), new Date(absence.getEndDate()));
+            let absenceResponse = new AbsenceResponse("", absence.getCompany(), absence.getUsername(), 
+                    absence.getStartDate(), absence.getEndDate());
             if ( absence.getCategory() != null ) {
                 absenceResponse.setCategory(absence.getCategory().toString());
             }
@@ -85,7 +102,7 @@ export class AbsenceUtils {
      * @param category a <code>AbsenceCategory</code> enum with the category for the desired absence.
      * @return a <code>List</code> of <code>Absence</code> objects.
      */
-    static generateAbsences (user: User, startDate: Date, endDate: Date, category: AbsenceCategory ): Absence[] {
+    static generateAbsences (user: User, startDate: Date, endDate: Date, category: AbsenceCategory | null ): Absence[] {
         let workingDays: string[] = user.getWorkingDays();
         let absences: Absence[] = [];
         let currentDate: Date = startDate;

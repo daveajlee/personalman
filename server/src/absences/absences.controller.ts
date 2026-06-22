@@ -16,6 +16,7 @@ import {
   ApiResponse,
 } from '@nestjs/swagger';
 import { AbsencesResponse } from './responses/absences.response';
+import { AbsenceResponse } from './responses/absence.response';
 import { AbsenceRequest } from './requests/absence.request';
 import { AbsencesService } from './absences.service';
 import { AbsenceCategory } from './models/absencecategory.enum';
@@ -62,13 +63,13 @@ export class AbsencesController {
     @Param('startDate') startDate: string,
     @Param('endDate') endDate: string,
     @Param('token') token: string,
+    @Res() res: Response,
     @Query('username') username?: string,
     @Query('onlyCount') onlyCount?: string,
     @Query('category') category?: string,
-    @Res() res: Response
-  ): AbsenceResponse[] {
+  ): AbsencesResponse {
         //Verify request was valid and authenticated.
-        var status: HttpStatus = this.validateAndAuthenticateRequest(startDate, endDate, token);
+        var status: HttpStatus | null = this.validateAndAuthenticateRequest(startDate, endDate, token);
         if ( status != null ) {
             res.status(status).send();
         }
@@ -77,21 +78,21 @@ export class AbsencesController {
         //Check if only count parameter was set to true.
         if ( onlyCount ) {
             //Convert category which is required for count.
-            var absenceCategory: AbsenceCategory = null;
+            var absenceCategory: AbsenceCategory | null = null;
             if ( category != null ) {
-                absenceCategory = AbsenceCategory.fromString(category);
+                absenceCategory = AbsenceUtils.absenceCategoryFromString(category);
             }
             if ( absenceCategory == null ) {
                 res.status(HttpStatus.BAD_REQUEST).send();
             }
             //Now try and count absences.
-            if ( username != null ) {
+            if ( username != null && absenceCategory != null ) {
               var count: number = this.absenceService.countAbsences(company, username, new Date(startDate),
                     new Date(endDate), absenceCategory);
               //Set count.
               absencesResponse.setCount(count);
             }
-        } else {
+        } else if (username != null) {
             //Now try and find absences. Convert the absences to a list of absence responses.
             var absenceResponses: AbsenceResponse[] = AbsenceUtils.convertAbsencesToAbsenceResponses(this.absenceService.findAbsences(company, username,  new Date(startDate),
                     new Date(endDate)));
@@ -111,7 +112,7 @@ export class AbsencesController {
   @ApiResponse({ status: 201, description: 'Successfully created absence' })
   add(@Body() absenceRequest: AbsenceRequest, @Res() res: Response): void {
     //Verify request was valid and authenticated.
-        var status: HttpStatus = this.validateAndAuthenticateRequest(absenceRequest.getStartDate(), absenceRequest.getEndDate(), absenceRequest.getToken());
+        var status: HttpStatus | null = this.validateAndAuthenticateRequest(absenceRequest.getStartDate(), absenceRequest.getEndDate(), absenceRequest.getToken());
         if ( status != null ) {
             res.send();
         }
@@ -192,13 +193,10 @@ export class AbsencesController {
      * @return a <code>AbsencesResponse</code> object containing the basic statistics map to.
      */
     private prepareAbsencesResponse ( ) : AbsencesResponse {
-        let statisticsMap: Map<String, number> = new Map<String, number>();
-        var absenceCategories: AbsenceCategory[] = AbsenceCategory.values();
-        absenceCategories.forEach(absenceCategory => {
-            statisticsMap.set(absenceCategory.toString(), 0);
-        })
-        return AbsencesResponse.builder()
-                .statisticsMap(statisticsMap)
-                .build();
+        let statisticsMap: Map<string, number> = new Map<string, number>();
+        for ( var absenceCategory in AbsenceCategory ) {
+          statisticsMap.set(absenceCategory.toString(), 0);
+        }
+        return new AbsencesResponse(statisticsMap);
     }
 }

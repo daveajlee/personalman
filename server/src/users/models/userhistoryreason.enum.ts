@@ -1,4 +1,4 @@
-export const UserHistoryReason = {
+export enum UserHistoryReason {
 
     /**
      * User joins the company.

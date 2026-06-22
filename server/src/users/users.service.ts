@@ -4,7 +4,6 @@ import { User } from './models/user.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserHistoryReason } from './models/userhistoryreason.enum';
-import { UserAccountStatus } from './models/useraccountstatus.enum';
 
 @Injectable()
 export class UsersService {

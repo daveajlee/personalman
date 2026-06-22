@@ -22,4 +22,24 @@ export class AddTimesheetHoursRequest {
     @ApiProperty()
     private hours: number;
 
+    getCompany(): string {
+        return this.company;
+    }
+
+    getUsername(): string {
+        return this.username;
+    }
+
+    getToken(): string {
+        return this.token;
+    }
+
+    getHours(): number {
+        return this.hours;
+    }
+
+    getDate(): string {
+        return this.date;
+    }
+
 }
