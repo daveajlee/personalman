@@ -31,7 +31,7 @@ export class UsersController {
         var usernameSet: () => MapIterator<string> = paidUserRequest.employeePayTable.keys;
         usernameSet.forEach(username => {
             //Find the relevant user.
-            var user: Promise<User | null> = this.userService.findByCompanyAndUserName(paidUserRequest.company, username);
+            var user: User | null = await this.userService.findByCompanyAndUserName(paidUserRequest.company, username);
             if ( !this.userService.addUserHistoryEntry(user, new Date(), UserHistoryReason.PAID,
                     "Paid " + paidUserRequest.employeePayTable.get(username) + " for date range " +
                     paidUserRequest.startDate + " - " + paidUserRequest.endDate)) {
@@ -72,7 +72,9 @@ export class UsersController {
             var startDateObj = new Date(startDate);
             var endDateObj = new Date(endDate);
             while ( startDateObj != null && endDateObj != null && (startDateObj <= endDateObj) ) {
-                sumToBePaid += (this.userService.getHoursForDate(user, startDateObj) * user.getHourlyWage());
+                if ( (this.userService.getHoursForDate(user, startDateObj) != null )) {
+                    sumToBePaid += (this.userService.getHoursForDate(user, startDateObj) * user.getHourlyWage());
+                }
                 startDateObj.setDate(startDateObj.getDate() + 1);
             }
             employeePayTable.set(user.getUsername(), sumToBePaid);

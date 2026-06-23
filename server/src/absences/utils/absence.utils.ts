@@ -3,6 +3,7 @@ import { AbsenceRequest } from "../requests/absence.request";
 import { AbsenceResponse } from "../responses/absence.response";
 import { AbsenceCategory } from "../models/absencecategory.enum";
 import { AbsencesResponse } from "../responses/absences.response";
+import { User } from "src/users/models/user.model";
 
 export class AbsenceUtils {
 
@@ -73,8 +74,7 @@ export class AbsenceUtils {
             if ( absenceResponse.getStartDate() != null && absenceResponse.getEndDate() != null
                 && absenceResponse.getCategory() != null ) {
                 absencesResponse.addToStatisticsMap(absenceResponse.getCategory(),
-                        Period.between(new Date(absenceResponse.getStartDate()),
-                                new Date(absenceResponse.getEndDate())).getDays() + 1);
+                (new Date(absenceResponse.getStartDate()).getDate() - new Date (absenceResponse.getEndDate()).getDate()) + 1);
             }
         })
         //Return absences response.
@@ -89,7 +89,7 @@ export class AbsenceUtils {
     static countAbsencesInDays ( absences: Absence[] ): number {
         let numAbsentDays: number = 0;
         absences.forEach((absence) => {
-            numAbsentDays += Period.between(absence.getStartDate(), absence.getEndDate()).getDays() + 1;
+            numAbsentDays += (new Date(absence.getStartDate()).getDate() - new Date (absence.getEndDate()).getDate()) + 1;
         })
         return numAbsentDays;
     }
@@ -107,29 +107,21 @@ export class AbsenceUtils {
         let absences: Absence[] = [];
         let currentDate: Date = startDate;
         //Start with start date and run until end date.
-        while ( !currentDate > endDate ) {
+        while ( currentDate.getTime() <= endDate.getTime() ) {
             //Check if it is a free day.
             let isFreeDay = true;
             workingDays.forEach((workingDay) => {
-                if (workingDay == currentDate.getDayOfWeek()) {
+                if (parseInt(workingDay) == currentDate.getDay()) {
                     isFreeDay = false;
                 }
             })
             //If it is not a free day then add the absence.
             if (!isFreeDay) {
-                absences.add(Absence.builder()
-                        .id(new ObjectId())
-                        .category(category)
-                        .startDate(currentDate)
-                        .endDate(currentDate)
-                        .username(user.getUserName())
-                        .company(user.getCompany())
-                        .build());
+                absences.push(new Absence(category?.valueOf() != undefined ? category?.valueOf() : "", user.getCompany(), user.getUsername(), currentDate.toDateString(), currentDate.toDateString()));
             }
 
             //Regardless we need to increase currentDate.
-            currentDate = currentDate.plusDays(1);
-
+            currentDate.setDate(currentDate.getDate() + 1);
         }
 
         return absences;
@@ -144,27 +136,20 @@ export class AbsenceUtils {
      */
     static generateDaysInLieu(user: User, startDate: Date, endDate: Date): Absence[] {
         let workingDays = user.getWorkingDays();
-        let absences = [];
+        let absences: Absence[] = [];
         let actualDate = startDate;
-        while ( !actualDate.isAfter(endDate)) {
+        while ( actualDate.getTime() <= endDate.getTime()) {
             //Check if it is a free day.
             let isFreeDay = true;
             workingDays.forEach((workingDay) => {
-                if ( workingDay==actualDate.getDayOfWeek()) {
+                if ( parseInt(workingDay)==actualDate.getDay()) {
                     isFreeDay = false;
                 }
             })
             if ( isFreeDay ) {
-                absences.add(Absence.builder()
-                        .id(new ObjectId())
-                        .company(user.getCompany())
-                        .category(AbsenceCategory.DAY_IN_LIEU_REQUEST)
-                        .startDate(actualDate)
-                        .endDate(actualDate)
-                        .username(user.getUserName())
-                        .build());
+                absences.push(new Absence(AbsenceCategory.DAY_IN_LIEU_REQUEST, user.getCompany(), user.getUsername(), actualDate.toDateString(), actualDate.toDateString()));
             }
-            actualDate = actualDate.plusDays(1);
+            actualDate.setDate(actualDate.getDate() + 1);
         }
         return absences;
     }

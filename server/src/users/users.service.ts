@@ -4,6 +4,7 @@ import { User } from './models/user.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserHistoryReason } from './models/userhistoryreason.enum';
+import { UserAccountStatus } from './models/useraccountstatus.enum';
 
 @Injectable()
 export class UsersService {
@@ -162,7 +163,7 @@ export class UsersService {
      * @param comment a <code>String</code> containing the comment about the entry/event.
      * @return a <code>boolean</code> which is true iff the user has been updated successfully.
      */
-    public addUserHistoryEntry (user: User, date: Date, userHistoryReason: typeof UserHistoryReason, comment: string): boolean {
+    public addUserHistoryEntry (user: User, date: Date, userHistoryReason: UserHistoryReason | null, comment: string): boolean {
         if ( user.getUserHistoryEntryList() == null ) {
             user.setUserHistoryEntryList([]);
         }

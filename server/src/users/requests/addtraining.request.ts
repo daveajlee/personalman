@@ -18,4 +18,20 @@ export class AddTrainingRequest {
     @ApiProperty()
     private trainingCourse: string;
 
+    getCompany(): string {
+        return this.company;
+    }
+
+    getUsername(): string {
+        return this.username;
+    }
+
+    getToken(): string {
+        return this.token;
+    }
+
+    getTrainingCourse(): string {
+        return this.trainingCourse;
+    }
+
 }

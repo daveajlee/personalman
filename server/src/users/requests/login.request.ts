@@ -28,4 +28,8 @@ export class LoginRequest {
         return this.username;
     }
 
+    getPassword(): string {
+        return this.password;
+    }
+
 }

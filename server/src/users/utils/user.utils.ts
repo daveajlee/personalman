@@ -4,6 +4,7 @@ import { UserRequest } from "../requests/user.request";
 import { UserResponse } from "../responses/user.response";
 import { UserHistoryResponse } from "../responses/userhistory.response";
 import { UserHistoryEntry } from "../models/userhistory.entry";
+import { UserHistoryReason } from "../models/userhistoryreason.enum";
 
 export class UserUtils {
 
@@ -47,5 +48,24 @@ export class UserUtils {
         });
         return userHistoryResponses;
     }
+
+    static userHistoryReasonFromString(userHistoryReason: string) {
+            switch ( userHistoryReason ) {
+              case "Joined": 
+                return UserHistoryReason.JOINED;
+              case "Paid":
+                return UserHistoryReason.PAID;
+              case "Evaluated":
+                return UserHistoryReason.EVALUATED;
+              case "Warned":
+                return UserHistoryReason.WARNED;
+              case "Resigned":
+                return UserHistoryReason.RESIGNED;
+              case "Sacked":
+                return UserHistoryReason.SACKED;
+              default:
+                return null;
+            }
+        }
 
 }

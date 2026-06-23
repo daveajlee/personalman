@@ -10,7 +10,8 @@ export class CompanyService {
      * @return a <code>boolean</code> which is true iff the company has been validated and saved successfully.
      */
     public save ( company: Company ) : boolean {
-        return companyRepository.save(company) != null;
+        const createdCompany = new this.companyModel(company);
+        return createdCompany.save() != null;
     }
 
     /**
@@ -19,7 +20,7 @@ export class CompanyService {
      */
     public getAllCompanies(): string[] {
         var companyNames: string[] = [];
-        companyRepository.findAll().forEach(company => companyNames.push(company.getName()));
+        companyModel.find().exec().forEach(company => companyNames.push(company.getName()));
         return companyNames;
     }
 
@@ -29,7 +30,7 @@ export class CompanyService {
      * @return a <code>Company</code> object containing the information for the company or null if the company was not found.
      */
     public getCompany ( name: string ) : Company {
-        return companyRepository.findByName(name);
+        return companyModel.find({name: name});
     }
 
     /**
@@ -39,9 +40,9 @@ export class CompanyService {
      *
      */
     public delete ( name: string ) : boolean {
-        var company: Company = companyRepository.findByName(name);
+        var company: Company = this.getCompany(name);
         if ( company != null ) {
-            companyRepository.delete(company);
+            companyModel.deleteOne(company);
             return true;
         }
         return false;

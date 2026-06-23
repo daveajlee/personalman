@@ -46,6 +46,10 @@ export class UserRequest {
     @ApiProperty()
     dateOfBirth: string;
 
+    setLeaveEntitlementPerYear(leaveEntitlementPerYear: number) {
+        this.leaveEntitlementPerYear = leaveEntitlementPerYear;
+    }
+
     getDateOfBirth(): string {
         return this.dateOfBirth;
     }

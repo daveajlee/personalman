@@ -154,7 +154,7 @@ export class User {
      * @param userHistoryReason a <code>UserHistoryReason</code> containing the reason that the entry/event took place.
      * @param comment a <code>String</code> containing the comment about the entry/event.
      */
-    public addUserHistoryEntry ( date: Date, userHistoryReason: typeof UserHistoryReason, comment: string ) : void {
+    public addUserHistoryEntry ( date: Date, userHistoryReason: UserHistoryReason | null, comment: string ) : void {
         if ( this.userHistoryEntryList == null ) {
             this.userHistoryEntryList = [];
         }
@@ -253,7 +253,7 @@ export class User {
      * Set the account status for this user.
      * @param accountStatus
      */
-    public setAccountStatus(accountStatus: typeof UserAccountStatus) {
+    public setAccountStatus(accountStatus: UserAccountStatus) {
         this.accountStatus = accountStatus;
     }
 
@@ -262,6 +262,13 @@ export class User {
      */
     public setEndDate(endDate: Date) {
         this.endDate = endDate;
+    }
+
+    /**
+     * Get the account status for this user.
+     */
+    public getAccountStatus(): UserAccountStatus {
+        return this.accountStatus;
     }
 
     /**

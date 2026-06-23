@@ -31,4 +31,8 @@ export class AbsencesResponse {
         return this.absenceResponseList;
     }
 
+    addToStatisticsMap(category: string, days: number) {
+        this.statisticsMap.set(category, days);
+    }
+
 }

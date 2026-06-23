@@ -22,7 +22,7 @@ export class AbsencesService {
         let user: User | null = await this.userService.findByCompanyAndUserName(absence.getCompany(), absence.getUsername());
         let absences: Absence[] = [];
         //Special processing for particular types of categories.
-        if ( absence.getCategory() == AbsenceCategory.HOLIDAY ) {
+        if ( absence.getCategory() == AbsenceCategory.HOLIDAY && user != null ) {
             if ( Math.abs(new Date(absence.getStartDate()).getFullYear() - new Date(absence.getEndDate()).getFullYear()) < 2 ) {
                 //Generate absences according to free days excluding these from the actual absences - just for the start year.
                 absences.concat(AbsenceUtils.generateAbsences(user, new Date(absence.getStartDate()),
@@ -44,13 +44,13 @@ export class AbsencesService {
                 //Holiday absences of more than one year are automatically rejected because annual leave will be exhausted.
                 result = false;
             }
-        } else if ( absence.getCategory()==AbsenceCategory.CONFERENCE || absence.getCategory()==AbsenceCategory.TRIP ) {
+        } else if ( (absence.getCategory()==AbsenceCategory.CONFERENCE || absence.getCategory()==AbsenceCategory.TRIP) && user != null ) {
             //We save the absence for the whole length.
             let newAbsence = new Absence(absence.getCategory(), absence.getCompany(), absence.getUsername(), absence.getStartDate(), absence.getEndDate());
             absences.push(newAbsence);
             //We then add days in lieu if applicable.
             absences.concat(AbsenceUtils.generateDaysInLieu(user, new Date(absence.getStartDate()), new Date(absence.getEndDate())));
-        } else if ( absence.getCategory()==AbsenceCategory.DAY_IN_LIEU ) {
+        } else if ( absence.getCategory()==AbsenceCategory.DAY_IN_LIEU && user != null ) {
             //Days In Lieu only bookable within same year.
             if ( new Date(absence.getStartDate()).getFullYear()!=new Date(absence.getEndDate()).getFullYear()) {
                 result = false;
@@ -67,14 +67,15 @@ export class AbsencesService {
                 absences.concat(AbsenceUtils.generateAbsences(user, new Date(absence.getStartDate()),
                         new Date(absence.getEndDate()), AbsenceUtils.absenceCategoryFromString(absence.getCategory())));
             }
-        } else {
+        } else if ( user != null) {
             // No special processing needed so just add the absence to the list.
             absences.concat(AbsenceUtils.generateAbsences(user, new Date(absence.getStartDate()),
                     new Date(absence.getEndDate()), AbsenceUtils.absenceCategoryFromString(absence.getCategory())));
         }
         if ( result ) {
             absences.forEach(absence => {
-                absenceRepository.save(absence);
+                const createdAbsence = new this.absenceModel(absence);
+                createdAbsence.save();
             });
         }
         return result;
@@ -110,13 +111,9 @@ export class AbsencesService {
     public findAbsences ( company: string, username: string, startDate: Date,
                                         endDate: Date ): Absence[] {
         //Call the appropriate DB method depending on whether a specified username is supplied.
-        var query: Query = new Query();
-        if ( username == null ) {
-            query.addCriteria(Criteria.where("company").is(company).and("startDate").gte(startDate).and("endDate").lte(endDate));
-            return mongoTemplate.find(query, Absence.class);
-        }
-        query.addCriteria(Criteria.where("company").is(company).and("username").is(username).and("startDate").gte(startDate).and("endDate").lte(endDate));
-        return mongoTemplate.find(query, Absence.class);
+        return username == null ? 
+            this.absenceModel.find({company: company, startDate: { $gt: startDate }, endDate: { $lt: endDate } }).exec() :
+            this.absenceModel.find({company: company, username: username, startDate: { $gt: startDate }, endDate: { $lt: endDate } }).exec();
     }
 
     /**
