@@ -4,11 +4,13 @@ import { Absence } from './models/absence.model';
 import { User } from '../users/models/user.model';
 import { AbsenceCategory } from './models/absencecategory.enum';
 import { AbsenceUtils } from './utils/absence.utils';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class AbsencesService {
 
-    private userService: UsersService;
+    constructor(@InjectModel(Absence.name) private absenceModel: Model<Absence>, private readonly userService: UsersService) {}
 
     /**
      * Save the specified absence object in the database.
@@ -27,18 +29,18 @@ export class AbsencesService {
                 //Generate absences according to free days excluding these from the actual absences - just for the start year.
                 absences.concat(AbsenceUtils.generateAbsences(user, new Date(absence.getStartDate()),
                         new Date(new Date(absence.getStartDate()).getFullYear(),12,31), AbsenceUtils.absenceCategoryFromString(absence.getCategory())));
-                result = this.controlAbsencesForYear ( absence.getCompany(), absence.getUsername(),
+                result = await this.controlAbsencesForYear ( absence.getCompany(), absence.getUsername(),
                         new Date(absence.getStartDate()).getFullYear(), AbsenceUtils.absenceCategoryFromString(absence.getCategory()), user, absences );
                 if ( result ) {
                     var absences2: Absence[] = AbsenceUtils.generateAbsences(user,
                             new Date(new Date(absence.getEndDate()).getFullYear(),1,1), new Date(absence.getEndDate()), AbsenceUtils.absenceCategoryFromString(absence.getCategory()));
-                    result = this.controlAbsencesForYear ( absence.getCompany(), absence.getUsername(),
+                    result = await this.controlAbsencesForYear ( absence.getCompany(), absence.getUsername(),
                             new Date(absence.getEndDate()).getFullYear(), AbsenceUtils.absenceCategoryFromString(absence.getCategory()), user, absences2 );
                     absences.concat(absences2);
                 }
             } else if ( new Date(absence.getStartDate()).getFullYear() == new Date(absence.getEndDate()).getFullYear() ) {
                 absences.concat(AbsenceUtils.generateAbsences(user, new Date(absence.getStartDate()), new Date(absence.getEndDate()), AbsenceUtils.absenceCategoryFromString(absence.getCategory())));
-                result = this.controlAbsencesForYear ( absence.getCompany(), absence.getUsername(),
+                result = await this.controlAbsencesForYear ( absence.getCompany(), absence.getUsername(),
                         new Date(absence.getStartDate()).getFullYear(), AbsenceUtils.absenceCategoryFromString(absence.getCategory()), user, absences );
             } else {
                 //Holiday absences of more than one year are automatically rejected because annual leave will be exhausted.
@@ -55,10 +57,10 @@ export class AbsencesService {
             if ( new Date(absence.getStartDate()).getFullYear()!=new Date(absence.getEndDate()).getFullYear()) {
                 result = false;
             } else {
-                var numDayInLieuDaysRequests: number = this.countAbsences(absence.getCompany(), absence.getUsername(),
+                var numDayInLieuDaysRequests: number = await this.countAbsences(absence.getCompany(), absence.getUsername(),
                         new Date(new Date(absence.getStartDate()).getFullYear(),1,1), new Date(new Date(absence.getStartDate()).getFullYear(),12,31),
                         AbsenceCategory.DAY_IN_LIEU_REQUEST);
-                var numDayInLieuDays: number = this.countAbsences(absence.getCompany(), absence.getUsername(),
+                var numDayInLieuDays: number = await this.countAbsences(absence.getCompany(), absence.getUsername(),
                         new Date(new Date(absence.getStartDate()).getFullYear(),1,1), new Date(new Date(absence.getStartDate()).getFullYear(),12,31),
                         AbsenceCategory.DAY_IN_LIEU);
                 var numDayInLieuDaysAvailable: number = numDayInLieuDaysRequests - numDayInLieuDays;
@@ -91,8 +93,8 @@ export class AbsencesService {
      * @param absences a <code>List</code> of <code>Absence/code> objects representing planned absences.
      * @return a <code>boolean</code> which is true iff the planned absences can be taken without exhausting all annual leave for the supplied year.
      */
-    private controlAbsencesForYear ( company: string, employeeName: string, year: number, category: AbsenceCategory | null, user: User | null, absences: Absence[] ) : boolean {
-        var numAnnualLeave: number = this.countAbsences(company, employeeName, new Date(year,1,1), new Date(year,12,31), category);
+    private async controlAbsencesForYear ( company: string, employeeName: string, year: number, category: AbsenceCategory | null, user: User | null, absences: Absence[] ) : Promise<boolean> {
+        var numAnnualLeave: number = await this.countAbsences(company, employeeName, new Date(year,1,1), new Date(year,12,31), category);
         numAnnualLeave += AbsenceUtils.countAbsencesInDays(absences);
         if ( user ) {
             return numAnnualLeave <= user.getLeaveEntitlementPerYear();
@@ -108,12 +110,12 @@ export class AbsencesService {
      * @param endDate a <code>Date</code> with the specified start date (inclusive).
      * @return a <code>List</code> of <code>Absence</code> objects containing all absences for the specified date.
      */
-    public findAbsences ( company: string, username: string, startDate: Date,
-                                        endDate: Date ): Absence[] {
+    public async findAbsences ( company: string, username: string, startDate: Date,
+                                        endDate: Date ): Promise<Absence[]> {
         //Call the appropriate DB method depending on whether a specified username is supplied.
         return username == null ? 
-            this.absenceModel.find({company: company, startDate: { $gt: startDate }, endDate: { $lt: endDate } }).exec() :
-            this.absenceModel.find({company: company, username: username, startDate: { $gt: startDate }, endDate: { $lt: endDate } }).exec();
+            await this.absenceModel.find({company: company, startDate: { $gt: startDate }, endDate: { $lt: endDate } }).exec() :
+            await this.absenceModel.find({company: company, username: username, startDate: { $gt: startDate }, endDate: { $lt: endDate } }).exec();
     }
 
     /**
@@ -125,10 +127,10 @@ export class AbsencesService {
      * @param absenceCategory a <code>AbsenceCategory</code> object representing the category of absences which should be retrieved.
      * @return a <code>Long</code> object containing the count of absences for the specified date.
      */
-    public countAbsences ( company: string, username: string, startDate: Date,
-                                endDate: Date, absenceCategory: AbsenceCategory | null): number {
+    public async countAbsences ( company: string, username: string, startDate: Date,
+                                endDate: Date, absenceCategory: AbsenceCategory | null): Promise<number> {
         var count: number = 0;
-        var matchingAbsences: Absence[] = this.findAbsences (company, username, startDate, endDate);
+        var matchingAbsences: Absence[] = await this.findAbsences (company, username, startDate, endDate);
         for ( var i = 0; i < matchingAbsences.length; i++ ) {
             var matchingAbsence: Absence = matchingAbsences[i];
             if ( matchingAbsence.getCategory() == absenceCategory ) {
@@ -145,11 +147,11 @@ export class AbsencesService {
      * @param startDate a <code>Date</code> with the specified start date (inclusive).
      * @param endDate a <code>Date</code> with the specified start date (inclusive).
      */
-    public delete ( company: string, username: string, startDate: Date,
-                         endDate: Date ): void {
-        var absencesToDelete: Absence[] = this.findAbsences(company, username, startDate, endDate);
+    public async delete ( company: string, username: string, startDate: Date,
+                         endDate: Date ): Promise<void> {
+        var absencesToDelete: Absence[] = await this.findAbsences(company, username, startDate, endDate);
         absencesToDelete.forEach((absence) => {
-            absenceModel.deleteOne(absence);
+            this.absenceModel.deleteOne(absence);
         });
     }
 
@@ -157,10 +159,10 @@ export class AbsencesService {
      * Delete all absences for a particular company.
      * @param company a <code>String</code> with the company to delete absences for.
      */
-    public deleteAllForCompany ( company: string ): void {
-        var absencesToDelete: Absence[] = absenceModel.findOne({company: company});
+    public async deleteAllForCompany ( company: string ): Promise<void> {
+        var absencesToDelete: Absence[] = await this.absenceModel.find({company: company}).exec();
         absencesToDelete.forEach((absence) => {
-            absenceModel.deleteOne(absence);
+            this.absenceModel.deleteOne(absence);
         });
     }
 

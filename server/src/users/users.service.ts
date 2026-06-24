@@ -178,8 +178,13 @@ export class UsersService {
      * @param date a <code>LocalDate</code> object containing the day to get the hours for.
      * @return a <code>int</code> with the number of hours.
      */
-    public getHoursForDate ( user: User, date: Date ): number | undefined {
-        return user.getHoursForDate(date);
+    public getHoursForDate ( user: User | null, date: Date ): number {
+        if ( user != null ) {
+            let hours: number = user.getHoursForDate(date);
+            return hours;
+        } else {
+            return 0;
+        }
     }
 
     /**

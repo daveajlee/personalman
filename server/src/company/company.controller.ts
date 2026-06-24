@@ -4,14 +4,11 @@ import { CompanyResponse } from './responses/company.response';
 import { RegisterCompanyRequest } from './requests/registercompany.request';
 import type { Response } from 'express';
 import { CompanyService } from './company.service';
-import { UsersService } from 'src/users/users.service';
-import { AbsencesService } from 'src/absences/absences.service';
 import { Company } from './models/company.model';
 @Controller('company')
 export class CompanyController {
 
-    constructor(private readonly companyService: CompanyService, private readonly userService: UsersService, 
-        private readonly absenceService: AbsencesService) {}
+    constructor(private readonly companyService: CompanyService) {}
 
   @Get('/')
   @ApiOperation({ summary: 'Retrieve a company', description: 'Retrieve a company from the system.' })
@@ -20,14 +17,14 @@ export class CompanyController {
     type: CompanyResponse
   })
   @ApiResponse({ status: 404, description: 'Company not found'})
-  retrieve(@Param('name') name: string, @Param('token') token: string, @Res() res: Response): CompanyResponse | null {
+  async retrieve(@Param('name') name: string, @Param('token') token: string, @Res() res: Response): Promise<CompanyResponse | null> {
     //Check valid request including authentication
         var status: Response = this.validateAndAuthenticateRequest(name, token, res);
         //If the status is not null then produce response and return.
         if ( status != null ) {
             res.send();
         }
-        var company: Company = this.companyService.getCompany(name);
+        var company: Company = await this.companyService.getCompany(name);
         if ( company != null ) {
             res.status(HttpStatus.OK).send();
             return new CompanyResponse(company.getName(), company.getDefaultAnnualLeaveInDays(), company.getCountry());
@@ -59,13 +56,13 @@ export class CompanyController {
             res.send();
         }
         //First of all, delete all users and absences belonging to this company.
-        this.absenceService.delete(name, "", new Date(), new Date());
+        /*this.absenceService.delete(name, "", new Date(), new Date());
         var user = await this.userService.findByCompanyAndUserName(name, "");
         if ( user ) {
             this.userService.delete(user);
-        }
+        }*/
         //Now delete the company.
-        if ( this.companyService.delete(name) ) {
+        if ( await this.companyService.delete(name) ) {
             //Return 200 if successful delete.
             res.status(HttpStatus.OK).send();
         } else {
@@ -86,9 +83,9 @@ export class CompanyController {
             res.status(HttpStatus.BAD_REQUEST).send();
         }
         //Verify that user is logged in.
-        if ( token == null || !this.userService.checkAuthToken(token) ) {
+        /*if ( token == null || !this.userService.checkAuthToken(token) ) {
             res.status(HttpStatus.FORBIDDEN).send();
-        }
+        }*/
         //If everything was ok then return null.
         return res;
     }

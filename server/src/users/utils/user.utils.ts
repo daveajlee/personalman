@@ -29,7 +29,7 @@ export class UserUtils {
         return new UserResponse(user.getFirstName(), user.getLastName(), user.getUsername(), user.getCompany(), user.getLeaveEntitlementPerYear(),
             user.getWorkingDays().join(","), user.getPosition(), user.getStartDate().toDateString(), user.getEndDate().toDateString(), 
             user.getRole(), user.getDateOfBirth().toDateString(), user.getHourlyWage(),
-            user.getContractedHoursPerWeek(), user.getTrainingsList(), this.convertToUserHistoryResponse(user.getUserHistoryEntryList()));
+            user.getContractedHoursPerWeek(), user.getTrainingsList(), UserUtils.convertToUserHistoryResponse(user.getUserHistoryEntryList()));
     }
 
     /**

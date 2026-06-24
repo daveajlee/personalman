@@ -16,9 +16,9 @@ export class CompaniesController {
     type: [CompanyResponse],
   })
   @ApiResponse({ status: 204, description: 'Successful but no companies in database'})
-  getAll(@Res() res: Response): string[] {
+  async getAll(@Res() res: Response): Promise<string[]> {
     //Retrieve the list of companies.
-        var companyNames: string[] = this.companyService.getAllCompanies();
+        var companyNames: string[] = await this.companyService.getAllCompanies();
         //If no companies then return 204.
         if ( companyNames.length == 0 ) {
             res.status(HttpStatus.NO_CONTENT).send();

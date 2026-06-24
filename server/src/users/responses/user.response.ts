@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { UserHistoryResponse } from './userhistory.response';
-import { UsersController } from '../users.controller';
+import { UserHistoryEntry } from '../models/userhistory.entry';
 
 export class UserResponse {
 

@@ -105,7 +105,11 @@ export class User {
             this.userName = username;
             this.password = password;
             this.company = company;
-            this.workingDays = workingDays.split(",");
+            if ( workingDays ) {
+                this.workingDays = workingDays.split(",");
+            } else {
+                this.workingDays = [];
+            }
             this.role = role;
             this.dateOfBirth = new Date(dateOfBirth);
             this.accountStatus = accountStatus;
@@ -139,13 +143,14 @@ export class User {
      * @param date a <code>LocalDate</code> object containing the day to retrieve hours for.
      * @return a <code>int</code> with the number of hours.
      */
-    public getHoursForDate ( date: Date ) : number | undefined {
+    public getHoursForDate ( date: Date ) : number {
         //If the date is null then return 0.
-        if ( this.timesheet.get(date) == null ) {
+        if ( this.timesheet.get(date) !== undefined ) {
+            return this.timesheet.get(date) as number;
+        } else {
+            //Otherwise return the number of hours.
             return 0;
         }
-        //Otherwise return the number of hours.
-        return this.timesheet.get(date);
     }
 
     /**
@@ -158,7 +163,10 @@ export class User {
         if ( this.userHistoryEntryList == null ) {
             this.userHistoryEntryList = [];
         }
-        this.userHistoryEntryList.push(new UserHistoryEntry(date, userHistoryReason, comment));
+        if ( userHistoryReason != null ) {
+            this.userHistoryEntryList.push(new UserHistoryEntry(date, userHistoryReason, comment));
+        }
+        
     }
 
     /**

@@ -8,6 +8,7 @@ import { User } from './models/user.model';
 import type { Response } from 'express';
 import { UsersService } from './users.service';
 import { UserHistoryReason } from './models/userhistoryreason.enum';
+import { UserUtils } from './utils/user.utils';
 
 @Controller('users')
 export class UsersController {
@@ -28,15 +29,16 @@ export class UsersController {
             res.status(HttpStatus.BAD_REQUEST).send();
         }
         //For each user in the supplied map.
-        var usernameSet: () => MapIterator<string> = paidUserRequest.employeePayTable.keys;
-        usernameSet.forEach(username => {
+        //var usernameSet: () => MapIterator<string> = paidUserRequest.employeePayTable.keys;
+        [...paidUserRequest.employeePayTable.keys()].forEach(username => {
             //Find the relevant user.
-            var user: User | null = await this.userService.findByCompanyAndUserName(paidUserRequest.company, username);
-            if ( !this.userService.addUserHistoryEntry(user, new Date(), UserHistoryReason.PAID,
+            this.userService.findByCompanyAndUserName(paidUserRequest.company, username).then(user => {
+                if ( user != null && !this.userService.addUserHistoryEntry(user, new Date(), UserHistoryReason.PAID,
                     "Paid " + paidUserRequest.employeePayTable.get(username) + " for date range " +
                     paidUserRequest.startDate + " - " + paidUserRequest.endDate)) {
                         res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
-            }
+                }
+            })
         });
         //Return empty ok response if no exceptions.
         res.status(HttpStatus.OK).send();
@@ -68,17 +70,20 @@ export class UsersController {
         var totalSum: number = 0; 
         var employeePayTable = new Map<string, number>();
         users.forEach((user) => {
-            var sumToBePaid: number = 0;
-            var startDateObj = new Date(startDate);
-            var endDateObj = new Date(endDate);
-            while ( startDateObj != null && endDateObj != null && (startDateObj <= endDateObj) ) {
-                if ( (this.userService.getHoursForDate(user, startDateObj) != null )) {
-                    sumToBePaid += (this.userService.getHoursForDate(user, startDateObj) * user.getHourlyWage());
+            if ( user != null ) {
+                var sumToBePaid: number = 0;
+                var startDateObj = new Date(startDate);
+                var endDateObj = new Date(endDate);
+                while ( startDateObj != null && endDateObj != null && (startDateObj <= endDateObj) ) {
+                    if ( (this.userService.getHoursForDate(user, startDateObj) != null )) {
+                        sumToBePaid += (this.userService.getHoursForDate(user, startDateObj) * user.getHourlyWage());
+                    }
+                    startDateObj.setDate(startDateObj.getDate() + 1);
                 }
-                startDateObj.setDate(startDateObj.getDate() + 1);
+                employeePayTable.set(user.getUsername(), sumToBePaid);
+                totalSum += sumToBePaid;
             }
-            employeePayTable.set(user.getUsername(), sumToBePaid);
-            totalSum += sumToBePaid;
+            
         });
         //Return response.
         res.status(HttpStatus.OK).send();
@@ -110,10 +115,7 @@ export class UsersController {
         //Convert to UserResponse object and return 200.
         var userResponses: UserResponse[] = new UserResponse[users.length];
         for ( var i = 0; i < users.length; i++ ) {
-            userResponses[i] = new UserResponse(users[i].getFirstName(), users[i].getLastName(), users[i].getUsername(), 
-                users[i].getCompany(), users[i].getLeaveEntitlementPerYear(), users[i].getWorkingDays().toString(), users[i].getPosition(),
-                users[i].getStartDate().toDateString(), users[i].getEndDate().toDateString(), users[i].getRole(), users[i].getDateOfBirth().toDateString(), users[i].getHourlyWage(),
-                users[i].getContractedHoursPerWeek(), users[i].getTrainingsList(), users[i].getUserHistoryEntryList());
+            userResponses[i] = UserUtils.convertUserToUserResponse(users[i]);
         }
         res.status(HttpStatus.OK).send();
         return new UsersResponse(userResponses.length, userResponses);

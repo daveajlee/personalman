@@ -18,7 +18,7 @@ import { User } from './models/user.model';
 import { UserUtils } from './utils/user.utils';
 import { UserAccountStatus } from './models/useraccountstatus.enum';
 import { CompanyService } from 'src/company/company.service';
-import { UserHistoryReason } from './models/userhistoryreason.enum';
+import { Company } from 'src/company/models/company.model';
 import { DeactivateUserResponse } from './responses/deactivateuser.response';
 
 @Controller('user')
@@ -84,7 +84,7 @@ export class UserController {
   @Post('/')
   @ApiOperation({ summary: 'Add a user', description: 'Add a user to the system.' })
   @ApiResponse({ status: 201, description: 'Successfully created user'})
-  addUser(@Body() userRequest: UserRequest, @Res() res: Response): void {
+  async addUser(@Body() userRequest: UserRequest, @Res() res: Response): Promise<void> {
     //First of all, check if any of the fields are empty or null, then return bad request.
         if (userRequest.getFirstName() === "" || userRequest.getSurname() === ""
                 || userRequest.getPosition() === "" || userRequest.getStartDate() === ""
@@ -94,7 +94,8 @@ export class UserController {
         }
         // If the leave entitlement is 0 then set it to company default.
         if ( userRequest.getLeaveEntitlementPerYear() <= 0 ) {
-            userRequest.setLeaveEntitlementPerYear(this.companyService.getCompany(userRequest.getCompany()).getDefaultAnnualLeaveInDays());
+            let company: Company = await this.companyService.getCompany(userRequest.getCompany());
+            userRequest.setLeaveEntitlementPerYear(company.getDefaultAnnualLeaveInDays());
         }
         //Now convert the dates to LocalDate. If end date is before start date then return bad request.
         var startLocalDate: Date = new Date(userRequest.getStartDate());

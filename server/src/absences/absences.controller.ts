@@ -58,7 +58,7 @@ export class AbsencesController {
     description: 'Successfully completed the search for absences',
     type: [AbsencesResponse],
   })
-  findOrCount(
+  async findOrCount(
     @Param('company') company: string,
     @Param('startDate') startDate: string,
     @Param('endDate') endDate: string,
@@ -67,7 +67,7 @@ export class AbsencesController {
     @Query('username') username?: string,
     @Query('onlyCount') onlyCount?: string,
     @Query('category') category?: string,
-  ): AbsencesResponse {
+  ): Promise<AbsencesResponse> {
         //Verify request was valid and authenticated.
         var status: HttpStatus | null = this.validateAndAuthenticateRequest(startDate, endDate, token);
         if ( status != null ) {
@@ -87,14 +87,14 @@ export class AbsencesController {
             }
             //Now try and count absences.
             if ( username != null && absenceCategory != null ) {
-              var count: number = this.absenceService.countAbsences(company, username, new Date(startDate),
+              var count: number = await this.absenceService.countAbsences(company, username, new Date(startDate),
                     new Date(endDate), absenceCategory);
               //Set count.
               absencesResponse.setCount(count);
             }
         } else if (username != null) {
             //Now try and find absences. Convert the absences to a list of absence responses.
-            var absenceResponses: AbsenceResponse[] = AbsenceUtils.convertAbsencesToAbsenceResponses(this.absenceService.findAbsences(company, username,  new Date(startDate),
+            var absenceResponses: AbsenceResponse[] = AbsenceUtils.convertAbsencesToAbsenceResponses(await this.absenceService.findAbsences(company, username,  new Date(startDate),
                     new Date(endDate)));
             absencesResponse.setCount(absenceResponses.length);
             absencesResponse.setAbsenceResponseList(absenceResponses);
