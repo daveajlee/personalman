@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Res, ValidationPipe } from '@nestjs/common';
 import { ApiOperation, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
 import { CompanyResponse } from './responses/company.response';
 import { RegisterCompanyRequest } from './requests/registercompany.request';
@@ -37,7 +37,9 @@ export class CompanyController {
   @Post('/')
   @ApiOperation({ summary: 'Add a company', description: 'Add a company to the system.' })
   @ApiResponse({ status: 201, description: 'Successfully created company'})
-  add(@Body() registerCompanyRequest: RegisterCompanyRequest, @Res() res: Response): void {
+  add(@Body(new ValidationPipe({transform: true})) registerCompanyRequest: RegisterCompanyRequest, @Res() res: Response): void {
+    console.log(registerCompanyRequest);
+    console.log(typeof registerCompanyRequest);
     this.companyService.save(new Company(registerCompanyRequest.getName(), registerCompanyRequest.getDefaultAnnualLeaveInDays(),
         registerCompanyRequest.getCountry()));
         //Return 201 if saved successfully.
