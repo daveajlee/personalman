@@ -42,17 +42,15 @@ export class UserController {
       description: 'Successfully processed login request',
       type: LoginResponse,
   })
-  async login(@Body() loginRequest: LoginRequest, @Res() res: Response): Promise<LoginResponse> {
+  async login(@Body(new ValidationPipe({transform: true})) loginRequest: LoginRequest, @Res() res: Response): Promise<void> {
     var user: User | null = await this.userService.findByCompanyAndUserName(loginRequest.getCompany(), loginRequest.getUsername());
-        if ( user != null && user.getAccountStatus()== UserAccountStatus.ACTIVE && user.getPassword() == loginRequest.getPassword() ) {
-            res.status(HttpStatus.OK).send();
-            return new LoginResponse("", this.userService.generateAuthToken(loginRequest.getUsername()),);
-        } else if ( user != null ) {
-            res.status(HttpStatus.FORBIDDEN).send();
-            return new LoginResponse("Password was incorrect!", "");
-        }
-        res.status(HttpStatus.FORBIDDEN).send();
-        return new LoginResponse("User was not found", "");
+    if ( user != null && user["accountStatus"]==='ACTIVE' && user["password"] == loginRequest.getPassword() ) {
+        res.status(HttpStatus.OK).json(new LoginResponse("", this.userService.generateAuthToken(loginRequest.getUsername())));
+    } else if ( user != null ) {
+        res.status(HttpStatus.FORBIDDEN).json(new LoginResponse("Password was incorrect!", ""));
+    } else {
+        res.status(HttpStatus.FORBIDDEN).json(new LoginResponse("User was not found", ""));
+    }
   }
 
   @Get('/')

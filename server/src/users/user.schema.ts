@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { UserAccountStatus } from "./models/useraccountstatus.enum";
 import { UserHistoryEntry } from "./models/userhistory.entry";
 
 export const UserSchema = new mongoose.Schema({
@@ -13,7 +12,7 @@ export const UserSchema = new mongoose.Schema({
     position: String,
     startDate: Date,
     endDate: Date,
-    //accountStatus: UserAccountStatus,
+    accountStatus: String,
     dateOfBirth: Date,
     role: String,
     hourlyWage: Number,

@@ -18,7 +18,7 @@ export class UserUtils {
     static convertUserRequestToUser (userRequest: UserRequest, startDate: Date, dateOfBirth: Date ): User {
         return new User(userRequest.getFirstName(), userRequest.getSurname(), userRequest.getLeaveEntitlementPerYear(),
             userRequest.getPosition(), startDate, userRequest.getUsername(), userRequest.getPassword(), userRequest.getCompany(),
-            userRequest.getWorkingDays(), userRequest.getRole(), dateOfBirth, UserAccountStatus.ACTIVE);
+            userRequest.getWorkingDays(), userRequest.getRole(), dateOfBirth, 'ACTIVE');
     }
 
     /**
