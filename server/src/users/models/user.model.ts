@@ -95,7 +95,7 @@ export class User {
     private userHistoryEntryList: UserHistoryEntry[];
 
     constructor(firstName: string, surname: string, leaveEntitlementPerYear: number, position: string, startDate: Date,
-        username: string, password: string, company: string, workingDays: string, role: string, dateOfBirth: string,
+        username: string, password: string, company: string, workingDays: string, role: string, dateOfBirth: Date,
         accountStatus: UserAccountStatus) {
             this.firstName = firstName;
             this.lastName = surname;
@@ -111,7 +111,7 @@ export class User {
                 this.workingDays = [];
             }
             this.role = role;
-            this.dateOfBirth = new Date(dateOfBirth);
+            this.dateOfBirth = dateOfBirth;
             this.accountStatus = accountStatus;
     }
 

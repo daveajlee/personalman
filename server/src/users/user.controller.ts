@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Res, ValidationPipe } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiOkResponse } from '@nestjs/swagger';
 import { AddHistoryRequest } from './requests/addhistory.request';
 import { AddTimesheetHoursRequest } from './requests/addtimesheethours.request';
@@ -84,7 +84,7 @@ export class UserController {
   @Post('/')
   @ApiOperation({ summary: 'Add a user', description: 'Add a user to the system.' })
   @ApiResponse({ status: 201, description: 'Successfully created user'})
-  async addUser(@Body() userRequest: UserRequest, @Res() res: Response): Promise<void> {
+  async addUser(@Body(new ValidationPipe({transform: true})) userRequest: UserRequest, @Res() res: Response): Promise<void> {
     //First of all, check if any of the fields are empty or null, then return bad request.
         if (userRequest.getFirstName() === "" || userRequest.getSurname() === ""
                 || userRequest.getPosition() === "" || userRequest.getStartDate() === ""
@@ -97,15 +97,24 @@ export class UserController {
             let company: Company = await this.companyService.getCompany(userRequest.getCompany());
             userRequest.setLeaveEntitlementPerYear(company.getDefaultAnnualLeaveInDays());
         }
-        //Now convert the dates to LocalDate. If end date is before start date then return bad request.
-        var startLocalDate: Date = new Date(userRequest.getStartDate());
-        if ( startLocalDate == null ) {
+        // Convert string to date.
+        var startDate: Date = this.convertToDate(userRequest.getStartDate());
+        var dateOfBirth: Date = this.convertToDate(userRequest.getDateOfBirth());
+        // Check dates are not null.
+        if ( startDate == null || dateOfBirth == null ) {
             res.status(HttpStatus.BAD_REQUEST).send();
         }
         //Now convert to user object.
-        var user: User = UserUtils.convertUserRequestToUser(userRequest, startLocalDate);
+        var user: User = UserUtils.convertUserRequestToUser(userRequest, startDate, dateOfBirth);
         //Return 201 if saved successfully.
         this.userService.save(user) ? res.status(HttpStatus.CREATED).send() : res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+  }
+
+  // Helper method to convert dates.
+  convertToDate(date: string): Date {
+    // First split the date.
+    let dateSplit = date.split("-");
+    return new Date(parseInt(dateSplit[2]), parseInt(dateSplit[1])-1, parseInt(dateSplit[0]));
   }
 
   @Delete('/')

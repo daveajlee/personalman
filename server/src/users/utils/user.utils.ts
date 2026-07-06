@@ -11,13 +11,14 @@ export class UserUtils {
     /**
      * This method converts a UserRequest object into a User object which can be saved in the database.
      * @param userRequest a <code>UserRequest</code> object to convert
-     * @param startDate a <code>LocalDate</code> with the already converted start date.
+     * @param startDate a <code>Date</code> with the already converted start date.
+     * @param dateOfBirth a <code>Date</code> with the already converted date of birth.
      * @return a <code>User</code> object.
      */
-    static convertUserRequestToUser (userRequest: UserRequest, startDate: Date ): User {
+    static convertUserRequestToUser (userRequest: UserRequest, startDate: Date, dateOfBirth: Date ): User {
         return new User(userRequest.getFirstName(), userRequest.getSurname(), userRequest.getLeaveEntitlementPerYear(),
             userRequest.getPosition(), startDate, userRequest.getUsername(), userRequest.getPassword(), userRequest.getCompany(),
-            userRequest.getWorkingDays(), userRequest.getRole(), userRequest.getDateOfBirth(), UserAccountStatus.ACTIVE);
+            userRequest.getWorkingDays(), userRequest.getRole(), dateOfBirth, UserAccountStatus.ACTIVE);
     }
 
     /**
