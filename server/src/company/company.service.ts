@@ -23,9 +23,9 @@ export class CompanyService {
      * @return a <code>List</code> of <code>String</code> with the names of all companies stored in the database.
      */
     public async getAllCompanies(): Promise<string[]> {
-        var companyNames: string[] = [];
-        let companies: Company[] = await this.companyModel.find().exec();
-        companies.forEach(company => companyNames.push(company.getName()));
+        let companyNames: string[] = [];
+        let companies: any = await this.companyModel.find().exec();
+        companies.forEach(company => companyNames.push(company["name"]));
         return companyNames;
     }
 

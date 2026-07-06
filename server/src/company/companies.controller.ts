@@ -16,15 +16,14 @@ export class CompaniesController {
     type: [CompanyResponse],
   })
   @ApiResponse({ status: 204, description: 'Successful but no companies in database'})
-  async getAll(@Res() res: Response): Promise<string[]> {
-    //Retrieve the list of companies.
-        var companyNames: string[] = await this.companyService.getAllCompanies();
-        //If no companies then return 204.
-        if ( companyNames.length == 0 ) {
+  async getAll(@Res() res: Response): Promise<void> {
+      //Retrieve the list of companies.
+      let companyNames: string[] = await this.companyService.getAllCompanies();
+      //If no companies then return 204.
+      if ( companyNames.length == 0 ) {
             res.status(HttpStatus.NO_CONTENT).send();
-        }
-        //Otherwise return 200.
-        res.status(HttpStatus.OK).send();
-        return companyNames;
+      }
+      //Otherwise return 200.
+      res.status(HttpStatus.OK).json(companyNames);
   }
 }
