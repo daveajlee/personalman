@@ -26,11 +26,11 @@ export class UserUtils {
      * @param user a <code>User</code> object to convert
      * @return a converted <code>UserResponse</code> object.
      */
-    static convertUserToUserResponse (user: User ): UserResponse {
-        return new UserResponse(user.getFirstName(), user.getLastName(), user.getUsername(), user.getCompany(), user.getLeaveEntitlementPerYear(),
-            user.getWorkingDays().join(","), user.getPosition(), user.getStartDate().toDateString(), user.getEndDate().toDateString(), 
-            user.getRole(), user.getDateOfBirth().toDateString(), user.getHourlyWage(),
-            user.getContractedHoursPerWeek(), user.getTrainingsList(), UserUtils.convertToUserHistoryResponse(user.getUserHistoryEntryList()));
+    static convertUserToUserResponse (user: any ): UserResponse {
+        return new UserResponse(user["firstName"], user["lastName"], user["userName"], user["company"], user["leaveEntitlementPerYear"],
+            user["workingDays"].join(","), user["position"], user["startDate"], user["endDate"], 
+            user["role"], user["dateOfBirth"], user["hourlyWage"],
+            user["contractedHoursPerWeek"], user["trainingsList"], UserUtils.convertToUserHistoryResponse(user["userEntryHistoryList"]));
     }
 
     /**

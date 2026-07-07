@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Inject, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Inject, Param, Query, Post, Res } from '@nestjs/common';
 import { ApiOperation, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
 import { PaidUserRequest } from './requests/paiduser.request';
 import { PayUsersResponse } from './responses/payusers.response';
@@ -97,7 +97,7 @@ export class UsersController {
     type: UsersResponse,
   })
   @ApiResponse({ status: 204, description: 'Successful but no users found'})
-  async findAllUsers(@Param('company') company: string, @Param('token') token: string, @Res() res: Response): Promise<UsersResponse> {
+  async findAllUsers(@Query('company') company: string, @Query('token') token: string, @Res() res: Response): Promise<void> {
     //Verify that user is logged in.
         if ( token == null || !this.userService.checkAuthToken(token) ) {
             res.status(HttpStatus.FORBIDDEN).send();
@@ -113,11 +113,10 @@ export class UsersController {
             res.status(HttpStatus.NO_CONTENT).send();
         }
         //Convert to UserResponse object and return 200.
-        var userResponses: UserResponse[] = new UserResponse[users.length];
+        var userResponses: UserResponse[] = new Array<UserResponse>();
         for ( var i = 0; i < users.length; i++ ) {
             userResponses[i] = UserUtils.convertUserToUserResponse(users[i]);
         }
-        res.status(HttpStatus.OK).send();
-        return new UsersResponse(userResponses.length, userResponses);
+        res.status(HttpStatus.OK).json(new UsersResponse(userResponses.length, userResponses));
   }
 }

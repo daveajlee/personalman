@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Res, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Query, Res, ValidationPipe } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiOkResponse } from '@nestjs/swagger';
 import { AddHistoryRequest } from './requests/addhistory.request';
 import { AddTimesheetHoursRequest } from './requests/addtimesheethours.request';
@@ -60,23 +60,21 @@ export class UserController {
       type: UserResponse,
   })
   @ApiResponse({ status: 204, description: 'Successful but no user found'})
-  async findUser(@Param('company') company: string, @Param('username') username: string, @Param('token') token: string, @Res() res: Response): Promise<UserResponse | null> {
-    //Check valid request including authentication
-        var status: HttpStatus = this.validateAndAuthenticateRequest(company, username, token);
-        //If the status is not null then produce response and return.
-        if ( status != null ) {
-            res.send();
+  async findUser(@Query('company') company: string, @Query('username') username: string, @Query('token') token: string, @Res() res: Response): Promise<void> {
+        //Verify that user is logged in.
+        if ( token == null || !this.userService.checkAuthToken(token)) {
+            res.status(HttpStatus.FORBIDDEN).send();
+        } else {
+            //Now retrieve the user based on the username.
+            var user: any = await this.userService.findByCompanyAndUserName(company, username);
+            //If user is null then return 204.
+            if ( user == null ) {
+                res.status(HttpStatus.NO_CONTENT).send();
+            } else {
+                //Convert to UserResponse object and return 200.
+                res.status(HttpStatus.OK).json(UserUtils.convertUserToUserResponse(user));
+            }
         }
-        //Now retrieve the user based on the username.
-        var user: User | null = await this.userService.findByCompanyAndUserName(company, username);
-        //If user is null then return 204.
-        if ( user == null ) {
-            res.status(HttpStatus.NO_CONTENT).send();
-            return null;
-        }
-        //Convert to UserResponse object and return 200.
-        res.status(HttpStatus.OK).send();
-        return UserUtils.convertUserToUserResponse(user);
   }
 
   @Post('/')
@@ -119,24 +117,23 @@ export class UserController {
   @ApiOperation({ summary: 'Delete a user', description: 'Delete a user from the system.' })
   @ApiResponse({ status: 200, description: 'Successfully delete user'})
   @ApiResponse({ status: 204, description: 'Successful but no user found'})
-  async deleteUser(@Param('company') company: string, @Param('username') username: string, @Param('token') token: string, @Res() res: Response): Promise<void> {
-    //Check valid request including authentication
-        var status: HttpStatus = this.validateAndAuthenticateRequest(company, username, token);
-        //If the status is not null then produce response and return.
-        if ( status != null ) {
-            res.status(status).send();
-        }
-        //Now retrieve the user based on the username.
-        var user: User | null = await this.userService.findByCompanyAndUserName(company, username);
-        //If user is null then return 204.
-        if ( user == null ) {
-            res.status(HttpStatus.NO_CONTENT).send();
+  async deleteUser(@Query('company') company: string, @Query('username') username: string, @Query('token') token: string, @Res() res: Response): Promise<void> {
+        //Verify that user is logged in.
+        if ( token == null || !this.userService.checkAuthToken(token)) {
+            res.status(HttpStatus.FORBIDDEN).send();
         } else {
-            //Now delete the user based on the username.
-            this.userService.delete(user);
-            //Return 200.
-            res.status(HttpStatus.OK).send();
-        }
+            //Now retrieve the user based on the username.
+            var user: any = await this.userService.findByCompanyAndUserName(company, username);
+            //If user is null then return 204.
+            if ( user == null ) {
+                res.status(HttpStatus.NO_CONTENT).send();
+            } else {
+                //Now delete the user based on the username.
+                await this.userService.delete(user);
+                //Return 200.
+                res.status(HttpStatus.OK).send();
+            }
+        }   
   }
 
   @Patch('/training')
@@ -145,10 +142,10 @@ export class UserController {
   @ApiResponse({ status: 204, description: 'No user found'})
   async addTraining(@Body() addTrainingRequest: AddTrainingRequest, @Res() res: Response): Promise<void> {
     //Check valid request including authentication
-        var status: HttpStatus = this.validateAndAuthenticateRequest(addTrainingRequest.getCompany(), addTrainingRequest.getUsername(), addTrainingRequest.getToken());
+        var status: Response = this.validateAndAuthenticateRequest(addTrainingRequest.getCompany(), addTrainingRequest.getUsername(), addTrainingRequest.getToken(), res);
         //If the status is not null then produce response and return.
         if ( status != null ) {
-            res.status(status).send();
+            res.status(status.statusCode).send();
         }
         //Now retrieve the user based on the username.
         var user: User | null = await this.userService.findByCompanyAndUserName(addTrainingRequest.getCompany(), addTrainingRequest.getUsername());
@@ -171,7 +168,7 @@ export class UserController {
   @ApiResponse({ status: 204, description: 'No user found'})
   async retrieveTimesheet(@Param('company') company: string, @Param('username') username: string, @Param('token') token: string, @Param('startDate') startDate: string, @Param('endDate') endDate: string, @Res() res: Response): Promise<number | undefined> {
     //Check valid request including authentication
-        var status: HttpStatus = this.validateAndAuthenticateRequest(company, username, token);
+        var status: Response = this.validateAndAuthenticateRequest(company, username, token, res);
         //If the status is not null then produce response and return.
         if ( status != null ) {
             res.send();
@@ -202,7 +199,7 @@ export class UserController {
   @ApiResponse({ status: 204, description: 'No user found'})
   async addHours(@Body() addHoursRequest: AddTimesheetHoursRequest, @Res() res: Response): Promise<void> {
     //Check valid request including authentication
-        var status: HttpStatus = this.validateAndAuthenticateRequest(addHoursRequest.getCompany(), addHoursRequest.getUsername(), addHoursRequest.getToken());
+        var status: Response = this.validateAndAuthenticateRequest(addHoursRequest.getCompany(), addHoursRequest.getUsername(), addHoursRequest.getToken(), res);
         //If the status is not null then produce response and return.
         if ( status != null ) {
             res.send()
@@ -225,7 +222,7 @@ export class UserController {
   @ApiResponse({ status: 204, description: 'No user found'})
   async updateSalary(@Body() updateSalaryRequest: UpdateSalaryRequest, @Res() res: Response): Promise<void> {
     //Check valid request including authentication
-        var status: HttpStatus = this.validateAndAuthenticateRequest(updateSalaryRequest.getCompany(), updateSalaryRequest.getUsername(), updateSalaryRequest.getToken());
+        var status: Response = this.validateAndAuthenticateRequest(updateSalaryRequest.getCompany(), updateSalaryRequest.getUsername(), updateSalaryRequest.getToken(), res);
         //If the status is not null then produce response and return.
         if ( status != null ) {
             res.send();
@@ -260,7 +257,7 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Successfully processed change password request'})
   async changePassword(@Body() changePasswordRequest: ChangePasswordRequest, @Res() res: Response): Promise<void> {
     //Check valid request including authentication
-        var status: HttpStatus = this.validateAndAuthenticateRequest(changePasswordRequest.getCompany(), changePasswordRequest.getUsername(), changePasswordRequest.getToken());
+        var status: Response = this.validateAndAuthenticateRequest(changePasswordRequest.getCompany(), changePasswordRequest.getUsername(), changePasswordRequest.getToken(), res);
         //If the status is not null then produce response and return.
         if ( status != null ) {
             res.send();
@@ -277,7 +274,7 @@ export class UserController {
   @ApiResponse({ status: 204, description: 'No user found'})
   async addHistoryEntry(@Body() addHistoryRequest: AddHistoryRequest, @Res() res: Response): Promise<void> {
     //Check valid request including authentication
-        var status: HttpStatus = this.validateAndAuthenticateRequest(addHistoryRequest.getCompany(), addHistoryRequest.getUsername(), addHistoryRequest.getToken());
+        var status: Response = this.validateAndAuthenticateRequest(addHistoryRequest.getCompany(), addHistoryRequest.getUsername(), addHistoryRequest.getToken(), res);
         //If the status is not null then produce response and return.
         if ( status != null ) {
             res.send();
@@ -301,7 +298,7 @@ export class UserController {
   @ApiResponse({ status: 204, description: 'Successful but no user found' })
   async deactivate(@Body() deactivateUserRequest: DeactivateUserRequest, @Res() res: Response): Promise<DeactivateUserResponse | null> {
     //Check valid request including authentication
-        var status: HttpStatus = this.validateAndAuthenticateRequest(deactivateUserRequest.getCompany(), deactivateUserRequest.getUsername(), deactivateUserRequest.getToken());
+        var status: Response = this.validateAndAuthenticateRequest(deactivateUserRequest.getCompany(), deactivateUserRequest.getUsername(), deactivateUserRequest.getToken(), res);
         //If the status is not null then produce response and return.
         if ( status != null ) {
             res.send();
@@ -321,34 +318,30 @@ export class UserController {
         
   }
 
-  @Patch('/getUser')
+  @Get('/getUser')
   @ApiOperation({ summary: 'Get user', description: 'Method to get a users details by name and date of birth.' })
   @ApiOkResponse({
     description: 'Successfully retrieved user details',
     type: UserResponse
   })
   @ApiResponse({ status: 500, description: 'Database not available' })
-  async getUser(@Param('name') name: string, @Param('dateOfBirth') dateOfBirth: string, @Param('company') company: string, @Param('token') token: string, @Res() res: Response): Promise<UserResponse | null> {
-    //Check valid request including authentication
+  async getUser(@Query('name') name: string, @Query('dateOfBirth') dateOfBirth: string, @Query('company') company: string, @Query('token') token: string, @Res() res: Response): Promise<void> {
+        //Check valid request including authentication
         if ( token == null || !this.userService.checkAuthToken(token) ) {
             res.status(HttpStatus.FORBIDDEN).send();
-            return null;
         }
         //If name or date of birth is null then bad request.
-        if ( name == null || dateOfBirth == null || company === '' ) {
+        else if ( name == null || dateOfBirth == null || company === '' ) {
             res.status(HttpStatus.BAD_REQUEST).send();
-            return null;
         } else {
             //Now retrieve the user based on the information provided.
-            var user: User | null = await this.userService.findUserByDateOfBirthAndNameAndCompany(new Date(dateOfBirth), name.split(" ")[0], name.split(" ")[1], company);
+            var user: any = await this.userService.findUserByDateOfBirthAndNameAndCompany(this.convertToDate(dateOfBirth), name.split(" ")[0], name.split(" ")[1], company);
             //If user is null then return 204.
             if ( user == null ) {
                 res.status(HttpStatus.NO_CONTENT).send();
-                return null;
             } else {
                 //Convert to UserResponse object and return 200.
-                res.status(HttpStatus.OK).send();
-                return UserUtils.convertUserToUserResponse(user);
+                res.status(HttpStatus.OK).json(UserUtils.convertUserToUserResponse(user));
             }
         }
   }
@@ -360,16 +353,16 @@ export class UserController {
      * @param token a <code>String</code> containing the token to verify that the user is logged in.
      * @return a <code>HttpStatus</code> which is either filled if it was not authenticated or null if authenticated and valid.
      */
-    private validateAndAuthenticateRequest ( company: string, username: string, token: string ): HttpStatus {
+    private validateAndAuthenticateRequest ( company: string, username: string, token: string, @Res() res: Response ): Response {
         //First of all, check if the username field is empty or null, then return bad request.
         if (username === '' || company === '') {
-            return HttpStatus.BAD_REQUEST;
+            return res.status(HttpStatus.BAD_REQUEST).send();
         }
         //Verify that user is logged in.
         if ( token == null || !this.userService.checkAuthToken(token) ) {
-            return HttpStatus.FORBIDDEN;
+            return res.status(HttpStatus.FORBIDDEN).send();
         }
         //If everything was ok then return null.
-        return HttpStatus.OK;
+        return res.status(HttpStatus.OK).send();
     }
 }

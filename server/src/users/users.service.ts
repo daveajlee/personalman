@@ -65,8 +65,12 @@ export class UsersService {
      * Delete the specified user object from the database.
      * @param user a <code>User</code> object to delete from the database.
      */
-    public delete ( user: User ): void {
-        this.userModel.deleteOne(user);
+    public async delete ( user: User ): Promise<boolean> {
+        if ( user != null ) {
+            var result = await this.userModel.deleteOne({username: user["username"]});
+            return result.deletedCount != 0;
+        }
+        return false;
     }
 
     /**
