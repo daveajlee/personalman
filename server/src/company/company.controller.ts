@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Res, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Query, Res, ValidationPipe } from '@nestjs/common';
 import { ApiOperation, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
 import { CompanyResponse } from './responses/company.response';
 import { RegisterCompanyRequest } from './requests/registercompany.request';
@@ -17,21 +17,21 @@ export class CompanyController {
     type: CompanyResponse
   })
   @ApiResponse({ status: 404, description: 'Company not found'})
-  async retrieve(@Param('name') name: string, @Param('token') token: string, @Res() res: Response): Promise<CompanyResponse | null> {
-    //Check valid request including authentication
+  async retrieve(@Query('name') name: string, @Query('token') token: string, @Res() res: Response): Promise<void> {
+        //Check valid request including authentication
         var status: Response = this.validateAndAuthenticateRequest(name, token, res);
         //If the status is not null then produce response and return.
-        if ( status != null ) {
-            res.send();
+        if ( status != null && status.statusCode != 200 ) {
+            res.status(status.statusCode).send();
+        } else {
+            var company: any = await this.companyService.getCompany(name);
+            if ( company != null ) {
+                res.status(HttpStatus.OK).json(new CompanyResponse(company["name"], company["defaultAnnualLeaveInDays"], company["country"]));
+            } else {
+                //Otherwise 404 to indicate not found.
+                res.status(HttpStatus.NOT_FOUND).send();
+            }
         }
-        var company: Company = await this.companyService.getCompany(name);
-        if ( company != null ) {
-            res.status(HttpStatus.OK).send();
-            return new CompanyResponse(company.getName(), company.getDefaultAnnualLeaveInDays(), company.getCountry());
-        }
-        //Otherwise 404 to indicate not found.
-        res.status(HttpStatus.NOT_FOUND).send();
-        return null;
   }
 
   @Post('/')
@@ -50,27 +50,29 @@ export class CompanyController {
   @ApiOperation({ summary: 'Delete a company', description: 'Delete a company from the system.' })
   @ApiResponse({ status: 200, description: 'Successfully deleted company'})
   @ApiResponse({ status: 404, description: 'Company not found'})
-  async delete(@Param('name') name: string, @Param('token') token: string, @Res() res: Response): Promise<void> {
+  async delete(@Query('name') name: string, @Query('token') token: string, @Res() res: Response): Promise<void> {
     //Check valid request including authentication
         var status: Response = this.validateAndAuthenticateRequest(name, token, res);
         //If the status is not null then produce response and return.
-        if ( status != null ) {
-            res.send();
-        }
-        //First of all, delete all users and absences belonging to this company.
-        /*this.absenceService.delete(name, "", new Date(), new Date());
-        var user = await this.userService.findByCompanyAndUserName(name, "");
-        if ( user ) {
-            this.userService.delete(user);
-        }*/
-        //Now delete the company.
-        if ( await this.companyService.delete(name) ) {
-            //Return 200 if successful delete.
-            res.status(HttpStatus.OK).send();
+        if ( status != null && status.statusCode != 200 ) {
+            res.status(status.statusCode).send();
         } else {
-            //Otherwise 404.
-            res.status(HttpStatus.NOT_FOUND).send();
+            //First of all, delete all users and absences belonging to this company.
+            /*this.absenceService.delete(name, "", new Date(), new Date());
+            var user = await this.userService.findByCompanyAndUserName(name, "");
+            if ( user ) {
+                this.userService.delete(user);
+            }*/
+            //Now delete the company.
+            if ( await this.companyService.delete(name) ) {
+                //Return 200 if successful delete.
+                res.status(HttpStatus.OK).send();
+            } else {
+                //Otherwise 404.
+                res.status(HttpStatus.NOT_FOUND).send();
+            }
         }
+        
   }
 
   /**

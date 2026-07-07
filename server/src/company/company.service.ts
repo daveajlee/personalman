@@ -46,10 +46,10 @@ export class CompanyService {
      *
      */
     public async delete ( name: string ) : Promise<boolean> {
-        var company: Company = await this.getCompany(name);
+        var company: any = await this.getCompany(name);
         if ( company != null ) {
-            this.companyModel.deleteOne(company);
-            return true;
+            var result = await this.companyModel.deleteOne({name: company["name"]});
+            return result.deletedCount != 0;
         }
         return false;
     }
