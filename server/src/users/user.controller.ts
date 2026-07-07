@@ -29,11 +29,11 @@ export class UserController {
   @Post('logout')
   @ApiOperation({ summary: 'Logout', description: 'Logout from the system' })
   @ApiResponse({ status: 200, description: 'Successfully processed logout request'})
-  logout(@Body() logoutRequest: LogoutRequest, @Res() res: Response): void {
+  logout(@Body(new ValidationPipe({transform: true})) logoutRequest: LogoutRequest, @Res() res: Response): void {
     //Remove the token from the authenticated tokens.
-        this.userService.removeAuthToken(logoutRequest.getToken());
-        //Return 200.
-        res.status(HttpStatus.OK).send();
+    this.userService.removeAuthToken(logoutRequest.getToken());
+    //Return 200.
+    res.status(HttpStatus.OK).send();
   }
 
   @Post('login')
