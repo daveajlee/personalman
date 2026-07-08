@@ -8,6 +8,7 @@ import {
   Post,
   Query,
   Res,
+  ValidationPipe
 } from '@nestjs/common';
 import {
   ApiQuery,
@@ -110,7 +111,7 @@ export class AbsencesController {
     description: 'Add an absence to the system.',
   })
   @ApiResponse({ status: 201, description: 'Successfully created absence' })
-  add(@Body() absenceRequest: AbsenceRequest, @Res() res: Response): void {
+  async add(@Body(new ValidationPipe({transform: true})) absenceRequest: AbsenceRequest, @Res() res: Response): Promise<void> {
     //Verify request was valid and authenticated.
         var status: HttpStatus | null = this.validateAndAuthenticateRequest(absenceRequest.getStartDate(), absenceRequest.getEndDate(), absenceRequest.getToken());
         if ( status != null ) {
@@ -123,10 +124,10 @@ export class AbsencesController {
             res.status(HttpStatus.BAD_REQUEST).send();
         }
         //Now convert to absence object.
-        this.absenceService.save(AbsenceUtils.convertAbsenceRequestToAbsence(absenceRequest,
+        var result = await this.absenceService.save(AbsenceUtils.convertAbsenceRequestToAbsence(absenceRequest,
                 new Date(absenceRequest.getStartDate()), new Date(absenceRequest.getEndDate())));
         //Return 201 if saved successfully.
-        res.status(HttpStatus.CREATED).send();
+        result ? res.status(HttpStatus.CREATED).send() : res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
   }
 
   @Delete('/')

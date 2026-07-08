@@ -60,7 +60,7 @@ export class UsersController {
     type: PayUsersResponse,
   })
   @ApiResponse({ status: 204, description: 'Successful but no users found'})
-  async payUsers(@Param('company') company: string, @Param('token') token: string, @Param('startDate') startDate: string, @Param('endDate') endDate: string, @Res() res: Response): Promise<PayUsersResponse> {
+  async payUsers(@Query('company') company: string, @Query('token') token: string, @Query('startDate') startDate: string, @Query('endDate') endDate: string, @Res() res: Response): Promise<PayUsersResponse> {
     //Verify that user is logged in.
         if ( token == null || !this.userService.checkAuthToken(token) ) {
             res.status(HttpStatus.FORBIDDEN).send();
