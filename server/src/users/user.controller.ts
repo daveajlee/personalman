@@ -140,7 +140,7 @@ export class UserController {
   @ApiOperation({ summary: 'Add a training course', description: 'Add a training course for a particular user.' })
   @ApiResponse({ status: 200, description: 'Successfully added training course'})
   @ApiResponse({ status: 204, description: 'No user found'})
-  async addTraining(@Body() addTrainingRequest: AddTrainingRequest, @Res() res: Response): Promise<void> {
+  async addTraining(@Body(new ValidationPipe({transform: true})) addTrainingRequest: AddTrainingRequest, @Res() res: Response): Promise<void> {
     //Check valid request including authentication
         var status: Response = this.validateAndAuthenticateRequest(addTrainingRequest.getCompany(), addTrainingRequest.getUsername(), addTrainingRequest.getToken(), res);
         //If the status is not null then produce response and return.
@@ -148,13 +148,13 @@ export class UserController {
             res.status(status.statusCode).send();
         }
         //Now retrieve the user based on the username.
-        var user: User | null = await this.userService.findByCompanyAndUserName(addTrainingRequest.getCompany(), addTrainingRequest.getUsername());
+        var user: any = await this.userService.findByCompanyAndUserName(addTrainingRequest.getCompany(), addTrainingRequest.getUsername());
         //If user is null then return 204.
         if ( user == null ) {
             res.status(HttpStatus.NO_CONTENT).send();
         } else {
             //Now add training course and return 200 or 500 depending on DB success.
-            this.userService.addTrainingCourse(user, addTrainingRequest.getTrainingCourse()) ?
+            await this.userService.addTrainingCourse(user, addTrainingRequest.getTrainingCourse()) ?
                 res.status(HttpStatus.OK).send() : res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
         }
   }
@@ -287,7 +287,7 @@ export class UserController {
         } else {
             //Now add training course and return 200 or 500 depending on DB success.
             this.userService.addUserHistoryEntry(user, new Date(addHistoryRequest.getDate()),
-                UserUtils.userHistoryReasonFromString(addHistoryRequest.getReason()), addHistoryRequest.getComment()) ?
+                addHistoryRequest.getReason(), addHistoryRequest.getComment()) ?
                 res.status(HttpStatus.OK).send() : res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
         }
   }

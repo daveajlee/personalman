@@ -8,7 +8,7 @@ export class PaidUserRequest {
 
     // a table of employee by username and the amount of pay they have received.
     @ApiProperty()
-    employeePayTable: Map<string, number>;
+    employeePayTable: [];
 
     // start date of date range that they were paid for in format dd-MM-yyyy
     @ApiProperty()
@@ -22,7 +22,7 @@ export class PaidUserRequest {
     @ApiProperty()
     token: string;
 
-    constructor(company: string, employeePayTable: Map<string, number>, startDate: string, endDate: string, token: string) {
+    constructor(company: string, employeePayTable: [], startDate: string, endDate: string, token: string) {
         this.company = company;
         this.employeePayTable = employeePayTable;
         this.startDate = startDate;

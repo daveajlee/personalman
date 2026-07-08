@@ -1,5 +1,3 @@
-import { UserHistoryReason } from "./userhistoryreason.enum";
-
 export class UserHistoryEntry {
 
     /**
@@ -10,21 +8,21 @@ export class UserHistoryEntry {
     /**
      * The reason for this history entry.
      */
-    userHistoryReason: UserHistoryReason;
+    reason: string;
 
     /**
      * A comment about this history - this could be the reason it was given.
      */
     comment: string;
 
-    constructor(date: Date, userHistoryReason: UserHistoryReason, comment: string) {
+    constructor(date: Date, reason: string, comment: string) {
         this.date = date;
-        this.userHistoryReason = userHistoryReason;
+        this.reason = reason;
         this.comment = comment;
     }
 
-    getUserHistoryReason(): UserHistoryReason {
-        return this.userHistoryReason;
+    getUserHistoryReason(): string {
+        return this.reason;
     }
 
     getComment(): string {

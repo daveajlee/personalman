@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Inject, Param, Query, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Inject, Param, Query, Post, Res, ValidationPipe } from '@nestjs/common';
 import { ApiOperation, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
 import { PaidUserRequest } from './requests/paiduser.request';
 import { PayUsersResponse } from './responses/payusers.response';
@@ -19,7 +19,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Mark users as paid for a company', description: 'Mark users as paid for a company within a specific date range.' })
   @ApiResponse({ status: 200, description: 'Successfully found user(s) and their pay'})
   @ApiResponse({ status: 204, description: 'Successful but no users found'})
-  async markUsersPaid(@Body() paidUserRequest: PaidUserRequest, @Res() res: Response): Promise<void> {
+  async markUsersPaid(@Body(new ValidationPipe({transform: true})) paidUserRequest: PaidUserRequest, @Res() res: Response): Promise<void> {
     //Verify that user is logged in.
         if ( paidUserRequest.token == null || !this.userService.checkAuthToken(paidUserRequest.token) ) {
             res.status(HttpStatus.FORBIDDEN).send();
@@ -30,18 +30,27 @@ export class UsersController {
         }
         //For each user in the supplied map.
         //var usernameSet: () => MapIterator<string> = paidUserRequest.employeePayTable.keys;
-        [...paidUserRequest.employeePayTable.keys()].forEach(username => {
-            //Find the relevant user.
-            this.userService.findByCompanyAndUserName(paidUserRequest.company, username).then(user => {
-                if ( user != null && !this.userService.addUserHistoryEntry(user, new Date(), UserHistoryReason.PAID,
-                    "Paid " + paidUserRequest.employeePayTable.get(username) + " for date range " +
-                    paidUserRequest.startDate + " - " + paidUserRequest.endDate)) {
-                        res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
-                }
-            })
-        });
+        for ( var i = 0; i < paidUserRequest.employeePayTable.length; i++) {
+            if (await this.processPaidUser(paidUserRequest.employeePayTable[i], paidUserRequest) === false) {
+                res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+            }
+        }
         //Return empty ok response if no exceptions.
         res.status(HttpStatus.OK).send();
+  }
+
+  async processPaidUser(username, paidUserRequest): Promise<boolean> {
+        //Find the relevant user.
+        var user = await this.userService.findByCompanyAndUserName(paidUserRequest.company, username["username"]);
+        if ( user != null ) {
+            var result = await this.userService.addUserHistoryEntry(user, new Date(), UserHistoryReason.PAID,
+                "Paid " + username["amount"] + " for date range " +
+                paidUserRequest.startDate + " - " + paidUserRequest.endDate);
+            if ( result != false ) {
+                return true;
+            }
+        }
+        return false;
   }
 
   @Get('pay')

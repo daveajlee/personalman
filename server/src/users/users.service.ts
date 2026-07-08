@@ -5,6 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserHistoryReason } from './models/userhistoryreason.enum';
 import { UserAccountStatus } from './models/useraccountstatus.enum';
+import { UserHistoryEntry } from './models/userhistory.entry';
 
 @Injectable()
 export class UsersService {
@@ -134,13 +135,11 @@ export class UsersService {
      * @param trainingCourse a <code>String</code> containing the name of the training course or qualification.
      * @return a <code>boolean</code> which is true iff the user has been updated successfully.
      */
-    public addTrainingCourse ( user: User, trainingCourse: string ): boolean {
-        if ( user.getTrainingsList() == null ) {
-            user.setTrainingsList([]);
-        }
-        user.addTrainingCourse(trainingCourse);
+    public async addTrainingCourse ( user: any, trainingCourse: string ): Promise<boolean> {
+        var trainingsList = user["trainingsList"];
+        trainingsList.push(trainingCourse);
         const createdUser = new this.userModel(user);
-        return createdUser.save() != null;
+        return await createdUser.save() != null;
     }
 
     /**
@@ -167,11 +166,13 @@ export class UsersService {
      * @param comment a <code>String</code> containing the comment about the entry/event.
      * @return a <code>boolean</code> which is true iff the user has been updated successfully.
      */
-    public addUserHistoryEntry (user: User, date: Date, userHistoryReason: UserHistoryReason | null, comment: string): boolean {
-        if ( user.getUserHistoryEntryList() == null ) {
-            user.setUserHistoryEntryList([]);
+    public addUserHistoryEntry (user: User, date: Date, userHistoryReason: string, comment: string): boolean {
+        var historyEntryList = user["userHistoryEntryList"];
+        if ( historyEntryList == null ) {
+            historyEntryList = [];
         }
-        user.addUserHistoryEntry(date, userHistoryReason, comment);
+        historyEntryList.push(new UserHistoryEntry(date, userHistoryReason, comment));
+        user["userHistoryEntryList"] = historyEntryList;
         const createdUser = new this.userModel(user);
         return createdUser.save() != null;
     }

@@ -1,6 +1,4 @@
 import mongoose from "mongoose";
-import { UserHistoryEntry } from "./models/userhistory.entry";
-
 export const UserSchema = new mongoose.Schema({
     firstName: String,
     lastName: String,
@@ -19,5 +17,9 @@ export const UserSchema = new mongoose.Schema({
     contractedHoursPerWeek: Number,
     trainingsList: [String],
     timesheet: Map<Date, Number>,
-    //userHistoryEntryList: [UserHistoryEntry]
+    userHistoryEntryList: [{
+        date: Date,
+        reason: String,
+        comment: String
+    }]
 });
