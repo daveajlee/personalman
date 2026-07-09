@@ -50,10 +50,10 @@ export class AbsenceUtils {
         let absenceResponses: AbsenceResponse[] = [];
         //Now convert each absence to an absence response.
         absences.forEach((absence) => {
-            let absenceResponse = new AbsenceResponse("", absence.getCompany(), absence.getUsername(), 
-                    absence.getStartDate(), absence.getEndDate());
-            if ( absence.getCategory() != null ) {
-                absenceResponse.setCategory(absence.getCategory().toString());
+            let absenceResponse = new AbsenceResponse("", absence["company"], absence["username"], 
+                    absence["startDate"], absence["endDate"]);
+            if ( absence["category"] != null ) {
+                absenceResponse.setCategory(absence["category"]);
             }
             absenceResponses.push(absenceResponse);
         });

@@ -60,15 +60,15 @@ export class AbsencesController {
     type: [AbsencesResponse],
   })
   async findOrCount(
-    @Param('company') company: string,
-    @Param('startDate') startDate: string,
-    @Param('endDate') endDate: string,
-    @Param('token') token: string,
+    @Query('company') company: string,
+    @Query('startDate') startDate: string,
+    @Query('endDate') endDate: string,
+    @Query('token') token: string,
     @Res() res: Response,
     @Query('username') username?: string,
     @Query('onlyCount') onlyCount?: string,
     @Query('category') category?: string,
-  ): Promise<AbsencesResponse> {
+  ): Promise<void> {
         //Verify request was valid and authenticated.
         var status: HttpStatus | null = this.validateAndAuthenticateRequest(startDate, endDate, token);
         if ( status != null ) {
@@ -77,7 +77,7 @@ export class AbsencesController {
         //Prepare response object.
         var absencesResponse: AbsencesResponse = this.prepareAbsencesResponse();
         //Check if only count parameter was set to true.
-        if ( onlyCount ) {
+        if ( onlyCount === "true" ) {
             //Convert category which is required for count.
             var absenceCategory: AbsenceCategory | null = null;
             if ( category != null ) {
@@ -88,21 +88,21 @@ export class AbsencesController {
             }
             //Now try and count absences.
             if ( username != null && absenceCategory != null ) {
-              var count: number = await this.absenceService.countAbsences(company, username, new Date(startDate),
-                    new Date(endDate), absenceCategory);
+              var count: number = await this.absenceService.countAbsences(company, username, this.convertToDate(startDate),
+                    this.convertToDate(endDate), absenceCategory);
               //Set count.
               absencesResponse.setCount(count);
             }
         } else if (username != null) {
             //Now try and find absences. Convert the absences to a list of absence responses.
-            var absenceResponses: AbsenceResponse[] = AbsenceUtils.convertAbsencesToAbsenceResponses(await this.absenceService.findAbsences(company, username,  new Date(startDate),
-                    new Date(endDate)));
+            var absenceResponses: AbsenceResponse[] = AbsenceUtils.convertAbsencesToAbsenceResponses(await this.absenceService.findAbsences(company, username,  this.convertToDate(startDate),
+                    this.convertToDate(endDate)));
             absencesResponse.setCount(absenceResponses.length);
             absencesResponse.setAbsenceResponseList(absenceResponses);
             absencesResponse = AbsenceUtils.calculateAbsencesResponseStatistics(absencesResponse);
         }
         //Return 200 and results.
-        return absencesResponse;
+        res.status(HttpStatus.OK).json(absencesResponse);
   }
 
   @Post('/')
@@ -183,8 +183,8 @@ export class AbsencesController {
         if ( startDate === "" || endDate === "" || token === "" ) {
             return HttpStatus.BAD_REQUEST;
         }
-        var startLocalDate: Date = new Date(startDate);
-        var endLocalDate: Date = new Date(endDate);
+        var startLocalDate: Date = this.convertToDate(startDate);
+        var endLocalDate: Date = this.convertToDate(endDate);
         if ( startLocalDate == null || endLocalDate == null || endLocalDate < startLocalDate ) {
             return HttpStatus.BAD_REQUEST;
         }
