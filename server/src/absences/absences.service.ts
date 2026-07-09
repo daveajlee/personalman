@@ -21,25 +21,27 @@ export class AbsencesService {
         //Store result.
         let result: boolean = true;
         //Get the employee information.
-        let user: User | null = await this.userService.findByCompanyAndUserName(absence.getCompany(), absence.getUsername());
+        let user: any = await this.userService.findByCompanyAndUserName(absence.getCompany(), absence.getUsername());
         let absences: Absence[] = [];
         //Special processing for particular types of categories.
-        if ( absence.getCategory() == AbsenceCategory.HOLIDAY && user != null ) {
-            if ( Math.abs(new Date(absence.getStartDate()).getFullYear() - new Date(absence.getEndDate()).getFullYear()) < 2 ) {
+        if ( absence.getCategory() === "Holiday" && user != null ) {
+            var absenceEndDate = new Date(absence.getEndDate());
+            absenceEndDate.setDate(absenceEndDate.getDate() + 1);
+            if ( Math.abs(new Date(absence.getStartDate()).getFullYear() - absenceEndDate.getFullYear()) < 2 ) {
                 //Generate absences according to free days excluding these from the actual absences - just for the start year.
-                absences.concat(AbsenceUtils.generateAbsences(user, new Date(absence.getStartDate()),
-                        new Date(new Date(absence.getStartDate()).getFullYear(),12,31), AbsenceUtils.absenceCategoryFromString(absence.getCategory())));
+                absences = absences.concat(AbsenceUtils.generateAbsences(user, new Date(absence.getStartDate()),
+                        absenceEndDate, AbsenceUtils.absenceCategoryFromString(absence.getCategory())));
                 result = await this.controlAbsencesForYear ( absence.getCompany(), absence.getUsername(),
                         new Date(absence.getStartDate()).getFullYear(), AbsenceUtils.absenceCategoryFromString(absence.getCategory()), user, absences );
-                if ( result ) {
+                /*if ( result ) {
                     var absences2: Absence[] = AbsenceUtils.generateAbsences(user,
                             new Date(new Date(absence.getEndDate()).getFullYear(),1,1), new Date(absence.getEndDate()), AbsenceUtils.absenceCategoryFromString(absence.getCategory()));
                     result = await this.controlAbsencesForYear ( absence.getCompany(), absence.getUsername(),
                             new Date(absence.getEndDate()).getFullYear(), AbsenceUtils.absenceCategoryFromString(absence.getCategory()), user, absences2 );
                     absences.concat(absences2);
-                }
+                }*/
             } else if ( new Date(absence.getStartDate()).getFullYear() == new Date(absence.getEndDate()).getFullYear() ) {
-                absences.concat(AbsenceUtils.generateAbsences(user, new Date(absence.getStartDate()), new Date(absence.getEndDate()), AbsenceUtils.absenceCategoryFromString(absence.getCategory())));
+                absences = absences.concat(AbsenceUtils.generateAbsences(user, new Date(absence.getStartDate()), new Date(absence.getEndDate()), AbsenceUtils.absenceCategoryFromString(absence.getCategory())));
                 result = await this.controlAbsencesForYear ( absence.getCompany(), absence.getUsername(),
                         new Date(absence.getStartDate()).getFullYear(), AbsenceUtils.absenceCategoryFromString(absence.getCategory()), user, absences );
             } else {
@@ -75,10 +77,10 @@ export class AbsencesService {
                     new Date(absence.getEndDate()), AbsenceUtils.absenceCategoryFromString(absence.getCategory())));
         }
         if ( result ) {
-            absences.forEach(absence => {
-                const createdAbsence = new this.absenceModel(absence);
-                createdAbsence.save();
-            });
+            for ( var i = 0; i < absences.length; i++ ) {
+                const createdAbsence = new this.absenceModel(absences[i]);
+                await createdAbsence.save();
+            }
         }
         return result;
     }
@@ -97,7 +99,7 @@ export class AbsencesService {
         var numAnnualLeave: number = await this.countAbsences(company, employeeName, new Date(year,1,1), new Date(year,12,31), category);
         numAnnualLeave += AbsenceUtils.countAbsencesInDays(absences);
         if ( user ) {
-            return numAnnualLeave <= user.getLeaveEntitlementPerYear();
+            return numAnnualLeave <= user["leaveEntitlementPerYear"];
         }
         return false;
     }

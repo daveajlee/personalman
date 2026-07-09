@@ -125,9 +125,16 @@ export class AbsencesController {
         }
         //Now convert to absence object.
         var result = await this.absenceService.save(AbsenceUtils.convertAbsenceRequestToAbsence(absenceRequest,
-                new Date(absenceRequest.getStartDate()), new Date(absenceRequest.getEndDate())));
+                this.convertToDate(absenceRequest.getStartDate()), this.convertToDate(absenceRequest.getEndDate())));
         //Return 201 if saved successfully.
         result ? res.status(HttpStatus.CREATED).send() : res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
+  }
+
+  // Helper method to convert dates.
+  convertToDate(date: string): Date {
+    // First split the date.
+    let dateSplit = date.split("-");
+    return new Date(parseInt(dateSplit[2]), parseInt(dateSplit[1])-1, parseInt(dateSplit[0]));
   }
 
   @Delete('/')

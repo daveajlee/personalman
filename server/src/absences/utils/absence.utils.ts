@@ -103,7 +103,7 @@ export class AbsenceUtils {
      * @return a <code>List</code> of <code>Absence</code> objects.
      */
     static generateAbsences (user: User, startDate: Date, endDate: Date, category: AbsenceCategory | null ): Absence[] {
-        let workingDays: string[] = user.getWorkingDays();
+        let workingDays: string[] = user["workingDays"];
         let absences: Absence[] = [];
         let currentDate: Date = startDate;
         //Start with start date and run until end date.
@@ -111,20 +111,38 @@ export class AbsenceUtils {
             //Check if it is a free day.
             let isFreeDay = true;
             workingDays.forEach((workingDay) => {
-                if (parseInt(workingDay) == currentDate.getDay()) {
+                if (this.getDayOfWeekNumber(workingDay) == currentDate.getDay()) {
                     isFreeDay = false;
                 }
             })
             //If it is not a free day then add the absence.
             if (!isFreeDay) {
-                absences.push(new Absence(category?.valueOf() != undefined ? category?.valueOf() : "", user.getCompany(), user.getUsername(), currentDate.toDateString(), currentDate.toDateString()));
+                absences.push(new Absence(category?.valueOf() != undefined ? category?.valueOf() : "", user["company"], user["userName"], currentDate.toDateString(), currentDate.toDateString()));
             }
 
             //Regardless we need to increase currentDate.
             currentDate.setDate(currentDate.getDate() + 1);
         }
-
         return absences;
+    }
+
+    static getDayOfWeekNumber(day: string) {
+        switch ( day ) {
+            case 'Sunday':
+                return 0;
+            case 'Monday':
+                return 1;
+            case 'Tuesday':
+                return 2;
+            case 'Wednesday':
+                return 3;
+            case 'Thursday':
+                return 4;
+            case 'Friday':
+                return 5;
+            default:
+                return 6;
+        }
     }
 
     /**
