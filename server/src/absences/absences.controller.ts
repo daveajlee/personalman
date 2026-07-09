@@ -150,14 +150,14 @@ export class AbsencesController {
     required: false,
   })
   @ApiResponse({ status: 200, description: 'Successfully deleted absences' })
-  delete(
-    @Param('company') company: string,
-    @Param('startDate') startDate: string,
-    @Param('endDate') endDate: string,
-    @Param('token') token: string,
+  async delete(
+    @Query('company') company: string,
+    @Query('startDate') startDate: string,
+    @Query('endDate') endDate: string,
+    @Query('token') token: string,
     @Res() res: Response,
     @Query('username') username?: string,
-  ): void {
+  ): Promise<void> {
     //Verify request was valid and authenticated.
         var status: HttpStatus | null = this.validateAndAuthenticateRequest(startDate, endDate, token);
         if ( status != null ) {
@@ -165,7 +165,7 @@ export class AbsencesController {
         }
         //Now try and delete absences.
         if ( username != null ) {
-            this.absenceService.delete(company, username, new Date(startDate), new Date(endDate));
+            await this.absenceService.delete(company, username, this.convertToDate(startDate), this.convertToDate(endDate));
         }
         //Return 200 if deleted successfully or nothing to delete.
         res.status(HttpStatus.OK).send();

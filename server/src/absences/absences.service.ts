@@ -152,10 +152,11 @@ export class AbsencesService {
      */
     public async delete ( company: string, username: string, startDate: Date,
                          endDate: Date ): Promise<void> {
+        
         var absencesToDelete: Absence[] = await this.findAbsences(company, username, startDate, endDate);
-        absencesToDelete.forEach((absence) => {
-            this.absenceModel.deleteOne(absence);
-        });
+        for ( var i = 0; i < absencesToDelete.length; i++ ) {
+            await this.absenceModel.deleteOne(absencesToDelete[i]);
+        }
     }
 
     /**
