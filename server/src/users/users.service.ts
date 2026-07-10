@@ -94,23 +94,23 @@ export class UsersService {
      * @param reason a <code>String</code> with a comment why the user is leaving
      * @return a <code>int</code> containing the number of days of annual leave the user may use this year.
      */
-    public deactivate (user: User, leavingDate: Date, resigned: boolean, reason: string) : number {
+    public async deactivate (user: any, leavingDate: Date, resigned: boolean, reason: string) : Promise<number> {
         //Set end date for this user as their leaving date.
-        user.setEndDate(leavingDate);
+        user["endDate"] = leavingDate;
+        //Deactivate user account.
+        user["accountStatus"] = "DEACTIVATED";
         //Add a note to their profile with reason for leaving or being sacked.
         if ( resigned ) {
-            user.addUserHistoryEntry(leavingDate, UserHistoryReason.RESIGNED, reason);
+            this.addUserHistoryEntry(user, leavingDate, "Resigned", reason);
         } else {
-            user.addUserHistoryEntry(leavingDate, UserHistoryReason.SACKED, reason);
+            this.addUserHistoryEntry(user, leavingDate, "Sacked", reason);
         }
-        //Deactivate user account.
-        user.setAccountStatus(UserAccountStatus.DEACTIVATED);
         //Calculate remaining annual leave.
         var remainingAnnualLeave: number = 0;
         //Calculate number of days that user worked this year.
-        var numWorkingDays: number = (new Date(leavingDate.getFullYear(), 0, 0).getTime() - leavingDate.getTime()) / 86400000; 
+        var numWorkingDays: number = (leavingDate.getTime() - (new Date(leavingDate.getFullYear(), 0, 1)).getTime()) / 86400000; 
         //1. Divide the user's annual leave by 365 days and then multiply by the number of working days - rounding up as necessary.
-        remainingAnnualLeave = Math.ceil(( user.getLeaveEntitlementPerYear() / 365) * numWorkingDays);
+        remainingAnnualLeave = Math.ceil(( user["leaveEntitlementPerYear"] / 365) * numWorkingDays);
         //Return the annual leave entitlement in this year.
         return remainingAnnualLeave;
     }

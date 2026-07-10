@@ -296,26 +296,22 @@ export class UserController {
   @ApiOperation({ summary: 'Deactivate user', description: 'Deactivate a user from the system' })
   @ApiResponse({ status: 200, description: 'Successfully deactivated user' })
   @ApiResponse({ status: 204, description: 'Successful but no user found' })
-  async deactivate(@Body() deactivateUserRequest: DeactivateUserRequest, @Res() res: Response): Promise<DeactivateUserResponse | null> {
+  async deactivate(@Body(new ValidationPipe({transform: true})) deactivateUserRequest: DeactivateUserRequest, @Res() res: Response): Promise<void> {
     //Check valid request including authentication
-        var status: Response = this.validateAndAuthenticateRequest(deactivateUserRequest.getCompany(), deactivateUserRequest.getUsername(), deactivateUserRequest.getToken(), res);
-        //If the status is not null then produce response and return.
-        if ( status != null ) {
-            res.send();
-        }
-        //Now retrieve the user based on the username.
-        var user: User | null = await this.userService.findByCompanyAndUserName(deactivateUserRequest.getCompany(), deactivateUserRequest.getUsername());
-        //If user is null then return 204.
-        if ( user == null ) {
-            res.status(HttpStatus.NO_CONTENT).send();
-            return null;
-        } else {
-            //Now deactivate the user based on the username and return the result.
-            res.status(HttpStatus.OK).send();
-            return new DeactivateUserResponse(this.userService.deactivate(user, new Date(deactivateUserRequest.getLeavingDate()),
-                        deactivateUserRequest.isResigned(), deactivateUserRequest.getReason()));
-        }
-        
+    if ( deactivateUserRequest.getToken() == null || !this.userService.checkAuthToken(deactivateUserRequest.getToken()) ) {
+        res.status(HttpStatus.FORBIDDEN).send();
+    } else {
+            //Now retrieve the user based on the username.
+            var user: User | null = await this.userService.findByCompanyAndUserName(deactivateUserRequest.getCompany(), deactivateUserRequest.getUsername());
+            //If user is null then return 204.
+            if ( user == null ) {
+                res.status(HttpStatus.NO_CONTENT).send();
+            } else {
+                //Now deactivate the user based on the username and return the result.
+                res.status(HttpStatus.OK).json(new DeactivateUserResponse(await this.userService.deactivate(user, this.convertToDate(deactivateUserRequest.getLeavingDate()),
+                        deactivateUserRequest.isResigned(), deactivateUserRequest.getReason())));
+            }
+    }  
   }
 
   @Get('/getUser')
