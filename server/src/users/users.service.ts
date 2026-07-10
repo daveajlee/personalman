@@ -123,8 +123,8 @@ export class UsersService {
      * @return a <code>boolean</code> which is true iff the user has been updated successfully.
      */
     public updateSalaryInformation (user: User, hourlyWage: number, contractedHoursPerWeek: number ): boolean {
-        user.setHourlyWage(hourlyWage);
-        user.setContractedHoursPerWeek(contractedHoursPerWeek);
+        user["hourlyWage"] = hourlyWage;
+        user["contractedHoursPerWeek"] = contractedHoursPerWeek;
         const createdUser = new this.userModel(user);
         return createdUser.save() != null;
     }
@@ -255,9 +255,9 @@ export class UsersService {
      * @return a <code>boolean</code> which is true iff the password could be reset successfully.
      */
     public async resetUserPassword ( company: string, username: string, newPassword: string ): Promise<boolean> {
-        var user: User | null = await this.userModel.findOne({ company, username }).exec();
+        var user: User | null = await this.findByCompanyAndUserName(company, username);
         if ( user != null ) {
-            user.setPassword(newPassword);
+            user["password"] = newPassword;
             const createdUser = new this.userModel(user);
             return createdUser.save() != null;
         }

@@ -220,13 +220,11 @@ export class UserController {
   @ApiOperation({ summary: 'Update salary information', description: "Update salary information for a particular user." })
   @ApiResponse({ status: 200, description: 'Successfully updated salary information'})
   @ApiResponse({ status: 204, description: 'No user found'})
-  async updateSalary(@Body() updateSalaryRequest: UpdateSalaryRequest, @Res() res: Response): Promise<void> {
+  async updateSalary(@Body(new ValidationPipe({transform: true})) updateSalaryRequest: UpdateSalaryRequest, @Res() res: Response): Promise<void> {
     //Check valid request including authentication
-        var status: Response = this.validateAndAuthenticateRequest(updateSalaryRequest.getCompany(), updateSalaryRequest.getUsername(), updateSalaryRequest.getToken(), res);
-        //If the status is not null then produce response and return.
-        if ( status != null ) {
-            res.send();
-        }
+    if ( updateSalaryRequest.getToken() == null || !this.userService.checkAuthToken(updateSalaryRequest.getToken()) ) {
+        res.status(HttpStatus.FORBIDDEN).send();
+    } else {
         //Now retrieve the user based on the username.
         var user: User | null = await this.userService.findByCompanyAndUserName(updateSalaryRequest.getCompany(), updateSalaryRequest.getUsername());
         //If user is null then return 204.
@@ -237,12 +235,13 @@ export class UserController {
             this.userService.updateSalaryInformation(user, updateSalaryRequest.getHourlyWage(), updateSalaryRequest.getContractedHoursPerWeek() ) ?
                 res.status(HttpStatus.OK).send() : res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
         }
+    }
   }
 
   @Patch('/reset')
   @ApiOperation({ summary: 'Reset user', description: 'Reset password for a user' })
   @ApiResponse({ status: 200, description: 'Successfully processed reset user request'})
-  async resetUser(@Body() resetUserRequest: ResetUserRequest, @Res() res: Response): Promise<void> {
+  async resetUser(@Body(new ValidationPipe({transform: true})) resetUserRequest: ResetUserRequest, @Res() res: Response): Promise<void> {
     //Verify that user is logged in.
         if ( resetUserRequest.getToken() == null || !this.userService.checkAuthToken(resetUserRequest.getToken()) ) {
             res.status(HttpStatus.FORBIDDEN).send();
