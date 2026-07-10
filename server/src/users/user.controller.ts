@@ -255,41 +255,39 @@ export class UserController {
   @Patch('/password')
   @ApiOperation({ summary: 'Change Password', description: 'Change password for a user' })
   @ApiResponse({ status: 200, description: 'Successfully processed change password request'})
-  async changePassword(@Body() changePasswordRequest: ChangePasswordRequest, @Res() res: Response): Promise<void> {
+  async changePassword(@Body(new ValidationPipe({transform: true})) changePasswordRequest: ChangePasswordRequest, @Res() res: Response): Promise<void> {
     //Check valid request including authentication
-        var status: Response = this.validateAndAuthenticateRequest(changePasswordRequest.getCompany(), changePasswordRequest.getUsername(), changePasswordRequest.getToken(), res);
-        //If the status is not null then produce response and return.
-        if ( status != null ) {
-            res.send();
-        }
+    if ( changePasswordRequest.getToken() == null || !this.userService.checkAuthToken(changePasswordRequest.getToken()) ) {
+        res.status(HttpStatus.FORBIDDEN).send();
+    } else {
         var result: boolean = await this.userService.changePassword(changePasswordRequest.getCompany(), changePasswordRequest.getUsername(),
                 changePasswordRequest.getCurrentPassword(), changePasswordRequest.getNewPassword());
         //If result is true, then return 200 otherwise return 404 to indicate user not found.
         result ? res.status(HttpStatus.OK).send() : res.status(HttpStatus.NOT_FOUND).send();
+    }
   }
 
   @Patch('/history')
   @ApiOperation({ summary: 'Add a new history entry', description: 'Add a new history entry for a particular user.' })
   @ApiResponse({ status: 200, description: 'Successfully added history entry'})
   @ApiResponse({ status: 204, description: 'No user found'})
-  async addHistoryEntry(@Body() addHistoryRequest: AddHistoryRequest, @Res() res: Response): Promise<void> {
+  async addHistoryEntry(@Body(new ValidationPipe({transform: true})) addHistoryRequest: AddHistoryRequest, @Res() res: Response): Promise<void> {
     //Check valid request including authentication
-        var status: Response = this.validateAndAuthenticateRequest(addHistoryRequest.getCompany(), addHistoryRequest.getUsername(), addHistoryRequest.getToken(), res);
-        //If the status is not null then produce response and return.
-        if ( status != null ) {
-            res.send();
-        }
+    if ( addHistoryRequest.getToken() == null || !this.userService.checkAuthToken(addHistoryRequest.getToken()) ) {
+        res.status(HttpStatus.FORBIDDEN).send();
+    } else {
         //Now retrieve the user based on the username.
-        var user: User | null = await this.userService.findByCompanyAndUserName(addHistoryRequest.getCompany(), addHistoryRequest.getUsername());
+        var user: any = await this.userService.findByCompanyAndUserName(addHistoryRequest.getCompany(), addHistoryRequest.getUsername());
         //If user is null then return 204.
         if ( user == null ) {
             res.status(HttpStatus.NO_CONTENT).send();
         } else {
             //Now add training course and return 200 or 500 depending on DB success.
-            this.userService.addUserHistoryEntry(user, new Date(addHistoryRequest.getDate()),
+            this.userService.addUserHistoryEntry(user, this.convertToDate(addHistoryRequest.getDate()),
                 addHistoryRequest.getReason(), addHistoryRequest.getComment()) ?
                 res.status(HttpStatus.OK).send() : res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
         }
+    }
   }
 
   @Patch('/deactivate')
