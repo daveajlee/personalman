@@ -1,6 +1,7 @@
 import { Body, Controller, Get, HttpStatus, Inject, Param, Query, Post, Res, ValidationPipe } from '@nestjs/common';
 import { ApiOperation, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
 import { PaidUserRequest } from './requests/paiduser.request';
+import { PayUserResponse } from './responses/payuser.response';
 import { PayUsersResponse } from './responses/payusers.response';
 import { UsersResponse } from './responses/users.response';
 import { UserResponse } from './responses/user.response';
@@ -60,7 +61,7 @@ export class UsersController {
     type: PayUsersResponse,
   })
   @ApiResponse({ status: 204, description: 'Successful but no users found'})
-  async payUsers(@Query('company') company: string, @Query('token') token: string, @Query('startDate') startDate: string, @Query('endDate') endDate: string, @Res() res: Response): Promise<PayUsersResponse> {
+  async payUsers(@Query('company') company: string, @Query('token') token: string, @Query('startDate') startDate: string, @Query('endDate') endDate: string, @Res() res: Response): Promise<void> {
     //Verify that user is logged in.
         if ( token == null || !this.userService.checkAuthToken(token) ) {
             res.status(HttpStatus.FORBIDDEN).send();
@@ -77,26 +78,26 @@ export class UsersController {
         }
         //Now go through each user if they have worked during the date range and then calculate pay.
         var totalSum: number = 0; 
-        var employeePayTable = new Map<string, number>();
+        var employeePayTable = new Array<PayUserResponse>();
         users.forEach((user) => {
             if ( user != null ) {
                 var sumToBePaid: number = 0;
                 while ( startDate != null && endDate != null && (startDate <= endDate) ) {
                     if ( (this.userService.getHoursForDate(user, startDate) != null )) {
-                        sumToBePaid += (this.userService.getHoursForDate(user, startDate) * user.getHourlyWage());
+                        sumToBePaid += (this.userService.getHoursForDate(user, startDate) * user["hourlyWage"]);
                     }
                     var startDateObj = this.convertToDate(startDate);
                     startDateObj.setDate(startDateObj.getDate() + 1);
-                    startDate = startDateObj.getDate() + "-" + (startDateObj.getMonth()+1) + "-" + startDateObj.getFullYear();
+                    startDate = this.addZeroPrefix(startDateObj.getDate()) + "-" + this.addZeroPrefix((startDateObj.getMonth()+1)) + "-" + startDateObj.getFullYear();
                 }
-                employeePayTable.set(user.getUsername(), sumToBePaid);
+                employeePayTable.push(new PayUserResponse(user["userName"], sumToBePaid));
                 totalSum += sumToBePaid;
             }
             
         });
+        let payUsersResponse = new PayUsersResponse(employeePayTable, totalSum);
         //Return response.
-        res.status(HttpStatus.OK).send();
-        return new PayUsersResponse(employeePayTable, totalSum);
+        res.status(HttpStatus.OK).json(payUsersResponse);
   }
 
   // Helper method to convert dates.
@@ -105,6 +106,14 @@ export class UsersController {
     let dateSplit = date.split("-");
     return new Date(parseInt(dateSplit[2]), parseInt(dateSplit[1])-1, parseInt(dateSplit[0]));
   }
+
+  // Helper method to add zero prefix if required.
+    addZeroPrefix(checkNumber: number): string {
+        if ( checkNumber < 10 ) {
+            return "0" + checkNumber;
+        }
+        return "" + checkNumber;
+    }
 
   @Get('/')
   @ApiOperation({ summary: 'Find all users for a company', description:'Find all users for a company to the system.' })
