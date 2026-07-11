@@ -10,15 +10,12 @@ const Api = () => (
                     <Card.Img variant="top" className="img-responsive w-25 rounded mx-auto d-block mt-3" src={apiImage} />
                     <Card.Title as="h3" className="mt-5 text-center">API</Card.Title>
                     <Card.Body className="text-center mb-5">The current API of PersonalMan can be accessed
-                        by running the PersonalMan server and then the following URL: <br/><br/><span style={{fontWeight: "bold"}}>http://server:port/swagger-ui/index.html</span> <br/><br/>If you would like to test the API or test a
+                        by running the PersonalMan server and then the following URL: <br/><br/><span style={{fontWeight: "bold"}}>http://your-personalman-server:your-port/swagger-ui</span> <br/><br/>If you would like to test the API or test a
                     client you have built for the API then you need to download PersonalMan Server from the Download
                     page.</Card.Body>
                 </Card>
             </Col>
         </Row>
-        {/*<Row>
-            <SwaggerUI url="swagger.json" />
-        </Row>*/}
     </Container>
 );
 

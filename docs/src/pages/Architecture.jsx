@@ -48,8 +48,8 @@ const Architecture = () => (
                         <Accordion.Body>
                             Whilst not an absolute requirement for a client server architecture, load balancing and
                             service registries is an important topic for this architecture pattern. PersonalMan
-                            integrates Eureka per default but other load balancer systems can also be used if an
-                            organisation needs to run multiple PersonalMan instances using an alternative technology.
+                            can use Eureka or any other load balancer systems if an
+                            organisation needs to run multiple PersonalMan instances.
                         </Accordion.Body>
                     </Accordion.Item>
                     <Accordion.Item eventKey="2">
@@ -59,7 +59,7 @@ const Architecture = () => (
                             The server is responsible for implementing the feature set and responding to all of the
                             requests that are sent by any client. The server is stateless and implements a REST API.
                             This ensures a simple and easy-to-use API which clients can then implement. The Server
-                            component is currently built in Java using Spring Boot. The server component can optionally
+                            component is currently built using the NestJS framework. The server component can optionally
                             also be deployed via Docker container(s).
                         </Accordion.Body>
                     </Accordion.Item>

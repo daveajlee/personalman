@@ -9,22 +9,22 @@ const Download = () => (
             </Col>
         </Row>
         <Row className="mt-5">
-            <Col xs={12} sm={12} md={6} lg={4}>
+            <Col xs={12} sm={12} md={6} lg={6}>
                 <Card className="text-center nav-card">
                     <Card.Body>
                         <Card.Title>Server</Card.Title>
                         <Card.Text>
                             A running server instance is required before any client of PersonalMan can be used. This
-                            server can be run on any computer which supports Java 11 or above. It can be
-                             manually started via the supplied JAR file or the supplied Docker image.
+                            server can be run on any computer which has Node.JS installed. It can be
+                             manually started via the supplied Zip file. A docker image will be provided in the near future.
                              <br className="d-none d-lg-block"/><br className="d-none d-lg-block"/>
                         </Card.Text>
-                        <Button variant="primary" href="https://github.com/daveajlee/personalman/packages/119518">JAR</Button>
-                        <Button variant="primary" className="ms-3" href="https://hub.docker.com/r/daveajlee/personalman">Docker</Button>
+                        <Button variant="primary" href="">Download Server</Button>
+                        <Button variant="primary" className="ms-3" disabled>Docker (Coming Soon)</Button>
                     </Card.Body>
                 </Card>
             </Col>
-            <Col xs={12} sm={12} md={6} lg={4}>
+            <Col xs={12} sm={12} md={6} lg={6}>
                 <Card className="text-center nav-card">
                     <Card.Body>
                         <Card.Title>Desktop Client</Card.Title>
@@ -36,20 +36,6 @@ const Download = () => (
                         </Card.Text>
                         <Button variant="primary"
                                 href="https://github.com/daveajlee/personalman/releases">Download Client</Button>
-                    </Card.Body>
-                </Card>
-            </Col>
-            <Col xs={12} sm={12} md={6} lg={4}>
-                <Card className="text-center nav-card">
-                    <Card.Body>
-                        <Card.Title>Java API Implementation</Card.Title>
-                        <Card.Text>
-                            It is possible to write a separate client for PersonalMan by implementing the API described
-                            on the API page. A Java Implementation of this API is provided via Maven which can then
-                            be used as a dependency in other Java projects.
-                            <br className="d-none d-lg-block"/><br className="d-none d-lg-block"/>
-                        </Card.Text>
-                        <Button variant="primary" href="https://search.maven.org/artifact/de.davelee.personalman/personalman-java-api">Maven Dependency</Button>
                     </Card.Body>
                 </Card>
             </Col>
