@@ -19,7 +19,7 @@ const Download = () => (
                              manually started via the supplied Zip file. A docker image will be provided in the near future.
                              <br className="d-none d-lg-block"/><br className="d-none d-lg-block"/>
                         </Card.Text>
-                        <Button variant="primary" href="">Download Server</Button>
+                        <Button variant="primary" href="https://github.com/daveajlee/personalman/raw/refs/heads/main/server/release/version-001.zip">Download Server</Button>
                         <Button variant="primary" className="ms-3" disabled>Docker (Coming Soon)</Button>
                     </Card.Body>
                 </Card>
