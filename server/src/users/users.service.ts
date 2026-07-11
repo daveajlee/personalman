@@ -190,12 +190,14 @@ export class UsersService {
      * @return a <code>int</code> with the number of hours.
      */
     public getHoursForDate ( user: User | null, date: string ): number {
+        let hours: number = 0;
         if ( user != null ) {
-            let hours: number = user.getHoursForDate(date);
-            return hours;
-        } else {
-            return 0;
+            //If the date is null then return 0.
+            if ( user["timesheet"].get(date) !== undefined ) {
+                hours = user["timesheet"].get(date) as number;
+            }
         }
+        return hours;
     }
 
     /**
@@ -210,7 +212,7 @@ export class UsersService {
         var date: Date = this.convertToDate(startDate);
         var endDateObj: Date = this.convertToDate(endDate);
         while ( date.getTime() <= endDateObj.getTime() ) {
-            hours += this.getHoursForDate(user, date.getDate() + "-" + (date.getMonth()+1) + "-" + date.getFullYear());
+            hours += this.getHoursForDate(user, this.addZeroPrefix(date.getDate()) + "-" + this.addZeroPrefix((date.getMonth()+1)) + "-" + date.getFullYear());
             date = new Date(date.getTime() + 86400000);
         }
         return hours;
@@ -221,6 +223,14 @@ export class UsersService {
         // First split the date.
         let dateSplit = date.split("-");
         return new Date(parseInt(dateSplit[2]), parseInt(dateSplit[1])-1, parseInt(dateSplit[0]));
+    }
+
+    // Helper method to add zero prefix if required.
+    addZeroPrefix(checkNumber: number): string {
+        if ( checkNumber < 10 ) {
+            return "0" + checkNumber;
+        }
+        return "" + checkNumber;
     }
 
     /**

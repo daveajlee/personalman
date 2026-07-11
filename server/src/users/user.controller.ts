@@ -166,13 +166,11 @@ export class UserController {
       type: Number,
   })
   @ApiResponse({ status: 204, description: 'No user found'})
-  async retrieveTimesheet(@Param('company') company: string, @Param('username') username: string, @Param('token') token: string, @Param('startDate') startDate: string, @Param('endDate') endDate: string, @Res() res: Response): Promise<number | undefined> {
+  async retrieveTimesheet(@Query('company') company: string, @Query('username') username: string, @Query('token') token: string, @Query('startDate') startDate: string, @Query('endDate') endDate: string, @Res() res: Response): Promise<void> {
     //Check valid request including authentication
-        var status: Response = this.validateAndAuthenticateRequest(company, username, token, res);
-        //If the status is not null then produce response and return.
-        if ( status != null ) {
-            res.send();
-        }
+    if ( token == null || !this.userService.checkAuthToken(token) ) {
+        res.status(HttpStatus.FORBIDDEN).send();
+    } else {
         //Now retrieve the user based on the username.
         var user: User | null = await this.userService.findByCompanyAndUserName(company, username);
         //If user is null then return 204.
@@ -181,13 +179,12 @@ export class UserController {
         } else {
             //Perform either date range or single date.
             if ( startDate != null && endDate != null && startDate == endDate ) {
-                res.status(HttpStatus.OK).send();
-                return this.userService.getHoursForDate(user, startDate);
+                res.status(HttpStatus.OK).json(this.userService.getHoursForDate(user, startDate));
             } else {
-                res.status(HttpStatus.OK).send();
-                return this.userService.getHoursForDateRange(user, startDate, endDate);
+                res.status(HttpStatus.OK).json(this.userService.getHoursForDateRange(user, startDate, endDate));
             }
         }
+    }
   }
 
   @Patch('/timesheet')
