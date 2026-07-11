@@ -179,16 +179,13 @@ export class UserController {
         if ( user == null ) {
             res.status(HttpStatus.NO_CONTENT).send();
         } else {
-            //Convert dates to LocalDates.
-            var localStartDate: Date = new Date(startDate);
-            var localEndDate: Date = new Date(endDate);
             //Perform either date range or single date.
-            if ( localStartDate != null && localEndDate != null && localStartDate == localEndDate ) {
+            if ( startDate != null && endDate != null && startDate == endDate ) {
                 res.status(HttpStatus.OK).send();
-                return this.userService.getHoursForDate(user, localStartDate);
+                return this.userService.getHoursForDate(user, startDate);
             } else {
                 res.status(HttpStatus.OK).send();
-                return this.userService.getHoursForDateRange(user, localStartDate, localEndDate);
+                return this.userService.getHoursForDateRange(user, startDate, endDate);
             }
         }
   }
@@ -197,13 +194,11 @@ export class UserController {
   @ApiOperation({ summary: "Add a number of hours to the user's timesheet", description: "Add a number of hours to a specified date for a specified user." })
   @ApiResponse({ status: 200, description: 'Successfully added hours'})
   @ApiResponse({ status: 204, description: 'No user found'})
-  async addHours(@Body() addHoursRequest: AddTimesheetHoursRequest, @Res() res: Response): Promise<void> {
+  async addHours(@Body(new ValidationPipe({transform: true})) addHoursRequest: AddTimesheetHoursRequest, @Res() res: Response): Promise<void> {
     //Check valid request including authentication
-        var status: Response = this.validateAndAuthenticateRequest(addHoursRequest.getCompany(), addHoursRequest.getUsername(), addHoursRequest.getToken(), res);
-        //If the status is not null then produce response and return.
-        if ( status != null ) {
-            res.send()
-        }
+    if ( addHoursRequest.getToken() == null || !this.userService.checkAuthToken(addHoursRequest.getToken()) ) {
+        res.status(HttpStatus.FORBIDDEN).send();
+    } else {
         //Now retrieve the user based on the username.
         var user: User | null = await this.userService.findByCompanyAndUserName(addHoursRequest.getCompany(), addHoursRequest.getUsername());
         //If user is null then return 204.
@@ -211,9 +206,10 @@ export class UserController {
             res.status(HttpStatus.NO_CONTENT).send();
         } else {
         //Now add the hours and return 200 or 500 depending on DB success.
-            this.userService.addHoursForDate(user, addHoursRequest.getHours(), new Date(addHoursRequest.getDate())) ?
+            this.userService.addHoursForDate(user, addHoursRequest.getHours(), addHoursRequest.getDate()) ?
                 res.status(HttpStatus.OK).send() : res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
         }
+    }
   }
 
   @Patch('/salary')

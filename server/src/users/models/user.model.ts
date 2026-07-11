@@ -87,7 +87,7 @@ export class User {
     /**
      * The number of hours that a user has worked on a particular day.
      */
-    private timesheet: Map<Date, number>;
+    private timesheet: Map<string, number>;
 
     /**
      * A log of entries representing the history of this user whilst working for this company.
@@ -126,9 +126,9 @@ export class User {
     /**
      * Add a number of hours for a particular day to the timesheet.
      * @param hours a <code>int</code> with the number of hours to add.
-     * @param date a <code>LocalDate</code> object containing the day to add the hours to.
+     * @param date a <code>string</code> object containing the day to add the hours to.
      */
-    public addHoursForDate ( hours: number, date: Date ) : void {
+    public addHoursForDate ( hours: number, date: string ) : void {
         //If the date already exists then add the hours to the hours already there.
         if ( this.timesheet.get(date) != null ) {
             this.timesheet.set(date, this.timesheet.get(date)! + hours);
@@ -140,10 +140,10 @@ export class User {
 
     /**
      * Retrieve the number of hours that the user has worked on a particular day.
-     * @param date a <code>LocalDate</code> object containing the day to retrieve hours for.
+     * @param date a <code>string</code> object containing the day to retrieve hours for.
      * @return a <code>int</code> with the number of hours.
      */
-    public getHoursForDate ( date: Date ) : number {
+    public getHoursForDate ( date: string ) : number {
         //If the date is null then return 0.
         if ( this.timesheet.get(date) !== undefined ) {
             return this.timesheet.get(date) as number;
@@ -203,17 +203,17 @@ export class User {
 
     /**
      * Retrieve the timesheet for this user.
-     * @return a <code>Map</code> of <code>Date</code> to <code>int</code> representing the timesheet for this user.
+     * @return a <code>Map</code> of <code>string</code> to <code>number</code> representing the timesheet for this user.
      */
-    public getTimesheet () : Map<Date, number> {
+    public getTimesheet () : Map<string, number> {
         return this.timesheet;
     }
     
     /**
      * Set the timesheet for this user.
-     * @param timesheet a <code>Map</code> of <code>Date</code> to <code>int</code> representing the timesheet for this user.
+     * @param timesheet a <code>Map</code> of <code>string</code> to <code>number</code> representing the timesheet for this user.
      */
-    public setTimesheet ( timesheet: Map<Date, number> ) : void {
+    public setTimesheet ( timesheet: Map<string, number> ) : void {
         this.timesheet = timesheet;
     }
 

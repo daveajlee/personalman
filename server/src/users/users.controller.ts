@@ -81,13 +81,13 @@ export class UsersController {
         users.forEach((user) => {
             if ( user != null ) {
                 var sumToBePaid: number = 0;
-                var startDateObj = new Date(startDate);
-                var endDateObj = new Date(endDate);
-                while ( startDateObj != null && endDateObj != null && (startDateObj <= endDateObj) ) {
-                    if ( (this.userService.getHoursForDate(user, startDateObj) != null )) {
-                        sumToBePaid += (this.userService.getHoursForDate(user, startDateObj) * user.getHourlyWage());
+                while ( startDate != null && endDate != null && (startDate <= endDate) ) {
+                    if ( (this.userService.getHoursForDate(user, startDate) != null )) {
+                        sumToBePaid += (this.userService.getHoursForDate(user, startDate) * user.getHourlyWage());
                     }
+                    var startDateObj = this.convertToDate(startDate);
                     startDateObj.setDate(startDateObj.getDate() + 1);
+                    startDate = startDateObj.getDate() + "-" + (startDateObj.getMonth()+1) + "-" + startDateObj.getFullYear();
                 }
                 employeePayTable.set(user.getUsername(), sumToBePaid);
                 totalSum += sumToBePaid;
@@ -97,6 +97,13 @@ export class UsersController {
         //Return response.
         res.status(HttpStatus.OK).send();
         return new PayUsersResponse(employeePayTable, totalSum);
+  }
+
+  // Helper method to convert dates.
+  convertToDate(date: string): Date {
+    // First split the date.
+    let dateSplit = date.split("-");
+    return new Date(parseInt(dateSplit[2]), parseInt(dateSplit[1])-1, parseInt(dateSplit[0]));
   }
 
   @Get('/')

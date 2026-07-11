@@ -149,11 +149,17 @@ export class UsersService {
      * @param date a <code>LocalDate</code> object containing the day to add the hours to.
      * @return a <code>boolean</code> which is true iff the user has been updated successfully.
      */
-    public addHoursForDate ( user: User, hours: number, date: Date ): boolean {
-        if ( user.getTimesheet() == null ) {
-            user.setTimesheet(new Map<Date, number>());
+    public addHoursForDate ( user: User, hours: number, date: string ): boolean {
+        if ( user["timesheet"] == null ) {
+            user["timesheet"] = new Map<string, number>();
         }
-        user.addHoursForDate(hours, date);
+        //If the date already exists then add the hours to the hours already there.
+        if ( user["timesheet"].get(date) != null ) {
+            user["timesheet"].set(date, user["timesheet"].get(date)! + hours);
+        } else {
+            //If no hours are present then just add it as first entry.
+            user["timesheet"].set(date, hours);
+        }
         const createdUser = new this.userModel(user);
         return createdUser.save() != null;
     }
@@ -180,10 +186,10 @@ export class UsersService {
     /**
      * Retrieve the number of hours for a particular date with the specified user object,
      * @param user a <code>User</code> object to get the hours for.
-     * @param date a <code>LocalDate</code> object containing the day to get the hours for.
+     * @param date a <code>string</code> object containing the day to get the hours for.
      * @return a <code>int</code> with the number of hours.
      */
-    public getHoursForDate ( user: User | null, date: Date ): number {
+    public getHoursForDate ( user: User | null, date: string ): number {
         if ( user != null ) {
             let hours: number = user.getHoursForDate(date);
             return hours;
@@ -195,18 +201,26 @@ export class UsersService {
     /**
      * Retrieve the number of hours for a date range with the specified user object,
      * @param user a <code>User</code> object to get the hours for.
-     * @param startDate a <code>LocalDate</code> object containing the first day to get the hours for.
-     * @param endDate a <code>LocalDate</code> object containing the last day to get the hours for.
+     * @param startDate a <code>string</code> object containing the first day to get the hours for.
+     * @param endDate a <code>string</code> object containing the last day to get the hours for.
      * @return a <code>int</code> with the number of hours.
      */
-    public getHoursForDateRange ( user: User, startDate: Date, endDate: Date ): number {
+    public getHoursForDateRange ( user: User, startDate: string, endDate: string ): number {
         var hours: number = 0;
-        var date: Date = startDate;
-        while ( date.getTime() <= endDate.getTime() ) {
-            hours += this.getHoursForDate(user, date);
+        var date: Date = this.convertToDate(startDate);
+        var endDateObj: Date = this.convertToDate(endDate);
+        while ( date.getTime() <= endDateObj.getTime() ) {
+            hours += this.getHoursForDate(user, date.getDate() + "-" + (date.getMonth()+1) + "-" + date.getFullYear());
             date = new Date(date.getTime() + 86400000);
         }
         return hours;
+    }
+
+    // Helper method to convert dates.
+    convertToDate(date: string): Date {
+        // First split the date.
+        let dateSplit = date.split("-");
+        return new Date(parseInt(dateSplit[2]), parseInt(dateSplit[1])-1, parseInt(dateSplit[0]));
     }
 
     /**
