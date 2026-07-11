@@ -13,23 +13,19 @@ PersonalMan is a open source employee management software for non-profit organis
 | --- | ----------- |
 | desktop | Desktop Client for PersonalMan based on Electron and React for Windows, Linux and Mac OS. |
 | docs | Current PersonalMan website with more information about the goals of the PersonalMan project. |
-| java-api | The current API of PersonalMan in the Java language. This can be used to write a Java client which talks with the Personalman server. To use these libraries you can simply define the API module as a maven dependency in your Java Client. |
 | server | This is the server application of PersonalMan with a RESTful API which any client can then implement in any programming language. |
 
 ## Server
 
 ### How to use
 
-1.  To use the server you need to specify the user specific configuration parameters in application.properties
-2.  Create an executable jar using mvn clean install.
-3.  Run the jar (for example in dev-test mode): java -Dspring.profiles.active=dev-test -jar personalman_server.jar
+1.  To use the server you need to specify the user specific configuration parameters in .env
+2.  Checkout the repository, change to the server folder and run the command: `npm run build`
+3.  Start the server by executing this command: `NODE_ENV=production node dist/main.js`
 
 ### Documentation
 
-Personalman comes with a Swagger API documentation which can be used to implement the API in a client on any programming language. The swagger user interface is available at: <http://your-personalman-server:your-port/swagger-ui.html>
-
-### Available Profiles
-*   dev-test - This profile activates the swagger API documentation. This works well for development and testing.
+Personalman comes with a Swagger API documentation which can be used to implement the API in a client on any programming language. The swagger user interface is available at: <http://your-personalman-server:your-port/swagger-ui>
 
 ## Desktop
 
