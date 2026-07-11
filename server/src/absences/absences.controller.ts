@@ -113,7 +113,7 @@ export class AbsencesController {
   @ApiResponse({ status: 201, description: 'Successfully created absence' })
   async add(@Body(new ValidationPipe({transform: true})) absenceRequest: AbsenceRequest, @Res() res: Response): Promise<void> {
     //Verify request was valid and authenticated.
-        var status: HttpStatus | null = this.validateAndAuthenticateRequest(absenceRequest.getStartDate(), absenceRequest.getEndDate(), absenceRequest.getToken());
+    var status: HttpStatus | null = this.validateAndAuthenticateRequest(absenceRequest.getStartDate(), absenceRequest.getEndDate(), absenceRequest.getToken());
         if ( status != null ) {
             res.send();
         }
@@ -159,16 +159,17 @@ export class AbsencesController {
     @Query('username') username?: string,
   ): Promise<void> {
     //Verify request was valid and authenticated.
-        var status: HttpStatus | null = this.validateAndAuthenticateRequest(startDate, endDate, token);
-        if ( status != null ) {
-            res.send();
-        }
+    var status: HttpStatus | null = this.validateAndAuthenticateRequest(startDate, endDate, token);
+    if ( status != null ) {
+        res.send();
+    } else {
         //Now try and delete absences.
         if ( username != null ) {
             await this.absenceService.delete(company, username, this.convertToDate(startDate), this.convertToDate(endDate));
         }
         //Return 200 if deleted successfully or nothing to delete.
         res.status(HttpStatus.OK).send();
+    }
   }
 
   /**

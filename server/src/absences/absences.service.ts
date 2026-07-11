@@ -58,7 +58,7 @@ export class AbsencesService {
             //Days In Lieu only bookable within same year.
             if ( new Date(absence.getStartDate()).getFullYear()!=new Date(absence.getEndDate()).getFullYear()) {
                 result = false;
-            } else {
+        } else {
                 var numDayInLieuDaysRequests: number = await this.countAbsences(absence.getCompany(), absence.getUsername(),
                         new Date(new Date(absence.getStartDate()).getFullYear(),1,1), new Date(new Date(absence.getStartDate()).getFullYear(),12,31),
                         AbsenceCategory.DAY_IN_LIEU_REQUEST);
