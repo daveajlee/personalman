@@ -1,4 +1,4 @@
-name: Build the new Desktop Client (Electron)
+name: Build the Desktop Client
 
 on:
   push:
