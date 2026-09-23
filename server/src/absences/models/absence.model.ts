@@ -3,10 +3,10 @@ export class Absence {
     private category: string;
     private company: string;
     private username: string;
-    private startDate: string;
-    private endDate: string;
+    private startDate: number;
+    private endDate: number;
 
-    constructor(category: string, company: string, username: string, startDate: string, endDate: string) {
+    constructor(category: string, company: string, username: string, startDate: number, endDate: number) {
         this.category = category;
         this.company = company;
         this.username = username;
@@ -18,11 +18,11 @@ export class Absence {
         return this.category;
     }
 
-    getStartDate(): string {
+    getStartDate(): number {
         return this.startDate;
     }
 
-    getEndDate(): string {
+    getEndDate(): number {
         return this.endDate;
     }
 

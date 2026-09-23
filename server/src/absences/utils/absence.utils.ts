@@ -16,7 +16,7 @@ export class AbsenceUtils {
      */
     static convertAbsenceRequestToAbsence(absenceRequest: AbsenceRequest, startDate: Date, endDate: Date ): Absence{
         return new Absence(absenceRequest.getCategory(), absenceRequest.getCompany(), 
-            absenceRequest.getUsername(), startDate.toDateString(), endDate.toDateString());
+            absenceRequest.getUsername(), startDate.getTime(), endDate.getTime());
     }
 
     static absenceCategoryFromString(category: string) {
@@ -51,7 +51,7 @@ export class AbsenceUtils {
         //Now convert each absence to an absence response.
         absences.forEach((absence) => {
             let absenceResponse = new AbsenceResponse("", absence["company"], absence["username"], 
-                    absence["startDate"], absence["endDate"]);
+                    new Date(absence["startDate"]).toDateString(), new Date(absence["endDate"]).toDateString());
             if ( absence["category"] != null ) {
                 absenceResponse.setCategory(absence["category"]);
             }
@@ -117,7 +117,7 @@ export class AbsenceUtils {
             })
             //If it is not a free day then add the absence.
             if (!isFreeDay) {
-                absences.push(new Absence(category?.valueOf() != undefined ? category?.valueOf() : "", user["company"], user["userName"], currentDate.toDateString(), currentDate.toDateString()));
+                absences.push(new Absence(category?.valueOf() != undefined ? category?.valueOf() : "", user["company"], user["userName"], currentDate.getTime(), currentDate.getTime()));
             }
 
             //Regardless we need to increase currentDate.
@@ -165,7 +165,7 @@ export class AbsenceUtils {
                 }
             })
             if ( isFreeDay ) {
-                absences.push(new Absence(AbsenceCategory.DAY_IN_LIEU_REQUEST, user.getCompany(), user.getUsername(), actualDate.toDateString(), actualDate.toDateString()));
+                absences.push(new Absence(AbsenceCategory.DAY_IN_LIEU_REQUEST, user.getCompany(), user.getUsername(), actualDate.getTime(), actualDate.getTime()));
             }
             actualDate.setDate(actualDate.getDate() + 1);
         }
