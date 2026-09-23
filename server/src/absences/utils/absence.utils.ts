@@ -172,4 +172,10 @@ export class AbsenceUtils {
         return absences;
     }
 
+    static convertToDate(date: string): Date {
+        // First split the date.
+        let dateSplit = date.split("-");
+        return new Date(parseInt(dateSplit[2]), parseInt(dateSplit[1])-1, parseInt(dateSplit[0]));
+    }
+
 }

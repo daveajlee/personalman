@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { UserHistoryReason } from './models/userhistoryreason.enum';
 import { UserAccountStatus } from './models/useraccountstatus.enum';
 import { UserHistoryEntry } from './models/userhistory.entry';
+import { UserUtils } from './utils/user.utils';
 
 @Injectable()
 export class UsersService {
@@ -209,20 +210,13 @@ export class UsersService {
      */
     public getHoursForDateRange ( user: User, startDate: string, endDate: string ): number {
         var hours: number = 0;
-        var date: Date = this.convertToDate(startDate);
-        var endDateObj: Date = this.convertToDate(endDate);
+        var date: Date = UserUtils.convertToDate(startDate);
+        var endDateObj: Date = UserUtils.convertToDate(endDate);
         while ( date.getTime() <= endDateObj.getTime() ) {
             hours += this.getHoursForDate(user, this.addZeroPrefix(date.getDate()) + "-" + this.addZeroPrefix((date.getMonth()+1)) + "-" + date.getFullYear());
             date = new Date(date.getTime() + 86400000);
         }
         return hours;
-    }
-
-    // Helper method to convert dates.
-    convertToDate(date: string): Date {
-        // First split the date.
-        let dateSplit = date.split("-");
-        return new Date(parseInt(dateSplit[2]), parseInt(dateSplit[1])-1, parseInt(dateSplit[0]));
     }
 
     // Helper method to add zero prefix if required.

@@ -88,15 +88,15 @@ export class AbsencesController {
             }
             //Now try and count absences.
             if ( username != null && absenceCategory != null ) {
-              var count: number = await this.absenceService.countAbsences(company, username, this.convertToDate(startDate),
-                    this.convertToDate(endDate), absenceCategory);
+              var count: number = await this.absenceService.countAbsences(company, username, AbsenceUtils.convertToDate(startDate),
+                    AbsenceUtils.convertToDate(endDate), absenceCategory);
               //Set count.
               absencesResponse.setCount(count);
             }
         } else if (username != null) {
             //Now try and find absences. Convert the absences to a list of absence responses.
-            var absenceResponses: AbsenceResponse[] = AbsenceUtils.convertAbsencesToAbsenceResponses(await this.absenceService.findAbsences(company, username,  this.convertToDate(startDate),
-                    this.convertToDate(endDate)));
+            var absenceResponses: AbsenceResponse[] = AbsenceUtils.convertAbsencesToAbsenceResponses(await this.absenceService.findAbsences(company, username, AbsenceUtils.convertToDate(startDate),
+                    AbsenceUtils.convertToDate(endDate)));
             absencesResponse.setCount(absenceResponses.length);
             absencesResponse.setAbsenceResponseList(absenceResponses);
             absencesResponse = AbsenceUtils.calculateAbsencesResponseStatistics(absencesResponse);
@@ -125,16 +125,9 @@ export class AbsencesController {
         }
         //Now convert to absence object.
         var result = await this.absenceService.save(AbsenceUtils.convertAbsenceRequestToAbsence(absenceRequest,
-                this.convertToDate(absenceRequest.getStartDate()), this.convertToDate(absenceRequest.getEndDate())));
+                AbsenceUtils.convertToDate(absenceRequest.getStartDate()), AbsenceUtils.convertToDate(absenceRequest.getEndDate())));
         //Return 201 if saved successfully.
         result ? res.status(HttpStatus.CREATED).send() : res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
-  }
-
-  // Helper method to convert dates.
-  convertToDate(date: string): Date {
-    // First split the date.
-    let dateSplit = date.split("-");
-    return new Date(parseInt(dateSplit[2]), parseInt(dateSplit[1])-1, parseInt(dateSplit[0]));
   }
 
   @Delete('/')
@@ -165,7 +158,7 @@ export class AbsencesController {
     } else {
         //Now try and delete absences.
         if ( username != null ) {
-            await this.absenceService.delete(company, username, this.convertToDate(startDate), this.convertToDate(endDate));
+            await this.absenceService.delete(company, username, AbsenceUtils.convertToDate(startDate), AbsenceUtils.convertToDate(endDate));
         }
         //Return 200 if deleted successfully or nothing to delete.
         res.status(HttpStatus.OK).send();
@@ -184,8 +177,8 @@ export class AbsencesController {
         if ( startDate === "" || endDate === "" || token === "" ) {
             return HttpStatus.BAD_REQUEST;
         }
-        var startLocalDate: Date = this.convertToDate(startDate);
-        var endLocalDate: Date = this.convertToDate(endDate);
+        var startLocalDate: Date = AbsenceUtils.convertToDate(startDate);
+        var endLocalDate: Date = AbsenceUtils.convertToDate(endDate);
         if ( startLocalDate == null || endLocalDate == null || endLocalDate < startLocalDate ) {
             return HttpStatus.BAD_REQUEST;
         }

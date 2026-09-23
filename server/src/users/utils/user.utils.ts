@@ -50,6 +50,12 @@ export class UserUtils {
         return userHistoryResponses;
     }
 
+    static convertToDate(date: string): Date {
+        // First split the date.
+        let dateSplit = date.split("-");
+        return new Date(parseInt(dateSplit[2]), parseInt(dateSplit[1])-1, parseInt(dateSplit[0]));
+    }
+
     static userHistoryReasonFromString(userHistoryReason: string) {
             switch ( userHistoryReason ) {
               case "Joined": 
