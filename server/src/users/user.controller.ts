@@ -89,19 +89,12 @@ export class UserController {
             res.status(HttpStatus.BAD_REQUEST).send();
         }
         // If the leave entitlement is 0 then set it to company default.
-        if ( userRequest.getLeaveEntitlementPerYear() <= 0 ) {
+        if ( !userRequest.getLeaveEntitlementPerYear() || userRequest.getLeaveEntitlementPerYear() <= 0 ) {
             let company: Company = await this.companyService.getCompany(userRequest.getCompany());
-            userRequest.setLeaveEntitlementPerYear(company.getDefaultAnnualLeaveInDays());
-        }
-        // Convert string to date.
-        var startDate: Date = UserUtils.convertToDate(userRequest.getStartDate());
-        var dateOfBirth: Date = UserUtils.convertToDate(userRequest.getDateOfBirth());
-        // Check dates are not null.
-        if ( startDate == null || dateOfBirth == null ) {
-            res.status(HttpStatus.BAD_REQUEST).send();
+            userRequest.setLeaveEntitlementPerYear(company["defaultAnnualLeaveInDays"]);
         }
         //Now convert to user object.
-        var user: User = UserUtils.convertUserRequestToUser(userRequest, startDate, dateOfBirth);
+        var user: User = UserUtils.convertUserRequestToUser(userRequest);
         //Return 201 if saved successfully.
         this.userService.save(user) ? res.status(HttpStatus.CREATED).send() : res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
   }

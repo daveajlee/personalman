@@ -47,12 +47,12 @@ export class User {
     /**
      * The date that the person started at the company.
      */
-    private startDate: Date;
+    private startDate: string;
 
     /**
      * The date that the person stopped working for the company.
      */
-    private endDate: Date;
+    private endDate: string;
 
     /**
      * The status of this user's account.
@@ -62,7 +62,7 @@ export class User {
     /**
      * The person's date of birth.
      */
-    private dateOfBirth: Date;
+    private dateOfBirth: string;
 
     /**
      * The role that the user has in PersonalMan for this company.
@@ -94,8 +94,8 @@ export class User {
      */
     private userHistoryEntryList: UserHistoryEntry[];
 
-    constructor(firstName: string, surname: string, leaveEntitlementPerYear: number, position: string, startDate: Date,
-        username: string, password: string, company: string, workingDays: string, role: string, dateOfBirth: Date,
+    constructor(firstName: string, surname: string, leaveEntitlementPerYear: number, position: string, startDate: string,
+        username: string, password: string, company: string, workingDays: string, role: string, dateOfBirth: string,
         accountStatus: String) {
             this.firstName = firstName;
             this.lastName = surname;
@@ -268,7 +268,7 @@ export class User {
     /**
      * Set the end date for this user.
      */
-    public setEndDate(endDate: Date) {
+    public setEndDate(endDate: string) {
         this.endDate = endDate;
     }
 

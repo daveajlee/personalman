@@ -15,10 +15,10 @@ export class UserUtils {
      * @param dateOfBirth a <code>Date</code> with the already converted date of birth.
      * @return a <code>User</code> object.
      */
-    static convertUserRequestToUser (userRequest: UserRequest, startDate: Date, dateOfBirth: Date ): User {
-        return new User(userRequest.getFirstName(), userRequest.getSurname(), userRequest.getLeaveEntitlementPerYear(),
-            userRequest.getPosition(), startDate, userRequest.getUsername(), userRequest.getPassword(), userRequest.getCompany(),
-            userRequest.getWorkingDays(), userRequest.getRole(), dateOfBirth, 'ACTIVE');
+    static convertUserRequestToUser (userRequest: UserRequest ): User {
+      return new User(userRequest.getFirstName(), userRequest.getSurname(), userRequest.getLeaveEntitlementPerYear(),
+            userRequest.getPosition(), UserUtils.formatDate(userRequest.getStartDate()), userRequest.getUsername(), userRequest.getPassword(), userRequest.getCompany(),
+            userRequest.getWorkingDays(), userRequest.getRole(), UserUtils.formatDate(userRequest.getDateOfBirth()), 'ACTIVE');
     }
 
     /**
@@ -54,6 +54,10 @@ export class UserUtils {
         // First split the date.
         let dateSplit = date.split("-");
         return new Date(parseInt(dateSplit[2]), parseInt(dateSplit[1])-1, parseInt(dateSplit[0]));
+    }
+    
+    static formatDate(date: string): string {
+      return date.indexOf("-") != -1 ? date.replaceAll("-", ".") : date;
     }
 
     static userHistoryReasonFromString(userHistoryReason: string) {

@@ -48,10 +48,11 @@ export class AbsenceUtils {
     static convertAbsencesToAbsenceResponses ( absences: Absence[] ): AbsenceResponse[] {
         //Make a list to return.
         let absenceResponses: AbsenceResponse[] = [];
+
         //Now convert each absence to an absence response.
         absences.forEach((absence) => {
-            let absenceResponse = new AbsenceResponse("", absence["company"], absence["username"], 
-                    new Date(absence["startDate"]).toDateString(), new Date(absence["endDate"]).toDateString());
+            let absenceResponse = new AbsenceResponse(absence["company"], absence["username"], 
+                    new Date(absence["startDate"]).toDateString(), new Date(absence["endDate"]).toDateString(), absence["category"]);
             if ( absence["category"] != null ) {
                 absenceResponse.setCategory(absence["category"]);
             }
@@ -176,6 +177,10 @@ export class AbsenceUtils {
         // First split the date.
         let dateSplit = date.split("-");
         return new Date(parseInt(dateSplit[2]), parseInt(dateSplit[1])-1, parseInt(dateSplit[0]));
+    }
+
+    static convertFromDate(date: Date): string {
+        return date.getDate() + "-" + date.getMonth() + "-" + date.getFullYear();
     }
 
 }

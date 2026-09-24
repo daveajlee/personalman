@@ -102,7 +102,7 @@ export class AbsencesController {
             absencesResponse = AbsenceUtils.calculateAbsencesResponseStatistics(absencesResponse);
         }
         //Return 200 and results.
-        res.status(HttpStatus.OK).json(absencesResponse);
+        res.status(HttpStatus.OK).json(absencesResponse).send();
   }
 
   @Post('/')
