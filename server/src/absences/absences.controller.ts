@@ -89,7 +89,7 @@ export class AbsencesController {
             //Now try and count absences.
             if ( username != null && absenceCategory != null ) {
               var count: number = await this.absenceService.countAbsences(company, username, AbsenceUtils.convertToDate(startDate),
-                    AbsenceUtils.convertToDate(endDate), absenceCategory);
+                    AbsenceUtils.convertToDate(endDate), AbsenceUtils.absenceCategoryFromString(absenceCategory));
               //Set count.
               absencesResponse.setCount(count);
             }
@@ -124,8 +124,7 @@ export class AbsencesController {
             res.status(HttpStatus.BAD_REQUEST).send();
         }
         //Now convert to absence object.
-        var result = await this.absenceService.save(AbsenceUtils.convertAbsenceRequestToAbsence(absenceRequest,
-                AbsenceUtils.convertToDate(absenceRequest.getStartDate()), AbsenceUtils.convertToDate(absenceRequest.getEndDate())));
+        var result = await this.absenceService.save(AbsenceUtils.convertAbsenceRequestToAbsence(absenceRequest));
         //Return 201 if saved successfully.
         result ? res.status(HttpStatus.CREATED).send() : res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
   }

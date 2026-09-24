@@ -43,10 +43,13 @@ function StatisticsModal ({setShowStatisticsModal, year, company, username, toke
         if ( username === '') {
             username = token.split("-")[0];
         }
+        console.log('Fetch Statistics!');
         fetch(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startYearDate + '&endDate=' + endYearDate + '&onlyCount=false&token=' + token)
             .then(res => res.json())
             .then(data => {
+                console.log(data);
                 const result = data;
+                console.log(result['statisticsMap']);
                 setStatisticsMap(result['statisticsMap']);
             }).catch(error => {
                 console.error(error);

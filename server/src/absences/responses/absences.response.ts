@@ -32,7 +32,7 @@ export class AbsencesResponse {
     }
 
     addToStatisticsMap(category: string, days: number) {
-        this.statisticsMap.set(category, days);
+        this.statisticsMap.set(category.toUpperCase(), days);
     }
 
 }

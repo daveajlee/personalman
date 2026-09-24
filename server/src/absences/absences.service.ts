@@ -22,7 +22,7 @@ export class AbsencesService {
         let result: boolean = true;
         //Get the employee information.
         let user: any = await this.userService.findByCompanyAndUserName(absence.getCompany(), absence.getUsername());
-        let absences: Absence[] = [];
+        /*let absences: Absence[] = [];
         //Special processing for particular types of categories.
         if ( absence.getCategory() === "Holiday" && user != null ) {
             var absenceEndDate = new Date(absence.getEndDate());
@@ -33,13 +33,6 @@ export class AbsencesService {
                         absenceEndDate, AbsenceUtils.absenceCategoryFromString(absence.getCategory())));
                 result = await this.controlAbsencesForYear ( absence.getCompany(), absence.getUsername(),
                         new Date(absence.getStartDate()).getFullYear(), AbsenceUtils.absenceCategoryFromString(absence.getCategory()), user, absences );
-                /*if ( result ) {
-                    var absences2: Absence[] = AbsenceUtils.generateAbsences(user,
-                            new Date(new Date(absence.getEndDate()).getFullYear(),1,1), new Date(absence.getEndDate()), AbsenceUtils.absenceCategoryFromString(absence.getCategory()));
-                    result = await this.controlAbsencesForYear ( absence.getCompany(), absence.getUsername(),
-                            new Date(absence.getEndDate()).getFullYear(), AbsenceUtils.absenceCategoryFromString(absence.getCategory()), user, absences2 );
-                    absences.concat(absences2);
-                }*/
             } else if ( new Date(absence.getStartDate()).getFullYear() == new Date(absence.getEndDate()).getFullYear() ) {
                 absences = absences.concat(AbsenceUtils.generateAbsences(user, new Date(absence.getStartDate()), new Date(absence.getEndDate()), AbsenceUtils.absenceCategoryFromString(absence.getCategory())));
                 result = await this.controlAbsencesForYear ( absence.getCompany(), absence.getUsername(),
@@ -75,12 +68,14 @@ export class AbsencesService {
             // No special processing needed so just add the absence to the list.
             absences.concat(AbsenceUtils.generateAbsences(user, new Date(absence.getStartDate()),
                     new Date(absence.getEndDate()), AbsenceUtils.absenceCategoryFromString(absence.getCategory())));
-        }
+        }*/
         if ( result ) {
-            for ( var i = 0; i < absences.length; i++ ) {
+            const createdAbsence = new this.absenceModel(absence);
+            await createdAbsence.save();
+            /*for ( var i = 0; i < absences.length; i++ ) {
                 const createdAbsence = new this.absenceModel(absences[i]);
                 await createdAbsence.save();
-            }
+            }*/
         }
         return result;
     }

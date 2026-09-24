@@ -14,9 +14,9 @@ export class AbsenceUtils {
      * @param endDate a <code>LocalDate</code> with the already converted end date.
      * @return a <code>Absence</code> object.
      */
-    static convertAbsenceRequestToAbsence(absenceRequest: AbsenceRequest, startDate: Date, endDate: Date ): Absence{
+    static convertAbsenceRequestToAbsence(absenceRequest: AbsenceRequest ): Absence{
         return new Absence(absenceRequest.getCategory(), absenceRequest.getCompany(), 
-            absenceRequest.getUsername(), startDate.getTime(), endDate.getTime());
+            absenceRequest.getUsername(), AbsenceUtils.formatDate(absenceRequest.getStartDate()), AbsenceUtils.formatDate(absenceRequest.getEndDate()));
     }
 
     static absenceCategoryFromString(category: string) {
@@ -52,7 +52,7 @@ export class AbsenceUtils {
         //Now convert each absence to an absence response.
         absences.forEach((absence) => {
             let absenceResponse = new AbsenceResponse(absence["company"], absence["username"], 
-                    new Date(absence["startDate"]).toDateString(), new Date(absence["endDate"]).toDateString(), absence["category"]);
+                    AbsenceUtils.returnDateFormat(absence["startDate"]), AbsenceUtils.returnDateFormat(absence["endDate"]), absence["category"]);
             if ( absence["category"] != null ) {
                 absenceResponse.setCategory(absence["category"]);
             }
@@ -103,7 +103,7 @@ export class AbsenceUtils {
      * @param category a <code>AbsenceCategory</code> enum with the category for the desired absence.
      * @return a <code>List</code> of <code>Absence</code> objects.
      */
-    static generateAbsences (user: User, startDate: Date, endDate: Date, category: AbsenceCategory | null ): Absence[] {
+    /*static generateAbsences (user: User, startDate: Date, endDate: Date, category: AbsenceCategory | null ): Absence[] {
         let workingDays: string[] = user["workingDays"];
         let absences: Absence[] = [];
         let currentDate: Date = startDate;
@@ -125,7 +125,7 @@ export class AbsenceUtils {
             currentDate.setDate(currentDate.getDate() + 1);
         }
         return absences;
-    }
+    }*/
 
     static getDayOfWeekNumber(day: string) {
         switch ( day ) {
@@ -153,7 +153,7 @@ export class AbsenceUtils {
      * @param endDate a <code>LocalDate</code> object with the end date of the desired absence.
      * @return a <code>List</code> of <code>Absence</code> objects.
      */
-    static generateDaysInLieu(user: User, startDate: Date, endDate: Date): Absence[] {
+    /*static generateDaysInLieu(user: User, startDate: Date, endDate: Date): Absence[] {
         let workingDays = user.getWorkingDays();
         let absences: Absence[] = [];
         let actualDate = startDate;
@@ -171,7 +171,7 @@ export class AbsenceUtils {
             actualDate.setDate(actualDate.getDate() + 1);
         }
         return absences;
-    }
+    }*/
 
     static convertToDate(date: string): Date {
         // First split the date.
@@ -181,6 +181,16 @@ export class AbsenceUtils {
 
     static convertFromDate(date: Date): string {
         return date.getDate() + "-" + date.getMonth() + "-" + date.getFullYear();
+    }
+
+    static formatDate(date: string): string {
+      return date.indexOf("-") != -1 ? date.replaceAll("-", ".") : date;
+    }
+    
+    static returnDateFormat(date: string): string {
+        let dateParts = date.split(".");
+        let revisedDate = dateParts[1] + "." + dateParts[0] + "." + dateParts[2];
+        return new Date(revisedDate).toDateString();
     }
 
 }
