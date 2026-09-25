@@ -75,7 +75,8 @@ export class AbsencesController {
             res.status(status).send();
         }
         //Prepare response object.
-        var absencesResponse: AbsencesResponse = this.prepareAbsencesResponse();
+        //var absencesResponse: AbsencesResponse = this.prepareAbsencesResponse();
+        var absencesResponse: AbsencesResponse = new AbsencesResponse();
         //Check if only count parameter was set to true.
         if ( onlyCount === "true" ) {
             //Convert category which is required for count.
@@ -193,11 +194,11 @@ export class AbsencesController {
      * Private helper method to prepare AbsencesResponse.
      * @return a <code>AbsencesResponse</code> object containing the basic statistics map to.
      */
-    private prepareAbsencesResponse ( ) : AbsencesResponse {
+    /*private prepareAbsencesResponse ( ) : AbsencesResponse {
         let statisticsMap: Map<string, number> = new Map<string, number>();
         for ( var absenceCategory in AbsenceCategory ) {
           statisticsMap.set(absenceCategory.toString(), 0);
         }
-        return new AbsencesResponse(statisticsMap);
-    }
+        return new AbsencesResponse(tatisticsMsap);
+    }*/
 }

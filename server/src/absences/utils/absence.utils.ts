@@ -74,8 +74,8 @@ export class AbsenceUtils {
         absenceResponseList.forEach((absenceResponse) => {
             if ( absenceResponse.getStartDate() != null && absenceResponse.getEndDate() != null
                 && absenceResponse.getCategory() != null ) {
-                absencesResponse.addToStatisticsMap(absenceResponse.getCategory(),
-                (new Date(absenceResponse.getStartDate()).getDate() - new Date (absenceResponse.getEndDate()).getDate()) + 1);
+                    var daysDiff = Math.abs(new Date(absenceResponse.getEndDate()).getTime() - new Date (absenceResponse.getStartDate()).getTime())/86400000 + 1;
+                 absencesResponse.addToStatisticsMap(absenceResponse.getCategory(), daysDiff);
             }
         })
         //Return absences response.
