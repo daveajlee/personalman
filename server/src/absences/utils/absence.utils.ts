@@ -179,6 +179,12 @@ export class AbsenceUtils {
         return new Date(parseInt(dateSplit[2]), parseInt(dateSplit[1])-1, parseInt(dateSplit[0]));
     }
 
+    static convertToDatePoint(date: string): Date {
+        // First split the date.
+        let dateSplit = date.split(".");
+        return new Date(parseInt(dateSplit[2]), parseInt(dateSplit[1])-1, parseInt(dateSplit[0]));
+    }
+
     static convertFromDate(date: Date): string {
         return date.getDate() + "-" + date.getMonth() + "-" + date.getFullYear();
     }

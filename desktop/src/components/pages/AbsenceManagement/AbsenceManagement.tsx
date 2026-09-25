@@ -142,6 +142,8 @@ function AbsenceManagement({docMode}: AbsenceManagementProps): React.JSX.Element
             alert(t('absenceManagementAddAbsenceSuccess'));
             setShowAddModal(false);
             window.location.reload();
+        } else if ( response.status === 500 ) {
+            alert(t('absenceManagementAddAbsenceFail'));
         }
     }
 

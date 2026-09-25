@@ -22,6 +22,14 @@ export class AbsencesService {
         let result: boolean = true;
         //Get the employee information.
         let user: any = await this.userService.findByCompanyAndUserName(absence.getCompany(), absence.getUsername());
+        if ( absence.getCategory() === "Holiday" && user != null ) {
+            // Check that the user is not attempting to take more than their allocated annual leave.
+            // Calculate total days of annual leave - if higher than total annual leave then reject.
+            var daysDiff = Math.abs(AbsenceUtils.convertToDatePoint(absence.getEndDate()).getTime() - AbsenceUtils.convertToDatePoint(absence.getStartDate()).getTime())/86400000 + 1;
+            if ( daysDiff > user["leaveEntitlementPerYear"] ) {
+                result = false;
+            }
+        }
         /*let absences: Absence[] = [];
         //Special processing for particular types of categories.
         if ( absence.getCategory() === "Holiday" && user != null ) {
