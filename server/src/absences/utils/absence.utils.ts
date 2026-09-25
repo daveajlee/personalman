@@ -14,9 +14,9 @@ export class AbsenceUtils {
      * @param endDate a <code>LocalDate</code> with the already converted end date.
      * @return a <code>Absence</code> object.
      */
-    static convertAbsenceRequestToAbsence(absenceRequest: AbsenceRequest, startDate: Date, endDate: Date ): Absence{
+    static convertAbsenceRequestToAbsence(absenceRequest: AbsenceRequest ): Absence{
         return new Absence(absenceRequest.getCategory(), absenceRequest.getCompany(), 
-            absenceRequest.getUsername(), startDate.toDateString(), endDate.toDateString());
+            absenceRequest.getUsername(), AbsenceUtils.formatDate(absenceRequest.getStartDate()), AbsenceUtils.formatDate(absenceRequest.getEndDate()));
     }
 
     static absenceCategoryFromString(category: string) {
@@ -48,10 +48,11 @@ export class AbsenceUtils {
     static convertAbsencesToAbsenceResponses ( absences: Absence[] ): AbsenceResponse[] {
         //Make a list to return.
         let absenceResponses: AbsenceResponse[] = [];
+
         //Now convert each absence to an absence response.
         absences.forEach((absence) => {
-            let absenceResponse = new AbsenceResponse("", absence["company"], absence["username"], 
-                    absence["startDate"], absence["endDate"]);
+            let absenceResponse = new AbsenceResponse(absence["company"], absence["username"], 
+                    AbsenceUtils.returnDateFormat(absence["startDate"]), AbsenceUtils.returnDateFormat(absence["endDate"]), absence["category"]);
             if ( absence["category"] != null ) {
                 absenceResponse.setCategory(absence["category"]);
             }
@@ -73,8 +74,8 @@ export class AbsenceUtils {
         absenceResponseList.forEach((absenceResponse) => {
             if ( absenceResponse.getStartDate() != null && absenceResponse.getEndDate() != null
                 && absenceResponse.getCategory() != null ) {
-                absencesResponse.addToStatisticsMap(absenceResponse.getCategory(),
-                (new Date(absenceResponse.getStartDate()).getDate() - new Date (absenceResponse.getEndDate()).getDate()) + 1);
+                    var daysDiff = Math.abs(new Date(absenceResponse.getEndDate()).getTime() - new Date (absenceResponse.getStartDate()).getTime())/86400000 + 1;
+                 absencesResponse.addToStatisticsMap(absenceResponse.getCategory(), daysDiff);
             }
         })
         //Return absences response.
@@ -102,7 +103,7 @@ export class AbsenceUtils {
      * @param category a <code>AbsenceCategory</code> enum with the category for the desired absence.
      * @return a <code>List</code> of <code>Absence</code> objects.
      */
-    static generateAbsences (user: User, startDate: Date, endDate: Date, category: AbsenceCategory | null ): Absence[] {
+    /*static generateAbsences (user: User, startDate: Date, endDate: Date, category: AbsenceCategory | null ): Absence[] {
         let workingDays: string[] = user["workingDays"];
         let absences: Absence[] = [];
         let currentDate: Date = startDate;
@@ -117,14 +118,14 @@ export class AbsenceUtils {
             })
             //If it is not a free day then add the absence.
             if (!isFreeDay) {
-                absences.push(new Absence(category?.valueOf() != undefined ? category?.valueOf() : "", user["company"], user["userName"], currentDate.toDateString(), currentDate.toDateString()));
+                absences.push(new Absence(category?.valueOf() != undefined ? category?.valueOf() : "", user["company"], user["userName"], currentDate.getTime(), currentDate.getTime()));
             }
 
             //Regardless we need to increase currentDate.
             currentDate.setDate(currentDate.getDate() + 1);
         }
         return absences;
-    }
+    }*/
 
     static getDayOfWeekNumber(day: string) {
         switch ( day ) {
@@ -152,7 +153,7 @@ export class AbsenceUtils {
      * @param endDate a <code>LocalDate</code> object with the end date of the desired absence.
      * @return a <code>List</code> of <code>Absence</code> objects.
      */
-    static generateDaysInLieu(user: User, startDate: Date, endDate: Date): Absence[] {
+    /*static generateDaysInLieu(user: User, startDate: Date, endDate: Date): Absence[] {
         let workingDays = user.getWorkingDays();
         let absences: Absence[] = [];
         let actualDate = startDate;
@@ -165,11 +166,37 @@ export class AbsenceUtils {
                 }
             })
             if ( isFreeDay ) {
-                absences.push(new Absence(AbsenceCategory.DAY_IN_LIEU_REQUEST, user.getCompany(), user.getUsername(), actualDate.toDateString(), actualDate.toDateString()));
+                absences.push(new Absence(AbsenceCategory.DAY_IN_LIEU_REQUEST, user.getCompany(), user.getUsername(), actualDate.getTime(), actualDate.getTime()));
             }
             actualDate.setDate(actualDate.getDate() + 1);
         }
         return absences;
+    }*/
+
+    static convertToDate(date: string): Date {
+        // First split the date.
+        let dateSplit = date.split("-");
+        return new Date(parseInt(dateSplit[2]), parseInt(dateSplit[1])-1, parseInt(dateSplit[0]));
+    }
+
+    static convertToDatePoint(date: string): Date {
+        // First split the date.
+        let dateSplit = date.split(".");
+        return new Date(parseInt(dateSplit[2]), parseInt(dateSplit[1])-1, parseInt(dateSplit[0]));
+    }
+
+    static convertFromDate(date: Date): string {
+        return date.getDate() + "-" + date.getMonth() + "-" + date.getFullYear();
+    }
+
+    static formatDate(date: string): string {
+      return date.indexOf("-") != -1 ? date.replaceAll("-", ".") : date;
+    }
+    
+    static returnDateFormat(date: string): string {
+        let dateParts = date.split(".");
+        let revisedDate = dateParts[1] + "." + dateParts[0] + "." + dateParts[2];
+        return new Date(revisedDate).toDateString();
     }
 
 }

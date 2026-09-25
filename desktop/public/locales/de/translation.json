@@ -58,6 +58,7 @@
   "absenceManagementReasonModal": "Grund",
   "cancel": "Abbrechen",
   "absenceManagementAddAbsenceSuccess": "Abwesenheit wurde erfolgreich hinzugefügt!",
+  "absenceManagementAddAbsenceFail": "Abwesenheit kann nicht hinzugefügt werden!",
   "statisticsModalTitle": "Statistiken",
   "statisticsModalDays": "Tage",
   "statisticsModalRemaining": "Übrig",

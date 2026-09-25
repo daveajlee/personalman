@@ -89,28 +89,14 @@ export class UserController {
             res.status(HttpStatus.BAD_REQUEST).send();
         }
         // If the leave entitlement is 0 then set it to company default.
-        if ( userRequest.getLeaveEntitlementPerYear() <= 0 ) {
+        if ( !userRequest.getLeaveEntitlementPerYear() || userRequest.getLeaveEntitlementPerYear() <= 0 ) {
             let company: Company = await this.companyService.getCompany(userRequest.getCompany());
-            userRequest.setLeaveEntitlementPerYear(company.getDefaultAnnualLeaveInDays());
-        }
-        // Convert string to date.
-        var startDate: Date = this.convertToDate(userRequest.getStartDate());
-        var dateOfBirth: Date = this.convertToDate(userRequest.getDateOfBirth());
-        // Check dates are not null.
-        if ( startDate == null || dateOfBirth == null ) {
-            res.status(HttpStatus.BAD_REQUEST).send();
+            userRequest.setLeaveEntitlementPerYear(company["defaultAnnualLeaveInDays"]);
         }
         //Now convert to user object.
-        var user: User = UserUtils.convertUserRequestToUser(userRequest, startDate, dateOfBirth);
+        var user: User = UserUtils.convertUserRequestToUser(userRequest);
         //Return 201 if saved successfully.
         this.userService.save(user) ? res.status(HttpStatus.CREATED).send() : res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
-  }
-
-  // Helper method to convert dates.
-  convertToDate(date: string): Date {
-    // First split the date.
-    let dateSplit = date.split("-");
-    return new Date(parseInt(dateSplit[2]), parseInt(dateSplit[1])-1, parseInt(dateSplit[0]));
   }
 
   @Delete('/')
@@ -275,7 +261,7 @@ export class UserController {
             res.status(HttpStatus.NO_CONTENT).send();
         } else {
             //Now add training course and return 200 or 500 depending on DB success.
-            this.userService.addUserHistoryEntry(user, this.convertToDate(addHistoryRequest.getDate()),
+            this.userService.addUserHistoryEntry(user, UserUtils.convertToDate(addHistoryRequest.getDate()),
                 addHistoryRequest.getReason(), addHistoryRequest.getComment()) ?
                 res.status(HttpStatus.OK).send() : res.status(HttpStatus.INTERNAL_SERVER_ERROR).send();
         }
@@ -298,7 +284,7 @@ export class UserController {
                 res.status(HttpStatus.NO_CONTENT).send();
             } else {
                 //Now deactivate the user based on the username and return the result.
-                res.status(HttpStatus.OK).json(new DeactivateUserResponse(await this.userService.deactivate(user, this.convertToDate(deactivateUserRequest.getLeavingDate()),
+                res.status(HttpStatus.OK).json(new DeactivateUserResponse(await this.userService.deactivate(user, UserUtils.convertToDate(deactivateUserRequest.getLeavingDate()),
                         deactivateUserRequest.isResigned(), deactivateUserRequest.getReason())));
             }
     }  
@@ -321,7 +307,7 @@ export class UserController {
             res.status(HttpStatus.BAD_REQUEST).send();
         } else {
             //Now retrieve the user based on the information provided.
-            var user: any = await this.userService.findUserByDateOfBirthAndNameAndCompany(this.convertToDate(dateOfBirth), name.split(" ")[0], name.split(" ")[1], company);
+            var user: any = await this.userService.findUserByDateOfBirthAndNameAndCompany(UserUtils.convertToDate(dateOfBirth), name.split(" ")[0], name.split(" ")[1], company);
             //If user is null then return 204.
             if ( user == null ) {
                 res.status(HttpStatus.NO_CONTENT).send();

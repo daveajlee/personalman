@@ -254,10 +254,10 @@ function AddUserForm ({companyName, handleAddUserClose}: AddUserFormProps): Reac
                     password: password,
                     company: company,
                     workingDays: workingDays.join(","),
-                position: position,
-                startDate: startDateSplit[2] + '-' + startDateSplit[1] + '-' + startDateSplit[0],
-                role: role,
-                dateOfBirth: dateOfBirthSplit[2] + '-' + dateOfBirthSplit[1] + '-' + dateOfBirthSplit[0]
+                    position: position,
+                    startDate: startDateSplit[2] + '-' + startDateSplit[1] + '-' + startDateSplit[0],
+                    role: role,
+                    dateOfBirth: dateOfBirthSplit[2] + '-' + dateOfBirthSplit[1] + '-' + dateOfBirthSplit[0]
             })});
             if ( response.status === 201 ) {
                 if ( !companyName || companyName === '' ) {

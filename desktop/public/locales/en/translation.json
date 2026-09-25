@@ -58,7 +58,7 @@
   "absenceManagementReasonModal": "Reason",
   "cancel": "Cancel",
   "absenceManagementAddAbsenceSuccess": "Absence was added successfully!",
-  "absenceManagementAddAbsenceFail": "Abwesenheit kann nicht hinzugefügt werden, da das Enddatum vor dem Startdatum liegt!",
+  "absenceManagementAddAbsenceFail": "Absence could not be added!",
   "statisticsModalTitle": "Statistics",
   "statisticsModalDays": "days",
   "statisticsModalRemaining": "Remaining",

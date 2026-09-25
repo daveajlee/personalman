@@ -1,5 +1,7 @@
 import {ApiProperty} from "@nestjs/swagger";
 import {AbsenceResponse} from "./absence.response";
+import { AbsenceCategoryCount } from "../models/absencecategorycount";
+import { AbsenceUtils } from "../utils/absence.utils";
 
 export class AbsencesResponse {
 
@@ -13,10 +15,10 @@ export class AbsencesResponse {
 
     //a map containing the absence categories as keys and the number of these categories in the response as values.
     @ApiProperty()
-    private statisticsMap: Map<string, number>;
+    private statisticsMap: AbsenceCategoryCount[];
 
-    constructor(statisticsMap: Map<string, number>) {
-        this.statisticsMap = statisticsMap;
+    constructor() {
+        this.statisticsMap = [];
     }
 
     setCount(count: number): void {
@@ -32,7 +34,9 @@ export class AbsencesResponse {
     }
 
     addToStatisticsMap(category: string, days: number) {
-        this.statisticsMap.set(category, days);
+        if ( AbsenceUtils.absenceCategoryFromString(category) ) {
+            this.statisticsMap.push(new AbsenceCategoryCount(AbsenceUtils.absenceCategoryFromString(category)!, days));
+        }
     }
 
 }

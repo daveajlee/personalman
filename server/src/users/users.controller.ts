@@ -86,7 +86,7 @@ export class UsersController {
                     if ( (this.userService.getHoursForDate(user, startDate) != null )) {
                         sumToBePaid += (this.userService.getHoursForDate(user, startDate) * user["hourlyWage"]);
                     }
-                    var startDateObj = this.convertToDate(startDate);
+                    var startDateObj = UserUtils.convertToDate(startDate);
                     startDateObj.setDate(startDateObj.getDate() + 1);
                     startDate = this.addZeroPrefix(startDateObj.getDate()) + "-" + this.addZeroPrefix((startDateObj.getMonth()+1)) + "-" + startDateObj.getFullYear();
                 }
@@ -98,13 +98,6 @@ export class UsersController {
         let payUsersResponse = new PayUsersResponse(employeePayTable, totalSum);
         //Return response.
         res.status(HttpStatus.OK).json(payUsersResponse);
-  }
-
-  // Helper method to convert dates.
-  convertToDate(date: string): Date {
-    // First split the date.
-    let dateSplit = date.split("-");
-    return new Date(parseInt(dateSplit[2]), parseInt(dateSplit[1])-1, parseInt(dateSplit[0]));
   }
 
   // Helper method to add zero prefix if required.

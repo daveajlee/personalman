@@ -1,5 +1,5 @@
 import {Button, Modal} from "react-bootstrap";
-import {useEffect, useState} from "react";
+import {useLayoutEffect, useState} from "react";
 import PropTypes from "prop-types";
 import {useTranslation} from "react-i18next";
 import * as React from "react";
@@ -13,6 +13,11 @@ type StatisticsModalProps = {
     showStatisticsModal: boolean;
 }
 
+type AbsenceCategoryCount = {
+    absenceCategory: string;
+    count: number;
+}
+
 /**
  * This is the modal window to show the view statistics for a particular user. The modal is used for admin users who want
  * to view the statistics of a particular user.
@@ -23,7 +28,7 @@ type StatisticsModalProps = {
  */
 function StatisticsModal ({setShowStatisticsModal, year, company, username, token, showStatisticsModal}: StatisticsModalProps): React.JSX.Element {
 
-    const [statisticsMap, setStatisticsMap] = useState<{[key: string]: string}>({});
+    const [statisticsMap, setStatisticsMap] = useState([]);
     const [leaveEntitlement, setLeaveEntitlement] = useState(0);
 
     const {t} = useTranslation();
@@ -36,17 +41,20 @@ function StatisticsModal ({setShowStatisticsModal, year, company, username, toke
     /**
      * Load the statistics from the REST API based on the supplied information.
      */
-    useEffect(() => {
+    useLayoutEffect(() => {
         // Load the statistics for the current year.
         let startYearDate = '01-01-' + year;
         let endYearDate = '31-12-' + year;
         if ( username === '') {
             username = token.split("-")[0];
         }
+        console.log('Fetch Statistics!');
         fetch(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startYearDate + '&endDate=' + endYearDate + '&onlyCount=false&token=' + token)
             .then(res => res.json())
             .then(data => {
+                console.log(data);
                 const result = data;
+                console.log(result['statisticsMap']);
                 setStatisticsMap(result['statisticsMap']);
             }).catch(error => {
                 console.error(error);
@@ -70,9 +78,16 @@ function StatisticsModal ({setShowStatisticsModal, year, company, username, toke
             <Modal.Header closeButton>
                 <Modal.Title>{t('statisticsModalTitle')} - {username} - {year}</Modal.Title>
             </Modal.Header>
-            <Modal.Body>{t('Illness')}: {statisticsMap['Illness']} {t('statisticsModalDays')} <br/> {t('Holiday')}: {statisticsMap['Holiday']} {t('statisticsModalDays')} ({t('statisticsModalRemaining')}: {leaveEntitlement} {t('statisticsModalDays')}) <br/>
-                {t('Trip')}: {statisticsMap['Trip']} {t('statisticsModalDays')} <br/> {t('Conference')}: {statisticsMap['Conference']} {t('statisticsModalDays')} <br/> {t('DayinLieu')}: {statisticsMap['Day in Lieu']} {t('statisticsModalDays')} ({t('statisticsModalRemaining')}: {statisticsMap['Day in Lieu Request']} {t('statisticsModalDays')}) <br/>
-                {t('FederalHoliday')}: {statisticsMap['Federal Holiday']} {t('statisticsModalDays')}</Modal.Body>
+            <Modal.Body>
+                {statisticsMap.map((d: AbsenceCategoryCount) => (
+                    <div>
+                        {t(d.absenceCategory) + ": " + d.count + " " + t('statisticsModalDays')}
+                    </div>
+                ))} 
+                <div>
+                    ({t('statisticsModalRemaining')}: {leaveEntitlement} {t('statisticsModalDays')})
+                </div>
+                </Modal.Body>
             <Modal.Footer>
                 <Button variant="primary" onClick={handleStatisticsClose}>
                     Close
