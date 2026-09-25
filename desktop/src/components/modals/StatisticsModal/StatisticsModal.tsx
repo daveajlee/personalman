@@ -1,5 +1,5 @@
 import {Button, Modal} from "react-bootstrap";
-import {useEffect, useLayoutEffect, useState} from "react";
+import {useLayoutEffect, useState} from "react";
 import PropTypes from "prop-types";
 import {useTranslation} from "react-i18next";
 import * as React from "react";
@@ -83,7 +83,10 @@ function StatisticsModal ({setShowStatisticsModal, year, company, username, toke
                     <div>
                         {t(d.absenceCategory) + ": " + d.count + " " + t('statisticsModalDays')}
                     </div>
-                ))}
+                ))} 
+                <div>
+                    ({t('statisticsModalRemaining')}: {leaveEntitlement} {t('statisticsModalDays')})
+                </div>
                 </Modal.Body>
             <Modal.Footer>
                 <Button variant="primary" onClick={handleStatisticsClose}>
