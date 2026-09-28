@@ -13,16 +13,8 @@ export class ResetUserRequest {
     @ApiProperty()
     private password: string;
 
-    // The token of the user to verify that they are logged in
-    @ApiProperty()
-    private token: string;
-
     getCompany(): string {
         return this.company;
-    }
-
-    getToken(): string {
-        return this.token;
     }
 
     getUsername(): string {

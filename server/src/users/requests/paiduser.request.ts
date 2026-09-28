@@ -18,16 +18,11 @@ export class PaidUserRequest {
     @ApiProperty()
     endDate: string;
 
-    // The token of the user to verify that they are logged in
-    @ApiProperty()
-    token: string;
-
-    constructor(company: string, employeePayTable: [], startDate: string, endDate: string, token: string) {
+    constructor(company: string, employeePayTable: [], startDate: string, endDate: string) {
         this.company = company;
         this.employeePayTable = employeePayTable;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.token = token;
     }
 
 }

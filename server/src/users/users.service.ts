@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { User } from './models/user.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -11,15 +10,8 @@ import { UserUtils } from './utils/user.utils';
 @Injectable()
 export class UsersService {
 
-    tokenLength: number | undefined;
-    timeoutInMinutes: number | undefined;
-
-    constructor(private configService: ConfigService, @InjectModel(User.name) private userModel: Model<User>) {
-        this.tokenLength = this.configService.get<number>('TOKEN_LENGTH');
-        this.timeoutInMinutes = this.configService.get<number>('LOGOUT_MINUTES');
+    constructor( @InjectModel(User.name) private userModel: Model<User>) {
     }
-
-    private loggedInTokens: Map<string, Date> = new Map<string, Date>();
 
     /**
      * Save the specified user object in the database.
@@ -225,44 +217,6 @@ export class UsersService {
             return "0" + checkNumber;
         }
         return "" + checkNumber;
-    }
-
-    /**
-     * Generate a token for this user and add it to the list of logged in tokens. The token should expire after the specified amount of minutes in the config.
-     * Return the token so that the client can also have access to it.
-     * @param userName a <code>String</code> with the user name of the logged in user.
-     * @return a <code>String</code> containing the token which is valid for a limited amount of time.
-     */
-    public generateAuthToken ( userName: string ): string {
-        var token: string = userName + "-" + this.createRandomString(this.tokenLength!);
-        this.loggedInTokens.set(token, new Date(Date.now() + this.timeoutInMinutes! * 60000));
-        return token;
-    }
-
-    private createRandomString(length: number): string {
-        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        let result = "";
-        for (let i = 0; i < length; i++) {
-            result += chars.charAt(Math.floor(Math.random() * chars.length));
-        }     
-        return result;
-    }
-
-    /**
-     * Check if this is a valid token which is defined as a token that exists in the token storage and has not yet expired.
-     * @param token a <code>String</code> containing the token to check.
-     * @return a <code>boolean</code> which is true iff the token is valid.
-     */
-    public checkAuthToken ( token: string ): boolean {
-        return this.loggedInTokens.has(token) && this.loggedInTokens.get(token)!.getTime() >= new Date().getTime();
-    }
-
-    /**
-     * Remove the supplied token from the list of logged in tokens.
-     * @param token a <code>String</code> containing the token to remove from the list of logged in tokens.
-     */
-    public removeAuthToken ( token: string ): void {
-        this.loggedInTokens.delete(token);
     }
 
     /**

@@ -10,10 +10,6 @@ export class ChangePasswordRequest {
     @ApiProperty()
     private username: string;
 
-    // The token of the user to verify that they are logged in
-    @ApiProperty()
-    private token: string;
-
     // current password for this user
     @ApiProperty()
     private currentPassword: string;
@@ -28,10 +24,6 @@ export class ChangePasswordRequest {
 
     getUsername(): string {
         return this.username;
-    }
-
-    getToken(): string {
-        return this.token;
     }
 
     getCurrentPassword(): string {

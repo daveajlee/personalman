@@ -10,10 +10,6 @@ export class UpdateSalaryRequest {
     @ApiProperty()
     private username: string;
 
-    //token of the user making the change
-    @ApiProperty()
-    private token: string;
-
     //hourly wage that the person should get
     @ApiProperty()
     private hourlyWage: number;
@@ -28,10 +24,6 @@ export class UpdateSalaryRequest {
 
     getUsername(): string {
         return this.username;
-    }
-
-    getToken(): string {
-        return this.token;
     }
 
     getHourlyWage(): number {

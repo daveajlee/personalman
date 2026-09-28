@@ -10,10 +10,6 @@ export class AddTimesheetHoursRequest {
     @ApiProperty()
     private username: string;
 
-    //token of the user making the change
-    @ApiProperty()
-    private token: string;
-
     //the date to add the hours to in format dd-MM-yyyy.
     @ApiProperty()
     private date: string;
@@ -28,10 +24,6 @@ export class AddTimesheetHoursRequest {
 
     getUsername(): string {
         return this.username;
-    }
-
-    getToken(): string {
-        return this.token;
     }
 
     getHours(): number {
