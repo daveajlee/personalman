@@ -10,10 +10,6 @@ export class AddHistoryRequest {
     @ApiProperty()
     private username: string;
 
-    //token of the user making the change
-    @ApiProperty()
-    private token: string;
-
     //date that the history entry took place in format (dd-mm-yyyy)
     @ApiProperty()
     private date: string;
@@ -46,7 +42,4 @@ export class AddHistoryRequest {
         return this.comment;
     }
 
-    getToken(): string {
-        return this.token;
-    }
 }

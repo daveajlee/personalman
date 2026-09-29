@@ -46,6 +46,11 @@ function AbsenceManagement({docMode}: AbsenceManagementProps): React.JSX.Element
     const company = ( docMode && docMode==='true') ? "" : location.state.company;
 
     /**
+     * Retrieve the username either from the supplied state or empty if we are in doc mode.
+     */
+    const username = ( docMode && docMode==='true') ? "" : location.state.username;
+
+    /**
      * Retrieve the year either from the supplied state or empty if we are in doc mode. 
      */
     const year = ( docMode && docMode==='true') ? "" :  location.state.year ? location.state.year : new Date().getFullYear();
@@ -98,7 +103,7 @@ function AbsenceManagement({docMode}: AbsenceManagementProps): React.JSX.Element
      * @returns the username
      */
     function getUsername() {
-        return token.split("-")[0];
+        return username;
     }
 
     /**
@@ -128,6 +133,7 @@ function AbsenceManagement({docMode}: AbsenceManagementProps): React.JSX.Element
         const response = await fetch(import.meta.env.VITE_SERVER_URL + '/absences/', {
             method: 'POST',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
@@ -135,8 +141,7 @@ function AbsenceManagement({docMode}: AbsenceManagementProps): React.JSX.Element
                 username: getUsername(),
                 startDate: startDateSplit[2] + '-' + startDateSplit[1] + '-' + startDateSplit[0],
                 endDate: endDateSplit[2] + '-' + endDateSplit[1] + '-' + endDateSplit[0],
-                category: reason,
-            token: token
+                category: reason
         })});
         if ( response.status === 201 ) {
             alert(t('absenceManagementAddAbsenceSuccess'));
@@ -176,7 +181,7 @@ function AbsenceManagement({docMode}: AbsenceManagementProps): React.JSX.Element
      */
     return (
         <Container fluid>
-            <Header token={token} company={company}/>
+            <Header token={token} company={company} username={username}/>
 
             <AbsenceList company={company} token={token} startDate={startDate} endDate={endDate}
             month={month}

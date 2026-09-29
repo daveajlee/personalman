@@ -94,6 +94,7 @@ function ChangePassword ({docMode}: ChangePasswordProps): React.JSX.Element {
         fetch(import.meta.env.VITE_SERVER_URL + '/user/password', {
             method: 'PATCH',
             headers: {
+                'Authorization': `Bearer ${getToken()}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
@@ -118,7 +119,7 @@ function ChangePassword ({docMode}: ChangePasswordProps): React.JSX.Element {
      * @returns the username
      */
     function getUsername() {
-        return getToken().split("-")[0];
+        return location.state.username;
     }
 
     /**
@@ -126,7 +127,7 @@ function ChangePassword ({docMode}: ChangePasswordProps): React.JSX.Element {
      */
     return (
         <Container fluid>
-            <Header token={getToken()} company={getCompany()}/>
+            <Header token={getToken()} company={getCompany()} username={getUsername()}/>
         <Container fluid className="p-3 my-5 h-custom">
         <Row className="d-flex flex-row align-items-center justify-content-center">
             <Col>

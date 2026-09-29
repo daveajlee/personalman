@@ -33,6 +33,11 @@ function AllAbsences({docMode}: AllAbsencesProps): React.JSX.Element {
     const company = ( docMode && docMode==='true') ? "" : location.state.company;
 
     /**
+     * Retrieve the username either from the supplied state or empty if we are in doc mode.
+     */
+    const username = ( docMode && docMode==='true') ? "" : location.state.username;
+
+    /**
      * Retrieve the year either from the supplied state or empty if we are in doc mode.
      */
     const year = ( docMode && docMode==='true') ? "" :  location.state.year ? location.state.year : new Date().getFullYear();
@@ -48,7 +53,13 @@ function AllAbsences({docMode}: AllAbsencesProps): React.JSX.Element {
      */
     useEffect(() => {
         // Ensure that the user is actually admin, otherwise they cannot view the page.
-        fetch(import.meta.env.VITE_SERVER_URL + '/user/?company=' + company + '&username=' + token.split("-")[0] + '&token=' + token)
+        fetch(import.meta.env.VITE_SERVER_URL + '/user/?company=' + company + '&username=' + username, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
                 .then(res => res.json())
                 .then(data => {
                     const result = data;
@@ -94,7 +105,7 @@ function AllAbsences({docMode}: AllAbsencesProps): React.JSX.Element {
      */
     return (
         <Container fluid>
-            <Header token={token} company={company}/>
+            <Header token={token} company={company} username={username}/>
 
             { role==='Admin' && <AbsenceList company={company} token={token} username='' startDate={startDate} endDate={endDate}
                          month={month}

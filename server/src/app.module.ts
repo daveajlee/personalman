@@ -7,6 +7,7 @@ import { ConfigService  } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { AbsencesModule } from './absences/absences.module';
 import { CompanyModule } from './company/company.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CompanyModule } from './company/company.module';
     UsersModule,
     AbsencesModule,
     CompanyModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

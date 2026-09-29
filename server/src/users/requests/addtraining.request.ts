@@ -10,10 +10,6 @@ export class AddTrainingRequest {
     @ApiProperty()
     private username: string;
 
-    //token of the user making the change
-    @ApiProperty()
-    private token: string;
-
     //name of the training course or qualification to be added to the user's profile
     @ApiProperty()
     private trainingCourse: string;
@@ -24,10 +20,6 @@ export class AddTrainingRequest {
 
     getUsername(): string {
         return this.username;
-    }
-
-    getToken(): string {
-        return this.token;
     }
 
     getTrainingCourse(): string {

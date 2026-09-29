@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus, Inject, Param, Query, Post, Res, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Inject, Param, Query, Post, Res, UseGuards,ValidationPipe } from '@nestjs/common';
 import { ApiOperation, ApiOkResponse, ApiResponse } from '@nestjs/swagger';
 import { PaidUserRequest } from './requests/paiduser.request';
 import { PayUserResponse } from './responses/payuser.response';
@@ -10,21 +10,19 @@ import type { Response } from 'express';
 import { UsersService } from './users.service';
 import { UserHistoryReason } from './models/userhistoryreason.enum';
 import { UserUtils } from './utils/user.utils';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('users')
 export class UsersController {
 
     constructor(private readonly userService: UsersService) {}
 
+  @UseGuards(AuthGuard)
   @Post('paid')
   @ApiOperation({ summary: 'Mark users as paid for a company', description: 'Mark users as paid for a company within a specific date range.' })
   @ApiResponse({ status: 200, description: 'Successfully found user(s) and their pay'})
   @ApiResponse({ status: 204, description: 'Successful but no users found'})
   async markUsersPaid(@Body(new ValidationPipe({transform: true})) paidUserRequest: PaidUserRequest, @Res() res: Response): Promise<void> {
-    //Verify that user is logged in.
-        if ( paidUserRequest.token == null || !this.userService.checkAuthToken(paidUserRequest.token) ) {
-            res.status(HttpStatus.FORBIDDEN).send();
-        }
         //First of all, check if the compny field is empty or null, then return bad request.
         if ( paidUserRequest.company === '' ) {
             res.status(HttpStatus.BAD_REQUEST).send();
@@ -54,6 +52,7 @@ export class UsersController {
         return false;
   }
 
+  @UseGuards(AuthGuard)
   @Get('pay')
   @ApiOperation({ summary: 'Pay all users for a company', description: 'Pay all users for a company within a specific date range.' })
   @ApiOkResponse({
@@ -61,11 +60,7 @@ export class UsersController {
     type: PayUsersResponse,
   })
   @ApiResponse({ status: 204, description: 'Successful but no users found'})
-  async payUsers(@Query('company') company: string, @Query('token') token: string, @Query('startDate') startDate: string, @Query('endDate') endDate: string, @Res() res: Response): Promise<void> {
-    //Verify that user is logged in.
-        if ( token == null || !this.userService.checkAuthToken(token) ) {
-            res.status(HttpStatus.FORBIDDEN).send();
-        }
+  async payUsers(@Query('company') company: string, @Query('startDate') startDate: string, @Query('endDate') endDate: string, @Res() res: Response): Promise<void> {
         //First of all, check if the compny field is empty or null, then return bad request.
         if ( company === '' ) {
             res.sendStatus(HttpStatus.BAD_REQUEST).send();
@@ -108,6 +103,7 @@ export class UsersController {
         return "" + checkNumber;
     }
 
+  @UseGuards(AuthGuard)
   @Get('/')
   @ApiOperation({ summary: 'Find all users for a company', description:'Find all users for a company to the system.' })
   @ApiOkResponse({
@@ -115,11 +111,7 @@ export class UsersController {
     type: UsersResponse,
   })
   @ApiResponse({ status: 204, description: 'Successful but no users found'})
-  async findAllUsers(@Query('company') company: string, @Query('token') token: string, @Res() res: Response): Promise<void> {
-    //Verify that user is logged in.
-        if ( token == null || !this.userService.checkAuthToken(token) ) {
-            res.status(HttpStatus.FORBIDDEN).send();
-        }
+  async findAllUsers(@Query('company') company: string, @Res() res: Response): Promise<void> {
         //First of all, check if the compny field is empty or null, then return bad request.
         if ( company === '') {
             res.status(HttpStatus.BAD_REQUEST).send();

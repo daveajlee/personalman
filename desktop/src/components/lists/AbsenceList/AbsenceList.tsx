@@ -48,10 +48,16 @@ function AbsenceList ({startDate, endDate, username, company, token, month, year
      */
     useEffect(() => {
         if ( startDate && endDate ) {
-            const url = (username)
-                ? import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token
-                : import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' +  token;
-            fetch(url)
+            const url = (username && username != '')
+                ? import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false'
+                : import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false';
+            fetch(url,  {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                })
                 .then(res => res.json()
                 .then(data => {
                     setAbsences(data['absenceResponseList']);
@@ -67,8 +73,14 @@ function AbsenceList ({startDate, endDate, username, company, token, month, year
                 minimumIntegerDigits: 2,
                 useGrouping: false
             }) + '-' + year
-            if ( username ) {
-                fetch(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token)
+            if ( username && username != '' ) {
+                fetch(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    })
                     .then(res => res.json())
                     .then(data =>  {
                         setAbsences(data['absenceResponseList']);
@@ -77,7 +89,13 @@ function AbsenceList ({startDate, endDate, username, company, token, month, year
                         console.error(error);
                     })
             } else {
-                fetch(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false&token=' + token)
+                fetch(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&startDate=' + startDate + '&endDate=' + endDate + '&onlyCount=false', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    })
                     .then(res => res.json()
                     .then(data => {
                         setAbsences(data['absenceResponseList']);
@@ -224,8 +242,12 @@ function AbsenceList ({startDate, endDate, username, company, token, month, year
      */
     async function deleteAbsence(absence: Absence) {
         fetch(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + absence.username
-            + '&startDate=' + absence.startDate + '&endDate=' + absence.endDate + '&token=' + token, {
-                method: 'DELETE'
+            + '&startDate=' + absence.startDate + '&endDate=' + absence.endDate, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
             })
             .then(function (response) {
                 if ( response.status === 200 ) {

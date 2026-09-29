@@ -22,7 +22,6 @@ function Login(): React.JSX.Element {
      * Load the list of available companies via the REST API.
      */
     useEffect(() => {
-        console.log(import.meta.env.VITE_SERVER_URL);
         fetch(import.meta.env.VITE_SERVER_URL + `/companies/`)
             .then(res => res.json())
             .then(data => {
@@ -63,7 +62,7 @@ function Login(): React.JSX.Element {
      * display a simple alert.
      */
     function login() {
-        fetch(import.meta.env.VITE_SERVER_URL + '/user/login', {
+        fetch(import.meta.env.VITE_SERVER_URL + '/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -76,8 +75,10 @@ function Login(): React.JSX.Element {
         }).then(function (response) {
             if ( response.status === 200 ) {
                 response.json().then(function (data) {
-                    navigate("/absences", {state:{token: data.token, company: company}})
+                    navigate("/absences", {state:{token: data.access_token, company: company, username: username}})
                 });
+            } else {
+                alert('Please verify that the username, password and company are correct and try again.');
             }
         }).catch(function (error) {
             alert('Please verify that the username, password and company are correct and try again.');

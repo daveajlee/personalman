@@ -45,6 +45,11 @@ function UsersManagement({docMode}: UsersManagementProps): React.JSX.Element {
     const company = ( docMode && docMode==='true') ? "" : location.state.company;
 
     /**
+     * Retrieve the username either from the supplied state or empty if we are in doc mode.
+     */
+    const username = ( docMode && docMode==='true') ? "" : location.state.username;
+
+    /**
      * Retrieve the year either from the supplied state or empty if we are in doc mode.
      * @returns the current year as a number.
      */
@@ -61,10 +66,17 @@ function UsersManagement({docMode}: UsersManagementProps): React.JSX.Element {
      * token is valid.
      */
     useEffect(() => {
-        fetch(import.meta.env.VITE_SERVER_URL + '/users/?company=' + company + '&token=' + token)
+        fetch(import.meta.env.VITE_SERVER_URL + '/users/?company=' + company, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
             .then(res => res.json()
             .then(data => {
                 setUsers(data['userResponses']);
+                setSelectedUsername(username);
             }).catch(error => {
                 console.error(error);
         }))
@@ -76,9 +88,12 @@ function UsersManagement({docMode}: UsersManagementProps): React.JSX.Element {
      */
     function deleteUser(username: string) {
         if(window.confirm(t('usersManagementDeleteUser', { username: username }))) {
-            fetch(import.meta.env.VITE_SERVER_URL + '/user/?company=' + company + '&username=' + username +
-                '&token=' + token, {
-                    method: 'DELETE'
+            fetch(import.meta.env.VITE_SERVER_URL + '/user/?company=' + company + '&username=' + username, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
                 })
                 .then(function (response) {
                     if ( response.status === 200 ) {
@@ -119,7 +134,7 @@ function UsersManagement({docMode}: UsersManagementProps): React.JSX.Element {
      * This function shows all absences.
      */
     function allAbsences() {
-        navigate('/allAbsences', {state:{token: token, month: (new Date().getMonth()+1), year: new Date().getFullYear(), company: company }});
+        navigate('/allAbsences', {state:{token: token, month: (new Date().getMonth()+1), year: new Date().getFullYear(), company: company, username:username }});
     }
 
     /**
@@ -128,7 +143,7 @@ function UsersManagement({docMode}: UsersManagementProps): React.JSX.Element {
     // @ts-ignore
     return (
         <Container fluid>
-            <Header token={token} company={company}/>
+            <Header token={token} company={company} username={username}/>
 
             <Container fluid className="p-3 my-5 h-custom">
                 <Row className="d-flex flex-row align-items-center justify-content-center">
