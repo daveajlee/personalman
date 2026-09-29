@@ -118,7 +118,9 @@ export class AbsencesService {
     public async findAbsences ( company: string, username: string, startDate: Date,
                                         endDate: Date ): Promise<Absence[]> {
         //Call the appropriate DB method depending on whether a specified username is supplied.
-        return await this.absenceModel.find({company: company, username: username}).exec();
+        return username != "" ?
+            await this.absenceModel.find({company: company, username: username}).exec() :
+            await this.absenceModel.find({company: company}).exec();
         /*return username == null ? 
             await this.absenceModel.find({company: company, startDate: { $gte: startDate }, endDate: { $lte: endDate } }).exec() :
             await this.absenceModel.find({company: company, username: username, startDate: { $gte: startDate }, endDate: { $lte: endDate } }).exec();*/
