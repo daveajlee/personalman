@@ -45,29 +45,38 @@ function StatisticsModal ({setShowStatisticsModal, year, company, username, toke
         // Load the statistics for the current year.
         let startYearDate = '01-01-' + year;
         let endYearDate = '31-12-' + year;
-        if ( username === '') {
-            username = token.split("-")[0];
-        }
-        console.log('Fetch Statistics!');
-        fetch(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startYearDate + '&endDate=' + endYearDate + '&onlyCount=false&token=' + token)
+        fetch(import.meta.env.VITE_SERVER_URL + '/absences/?company=' + company + '&username=' + username + '&startDate=' + startYearDate + '&endDate=' + endYearDate + '&onlyCount=false', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                })
             .then(res => res.json())
             .then(data => {
-                console.log(data);
                 const result = data;
-                console.log(result['statisticsMap']);
                 setStatisticsMap(result['statisticsMap']);
             }).catch(error => {
                 console.error(error);
         })
+        console.log('Attempting to get annual leave for ' + company + " and username " + username);
         // Get the leave entitlement for this user.
-        fetch(import.meta.env.VITE_SERVER_URL  + '/user/?company=' + company + '&username=' + username + '&token=' + token)
+        if ( username ) {
+            fetch(import.meta.env.VITE_SERVER_URL  + '/user/?company=' + company + '&username=' + username, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                })
             .then(res => res.json())
             .then(data => {
                 const result = data;
                 setLeaveEntitlement(result['leaveEntitlementPerYear']);
             }).catch(error => {
                 console.error(error);
-        })
+            })
+        } 
     }, [company, token, year, username]);
 
     /**
@@ -80,7 +89,7 @@ function StatisticsModal ({setShowStatisticsModal, year, company, username, toke
             </Modal.Header>
             <Modal.Body>
                 {statisticsMap.map((d: AbsenceCategoryCount) => (
-                    <div>
+                    <div key={d.absenceCategory}>
                         {t(d.absenceCategory) + ": " + d.count + " " + t('statisticsModalDays')}
                     </div>
                 ))} 

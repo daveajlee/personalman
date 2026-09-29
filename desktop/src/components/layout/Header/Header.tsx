@@ -10,6 +10,7 @@ import * as React from "react";
 type HeaderProps = {
     company: string;
     token: string;
+    username: string;
 }
 
 /**
@@ -17,7 +18,7 @@ type HeaderProps = {
  * @param props company - the company that the user belongs to, token - the user access token for the currently logged in user.
  * @returns {JSX.Element} to be displayed to the user.
  */
-function Header({company, token}: HeaderProps): React.JSX.Element {
+function Header({company, token, username}: HeaderProps): React.JSX.Element {
 
     const [name, setName] = useState("");
     const [role, setRole] = useState("");
@@ -28,7 +29,13 @@ function Header({company, token}: HeaderProps): React.JSX.Element {
      * Load the first name, surname and role of the currently logged in user to be displayed as part of the header bar.
      */
     useEffect(() => {
-        fetch(import.meta.env.VITE_SERVER_URL + '/user/?company=' + company + '&username=' + token.split("-")[0] + '&token=' +  token)
+        fetch(import.meta.env.VITE_SERVER_URL + '/user/?company=' + company + '&username=' + username, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
             .then(res => res.json()
                 .then(data => {  
                     setName(data['firstName'] + ' ' + data['surname']);
@@ -49,10 +56,10 @@ function Header({company, token}: HeaderProps): React.JSX.Element {
                 <Navbar.Toggle aria-controls="basic-navbar-nav"/>
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link as={Link} to="/absences" state={{token:  token, company:  company}} id="absences-link">{t('headerAbsencesLink')}</Nav.Link>
-                        <Nav.Link as={Link} to="/changePassword" state={{token: token, company:  company}} id="password-link">{t('headerPasswordLink')}</Nav.Link>
+                        <Nav.Link as={Link} to="/absences" state={{token:  token, company:  company, username: username}} id="absences-link">{t('headerAbsencesLink')}</Nav.Link>
+                        <Nav.Link as={Link} to="/changePassword" state={{token: token, company:  company, username: username}} id="password-link">{t('headerPasswordLink')}</Nav.Link>
                         {role === 'Admin' &&
-                            <Nav.Link as={Link} to="/users" state={{token: token, company: company}} id="users-link">{t('headerUsersLink')}</Nav.Link>
+                            <Nav.Link as={Link} to="/users" state={{token: token, company: company, username: username}} id="users-link">{t('headerUsersLink')}</Nav.Link>
                         }
                     </Nav>
                 </Navbar.Collapse>

@@ -23,22 +23,7 @@ function Logout({docMode}: LogoutProps): React.JSX.Element {
      * Logout of the system via the REST API.
      */
     useEffect(() => {
-        fetch(import.meta.env.VITE_SERVER_URL + `/user/logout`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                token: token
-            })
-        })
-            .then(res => {
-                if ( res.status === 200 ) {
-                    navigate("/")
-                }
-            }).catch(error => {
-                console.error(error);
-        })
+        navigate("/")
     }, [token, navigate]);
 
     /**
