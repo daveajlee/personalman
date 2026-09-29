@@ -59,7 +59,6 @@ function StatisticsModal ({setShowStatisticsModal, year, company, username, toke
             }).catch(error => {
                 console.error(error);
         })
-        console.log('Attempting to get annual leave for ' + company + " and username " + username);
         // Get the leave entitlement for this user.
         if ( username ) {
             fetch(import.meta.env.VITE_SERVER_URL  + '/user/?company=' + company + '&username=' + username, {

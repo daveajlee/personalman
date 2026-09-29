@@ -98,6 +98,13 @@ export class AbsencesController {
             absencesResponse.setCount(absenceResponses.length);
             absencesResponse.setAbsenceResponseList(absenceResponses);
             absencesResponse = AbsenceUtils.calculateAbsencesResponseStatistics(absencesResponse);
+        } else {
+            // Now try and find absences without username.
+            var absenceResponses: AbsenceResponse[] = AbsenceUtils.convertAbsencesToAbsenceResponses(await this.absenceService.findAbsences(company, "", AbsenceUtils.convertToDate(startDate),
+                    AbsenceUtils.convertToDate(endDate)));
+            absencesResponse.setCount(absenceResponses.length);
+            absencesResponse.setAbsenceResponseList(absenceResponses);
+            absencesResponse = AbsenceUtils.calculateAbsencesResponseStatistics(absencesResponse);
         }
         //Return 200 and results.
         res.status(HttpStatus.OK).json(absencesResponse).send();
