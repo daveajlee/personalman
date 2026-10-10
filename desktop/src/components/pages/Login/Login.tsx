@@ -68,7 +68,6 @@ function Login(): React.JSX.Element {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                company: company,
                 username: username,
                 password: password,
             })
@@ -78,10 +77,10 @@ function Login(): React.JSX.Element {
                     navigate("/absences", {state:{token: data.access_token, company: company, username: username}})
                 });
             } else {
-                alert('Please verify that the username, password and company are correct and try again.');
+                alert('Please verify that the username and password are correct and try again.');
             }
         }).catch(function (error) {
-            alert('Please verify that the username, password and company are correct and try again.');
+            alert('Please verify that the username and password are correct and try again.');
             console.log(error);
         });
     }

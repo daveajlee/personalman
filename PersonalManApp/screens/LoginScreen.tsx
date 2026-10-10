@@ -3,7 +3,7 @@
  */
 import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Appearance, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Appearance, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 type NavigationStackParams = {
@@ -13,6 +13,7 @@ type NavigationStackParams = {
 
 export default function LoginScreen() {
 
+    const [server, setServer] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [activationCode, setActivationCode] = useState('');
@@ -22,6 +23,14 @@ export default function LoginScreen() {
     const logoImage = require('./../assets/images/logo-1024.png');
     
     const navigation = useNavigation<NavigationStackParams>();
+
+    /**
+     * Set the server that the user entered.
+     * @param {string} enteredText the text that the user entered in the server field.
+     */
+    function serverInputHandler(enteredText: string) {
+        setServer(enteredText);
+    }
 
     /**
      * Set the username that the user entered.
@@ -51,7 +60,31 @@ export default function LoginScreen() {
      * Attempt to login the user with the credentials supplied.
      */
     function loginHandler() {
-        navigation.navigate("MainMenuScreen", { username: username });
+        if ( server === '' || server.toLowerCase() === 'keine') {
+            navigation.navigate("MainMenuScreen", { username: username });
+        } else {
+            fetch('http://' + server + ':8150/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username.toLowerCase(),
+                password: password.toLowerCase(),
+            })
+        }).then(function (response) {
+            if ( response.status === 200 ) {
+                response.json().then(function (data) {
+                    navigation.navigate("MainMenuScreen", { username: username, token: data.access_token });
+                });
+            } else {
+                Alert.alert('Please verify that the username and password are correct and try again.');
+            }
+        }).catch(function (error) {
+            Alert.alert('Please verify that the username and password are correct and try again.');
+            console.log(error);
+        });
+        }
     }
 
     /**
@@ -75,6 +108,10 @@ export default function LoginScreen() {
             <Text style={[styles.headerText, colorScheme === 'dark' ? styles.darkText : styles.lightText]}>Login</Text>
           </View>
           <View style={styles.bodyContainer}>
+            <View style={styles.serverContainer}>
+                <Text style={[styles.bodyText, colorScheme === 'dark' ? styles.darkText : styles.lightText]}>Server:</Text>
+                <TextInput style={colorScheme === 'dark' ? styles.textInputDark : styles.textInputLight} placeholder='PersonalMan Server' onChangeText={serverInputHandler} value={server}/>
+            </View>
             <View style={styles.usernameContainer}>
                 <Text style={[styles.bodyText, colorScheme === 'dark' ? styles.darkText : styles.lightText]}>Username:</Text>
                 <TextInput style={colorScheme === 'dark' ? styles.textInputDark : styles.textInputLight} placeholder='Your Username' onChangeText={usernameInputHandler} value={username}/>
@@ -88,7 +125,7 @@ export default function LoginScreen() {
                     <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
             </View>
-            <View style={styles.headerContainer}>
+            {/*<View style={styles.headerContainer}>
                 <Text style={[styles.headerText, colorScheme === 'dark' ? styles.darkText : styles.lightText]}>OR Activate Account</Text>
             </View>
             <View style={styles.activationContainer}>
@@ -99,7 +136,7 @@ export default function LoginScreen() {
                 <TouchableOpacity style={styles.button} onPress={activateHandler}>
                     <Text style={styles.buttonText}>Activate / Register</Text>
                 </TouchableOpacity>
-            </View>
+            </View>*/}
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -142,9 +179,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
+    serverContainer: {
+        flexDirection: 'column',
+        width: '80%',
+    },
     usernameContainer: {
         flexDirection: 'column',
         width: '80%',
+        marginTop: 10
     },
     passwordContainer: {
         flexDirection: 'column',
