@@ -7,8 +7,8 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
   constructor(private readonly usersService: UsersService, private jwtService: JwtService) {}
 
-  async login(company: string, username: string, pass: string): Promise<any> {
-    const user: User | null = await this.usersService.findByCompanyAndUserName(company, username);
+  async login(username: string, pass: string): Promise<any> {
+    const user: User | null = await this.usersService.findByUserName(username);
     if ( user != null && user["accountStatus"]==='ACTIVE' && user["password"] == pass ) {
         // TODO: Generate a JWT and return it here
         // instead of the user object
