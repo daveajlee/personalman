@@ -2,10 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginRequest {
 
-    //The company that the user is using to login.
-    @ApiProperty()
-    private company: string;
-
     //The username who wants to login
     @ApiProperty()
     private username: string;
@@ -14,14 +10,9 @@ export class LoginRequest {
     @ApiProperty()
     private password: string;
 
-    constructor(company: string, username: string, password: string) {
-        this.company = company;
+    constructor(username: string, password: string) {
         this.username = username;
         this.password = password;
-    }
-
-    getCompany(): string {
-        return this.company;
     }
 
     getUsername(): string {

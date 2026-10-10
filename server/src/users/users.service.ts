@@ -34,6 +34,15 @@ export class UsersService {
     }
 
     /**
+     * Find a user according to their user name.
+     * @param userName a <code>String</code> with the user name.
+     * @return a <code>User</code> representing the user which has this user name. Returns null if no matching user. User name is a unique field so no chance of more than one result!
+     */
+    public async findByUserName ( userName: string ): Promise<User | null> {
+        return await this.userModel.findOne({userName});
+    }
+
+    /**
      * Find a user based on their date of birth, name and company.
      * @param dateOfBirth a <code>LocalDate</code> object containing the date of birth of the user to retrieve.
      * @param firstName a <code>String</code> containing the first name of the user to retrieve.

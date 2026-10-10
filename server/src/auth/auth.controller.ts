@@ -9,6 +9,6 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   signIn(@Body() loginRequest: LoginRequest) {
-    return this.authService.login(loginRequest["company"], loginRequest["username"], loginRequest["password"]);
+    return this.authService.login(loginRequest["username"], loginRequest["password"]);
   }
 }
