@@ -1,8 +1,9 @@
-import { Alert, Appearance, StyleSheet, Text, View } from "react-native";
+import { Alert, Appearance, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import IconTextButton from "../components/IconTextButton";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
 import IconButton from "../components/IconButton";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type MainMenuScreenProps = {
   route: any;
@@ -44,63 +45,121 @@ export default function MainMenuScreen({route}: MainMenuScreenProps) {
     }
 
     return (
-        <View style={[styles.container, colorScheme === 'dark' ? styles.darkBackground : styles.lightBackground]}>
-            <View style={styles.headerContainer}>
-                <Text style={[styles.header, colorScheme === 'dark' ? styles.darkText : styles.lightText]}>Welcome, {route.params.username}</Text>
+        <SafeAreaView style={styles.centeredView}>
+        <ScrollView contentContainerStyle={styles.container}>
+          <View style={styles.infoContainer}>
+            <View style={styles.titleContainer}>
+              <IconButton icon="calendar-outline" size={28} color="black"/>
+              <Text style={styles.leftInfoText}>Welcome, {route.params.username}</Text>
             </View>
-            <View style={styles.bodyContainer}>
-                <View style={styles.row}>
-                    <IconTextButton icon="calendar-outline" text="Absences" onPress={onAbsencePress}/>
-                    <IconTextButton icon="person-outline" text="Profile" onPress={onProfilePress}/>
+          </View>
+          
+          
+          <View style={styles.menuContainer}>
+                <View style={styles.menuButtonLeft}>
+                    <Pressable onPress={onAbsencePress}>
+                        <IconButton icon="calendar-outline" size={48} color="white" onPress={onAbsencePress}/>
+                        <Text style={styles.textStyle}>{"Absences"}</Text>
+                    </Pressable>
                 </View>
-                <View style={styles.break}></View>
-                <View style={styles.row}>
-                    <IconTextButton icon="people-outline" text="Users" onPress={onUsersPress}/>
+                <View style={styles.menuButtonRight}>
+                    <Pressable onPress={onProfilePress}>
+                        <IconButton icon="person-outline" size={48} color="white" onPress={onProfilePress}/>
+                        <Text style={styles.textStyle}>{"Profile"}</Text>
+                    </Pressable>     
                 </View>
-            </View>
-        </View>
+          </View>
+          <View style={styles.menuContainer}>
+                <View style={styles.menuButtonLeft}>
+                    <Pressable onPress={onUsersPress}>
+                        <IconButton icon="people-outline" size={48} color="white" onPress={onUsersPress}/>
+                        <Text style={styles.textStyle}>{"Users"}</Text>
+                    </Pressable>
+                </View>
+                {/*<View style={styles.menuButtonRight}>
+                    <Pressable onPress={onMessagePress}>
+                        <IconButton icon="mail-outline" size={48} color="black" onPress={onMessagePress}/>
+                        <Text style={styles.textStyle}>{"Messages"}</Text>
+                    </Pressable>
+                </View>*/}
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     );
 
 }
 
 const styles = StyleSheet.create({
-    darkBackground: {
-        backgroundColor: 'black',
-    },
-    lightBackground: {
-        backgroundColor: '#F0F0F0',
-    },
-    darkText: {
-        color: 'white'
-    },
-    lightText: {
-        color: 'black'
+    centeredView: {
+        flex: 1,
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     container: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
     },
-    headerContainer: {
-        paddingTop: 100
+    infoContainer: {
+        borderRadius: 25,
+        backgroundColor: '#f2e9e9',
+        width: '90%',
+        marginBottom: '10%',
+        borderStyle: 'solid',
+        borderWidth: 3,
+        borderColor: 'black'
     },
-    header: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center'
-    },
-    bodyContainer: {
-        flex: 4,
-        width: '100%',
-        alignItems: 'center',
-        marginTop: 30
-    },
-    row: {
+    titleContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
+        alignItems: 'flex-start',
+        gap: 8,
+        justifyContent: 'flex-start',
+        marginTop: 5,
+        marginLeft: 15,
     },
-    break: {
-        marginTop: 20
-    }
+    leftInfoText: {
+        color: 'black',
+        marginLeft: 10,
+        fontSize: 20,
+        width: '30%',
+        fontWeight: "bold"
+    },
+    rightInfoText: {
+        color: 'black',
+        marginLeft: 10,
+        fontSize: 20,
+        fontWeight: "bold",
+        textAlign: 'right',
+        width: '45%',
+    },
+    menuContainer: {
+        flexDirection: 'row',
+        marginTop: 10,
+    },
+    menuButtonLeft: {
+        flexDirection: 'column',
+        width: '45%',
+        borderRadius: 25,
+        backgroundColor: '#185f92ff',
+        padding: 10,
+        marginBottom: 10,
+        marginRight: 10,
+    },
+    menuButtonRight: {
+        flexDirection: 'column',
+        width: '45%',
+        borderRadius: 25,
+        backgroundColor: '#185f92ff',
+        padding: 10,
+        marginLeft: 10,
+        marginBottom: 10
+    },
+    textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: 20,
+        marginTop: 10
+    },
 })
