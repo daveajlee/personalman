@@ -44,6 +44,10 @@ export default function MainMenuScreen({route}: MainMenuScreenProps) {
         Alert.alert("Coming Soon!", "Not yet available!");
     }
 
+    function onChangePasswordPress() {
+        navigation.navigate("ChangePasswordScreen", { server: route.params.server, username: route.params.username, token: route.params.token });
+    }
+
     return (
         <SafeAreaView style={styles.centeredView}>
         <ScrollView contentContainerStyle={styles.container}>
@@ -76,12 +80,12 @@ export default function MainMenuScreen({route}: MainMenuScreenProps) {
                         <Text style={styles.textStyle}>{"Users"}</Text>
                     </Pressable>
                 </View>
-                {/*<View style={styles.menuButtonRight}>
-                    <Pressable onPress={onMessagePress}>
-                        <IconButton icon="mail-outline" size={48} color="black" onPress={onMessagePress}/>
-                        <Text style={styles.textStyle}>{"Messages"}</Text>
+                <View style={styles.menuButtonRight}>
+                    <Pressable onPress={onChangePasswordPress}>
+                        <IconButton icon="options-outline" size={48} color="white" onPress={onChangePasswordPress}/>
+                        <Text style={styles.textStyle}>{"Settings"}</Text>
                     </Pressable>
-                </View>*/}
+                </View>
           </View>
         </ScrollView>
       </SafeAreaView>

@@ -61,7 +61,7 @@ export default function LoginScreen() {
      */
     function loginHandler() {
         if ( server === '' || server.toLowerCase() === 'keine') {
-            navigation.navigate("MainMenuScreen", { username: username });
+            navigation.navigate("MainMenuScreen", { username: username, server: server });
         } else {
             fetch('http://' + server + ':8150/api/auth/login', {
             method: 'POST',
@@ -75,7 +75,7 @@ export default function LoginScreen() {
         }).then(function (response) {
             if ( response.status === 200 ) {
                 response.json().then(function (data) {
-                    navigation.navigate("MainMenuScreen", { username: username, token: data.access_token });
+                    navigation.navigate("MainMenuScreen", { username: username.toLowerCase(), token: data.access_token, server: server });
                 });
             } else {
                 Alert.alert('Please verify that the username and password are correct and try again.');

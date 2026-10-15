@@ -254,7 +254,7 @@ export class UsersService {
      * @return a <code>boolean</code> which is true iff the password could be changed successfully.
      */
     public async changePassword ( company: string, username: string, oldPassword: string, newPassword: string ): Promise<boolean> {
-        var user: User | null = await this.findByCompanyAndUserName(company, username);
+        var user: User | null = await this.findByUserName(username);
         if ( user != null ) {
             if ( user["password"] === oldPassword ) {
                 user["password"] = newPassword;
