@@ -98,9 +98,8 @@ function ChangePassword ({docMode}: ChangePasswordProps): React.JSX.Element {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                company: getCompany(),
+                company: "",
                 username: getUsername(),
-                token: getToken(),
                 currentPassword: currentPassword,
                 newPassword: newPassword
             })
