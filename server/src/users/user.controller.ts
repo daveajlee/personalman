@@ -92,7 +92,7 @@ export class UserController {
   @ApiResponse({ status: 204, description: 'No user found'})
   async addTraining(@Body(new ValidationPipe({transform: true})) addTrainingRequest: AddTrainingRequest, @Res() res: Response): Promise<void> {
         //retrieve the user based on the username.
-        var user: any = await this.userService.findByCompanyAndUserName(addTrainingRequest.getCompany(), addTrainingRequest.getUsername());
+        var user: any = await this.userService.findByUserName(addTrainingRequest.getUsername());
         //If user is null then return 204.
         if ( user == null ) {
             res.status(HttpStatus.NO_CONTENT).send();

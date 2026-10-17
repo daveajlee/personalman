@@ -10,6 +10,7 @@ import ChangePassword from "./components/pages/ChangePassword/ChangePassword";
 import UsersManagement from "./components/pages/UsersManagement/UsersManagement";
 import AllAbsences from "./components/pages/AllAbsences/AllAbsences";
 import Logout from "./components/pages/Logout/Logout";
+import ProfilePage from './components/pages/ProfilePage/ProfilePage';
 import * as React from "react";
 
 /**
@@ -32,6 +33,7 @@ function App(): React.JSX.Element {
           setLoading(false);
           setCompanies(data);
         }).catch(error => {
+
             console.log('No connection to API available: ', error);
     })
   }, []);
@@ -50,6 +52,7 @@ function App(): React.JSX.Element {
             <Route path='/users' element={<UsersManagement docMode="false"/>} />
             <Route path='/allAbsences' element={<AllAbsences docMode="false"/>} />
             <Route path='/logout' element={<Logout docMode="false"/>} />
+            <Route path='/profile' element={<ProfilePage docMode="false"/>} />
         </Routes>
   );
 }
