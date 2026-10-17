@@ -111,5 +111,13 @@
   "roleAdmin": "Admin",
   "addUserFormRegisterButton": "Registrieren",
   "addUserFormResetButton": "Zurücksetzen",
-  "addUserFormCancelButton": "Abbrechen"
+  "addUserFormCancelButton": "Abbrechen",
+  "headerProfileLink": "Profil",
+  "trainingCourseTitle": "Fortbildungen",
+  "addTrainingCourse": "Schulung",
+  "trainingCourseName": "Name",
+  "trainingCourseButton": "Speichern",
+  "trainingCourseReset": "Zurücksetzen",
+  "addTrainingCourseSuccess": "Fortbildung wurde erfolgreich gespeichert!",
+  "addTrainingCourseError": "Fortbildung konnte nicht gespeichert werden. Bitte versuchen Sie es später erneut."
 }

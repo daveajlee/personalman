@@ -58,6 +58,7 @@ function Header({company, token, username}: HeaderProps): React.JSX.Element {
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to="/absences" state={{token:  token, company:  company, username: username}} id="absences-link">{t('headerAbsencesLink')}</Nav.Link>
                         <Nav.Link as={Link} to="/changePassword" state={{token: token, company:  company, username: username}} id="password-link">{t('headerPasswordLink')}</Nav.Link>
+                        <Nav.Link as={Link} to="/profile" state={{token: token, company:  company, username: username}} id="profile-link">{t('headerProfileLink')}</Nav.Link>
                         {role === 'Admin' &&
                             <Nav.Link as={Link} to="/users" state={{token: token, company: company, username: username}} id="users-link">{t('headerUsersLink')}</Nav.Link>
                         }

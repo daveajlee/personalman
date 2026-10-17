@@ -111,6 +111,13 @@
   "roleAdmin": "Admin",
   "addUserFormRegisterButton": "Register",
   "addUserFormResetButton": "Reset",
-  "addUserFormCancelButton": "Cancel"
-
+  "addUserFormCancelButton": "Cancel",
+  "headerProfileLink": "Profile",
+  "trainingCourseTitle": "Training",
+  "addTrainingCourse": "Course",
+  "trainingCourseName": "Name",
+  "trainingCourseButton": "Save",
+  "trainingCourseReset": "Reset",
+  "addTrainingCourseSuccess": "Training Course was saved successfully!",
+  "addTrainingCourseError": "Training Course could not be saved. Please try again later."
 }
