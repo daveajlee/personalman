@@ -12,6 +12,7 @@ import AbsenceScreen from './screens/AbsenceScreen';
 import LoginScreen from './screens/LoginScreen';
 import MainMenuScreen from './screens/MainMenuScreen';
 import ChangePasswordScreen from './screens/ChangePasswordScreen';
+import ProfileScreen from './screens/ProfileScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { Appearance } from 'react-native';
@@ -57,6 +58,9 @@ function App() {
           }}/>
           <Stack.Screen name="ChangePasswordScreen" component={ChangePasswordScreen} options={{
           title: 'Change Password',
+          }}/>
+          <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{
+          title: 'Profile Screen',
           }}/>
         </Stack.Navigator>
       </NavigationContainer>

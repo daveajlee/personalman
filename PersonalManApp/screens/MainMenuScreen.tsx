@@ -37,7 +37,7 @@ export default function MainMenuScreen({route}: MainMenuScreenProps) {
     }
 
     function onProfilePress() {
-        Alert.alert("Coming Soon!", "Not yet available!");
+        navigation.navigate("ProfileScreen", { server: route.params.server, username: route.params.username, token: route.params.token });
     }
 
     function onUsersPress() {
