@@ -113,7 +113,7 @@ export class UserController {
   @ApiResponse({ status: 204, description: 'No user found'})
   async retrieveTimesheet(@Query('company') company: string, @Query('username') username: string, @Query('startDate') startDate: string, @Query('endDate') endDate: string, @Res() res: Response): Promise<void> {
         //Retrieve the user based on the username.
-        var user: User | null = await this.userService.findByCompanyAndUserName(company, username);
+        var user: User | null = await this.userService.findByUserName(username);
         //If user is null then return 204.
         if ( user == null ) {
             res.status(HttpStatus.NO_CONTENT).send();
@@ -134,7 +134,7 @@ export class UserController {
   @ApiResponse({ status: 204, description: 'No user found'})
   async addHours(@Body(new ValidationPipe({transform: true})) addHoursRequest: AddTimesheetHoursRequest, @Res() res: Response): Promise<void> {
         //Retrieve the user based on the username.
-        var user: User | null = await this.userService.findByCompanyAndUserName(addHoursRequest.getCompany(), addHoursRequest.getUsername());
+        var user: User | null = await this.userService.findByUserName(addHoursRequest.getUsername());
         //If user is null then return 204.
         if ( user == null ) {
             res.status(HttpStatus.NO_CONTENT).send();
