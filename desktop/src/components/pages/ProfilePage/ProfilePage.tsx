@@ -153,6 +153,16 @@ function ProfilePage ({docMode}: ProfilePageProps): React.JSX.Element {
     }
 
     /**
+     * Set the timesheet date if it is not null.
+     * @param value the date which can be null.
+     */
+    function setTimesheetDateIfNotNull(value: Date | null) {
+        if ( value != null ) {
+            setTimesheetDate(value);
+        }
+    }
+
+    /**
      * Display the relevant elements and data to the user.
      */
     return (
@@ -211,7 +221,7 @@ function ProfilePage ({docMode}: ProfilePageProps): React.JSX.Element {
                         <Form.Group as={Row} className="mb-3" controlId="formPlaintextTimesheetDate">
                             <Form.Label column sm="2">{t('timesheetDate')}:</Form.Label>
                             <Col sm="10">
-                                <DatePicker locale="de" selected={timesheetDate} onChange={(date) => setTimesheetDate(date)} />
+                                <DatePicker locale="de" selected={timesheetDate} onChange={(date: Date | null) => setTimesheetDateIfNotNull(date)} />
                             </Col>
                         </Form.Group>
 
