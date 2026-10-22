@@ -119,5 +119,11 @@
   "trainingCourseButton": "Speichern",
   "trainingCourseReset": "Zurücksetzen",
   "addTrainingCourseSuccess": "Fortbildung wurde erfolgreich gespeichert!",
-  "addTrainingCourseError": "Fortbildung konnte nicht gespeichert werden. Bitte versuchen Sie es später erneut."
+  "addTrainingCourseError": "Fortbildung konnte nicht gespeichert werden. Bitte versuchen Sie es später erneut.",
+  "timesheetTitle": "Arbeitszeitkonto",
+  "addHours": "Stunden hinzufügen",
+  "timesheetDate": "Datum",
+  "timesheetTooBigOrSmall": "Bitte geben Sie eine gültige Zahl zwischen 1 und 24 ein.",
+  "addTimesheetSuccess": "Arbeitszeit wurde erfolgreich gespeichert!",
+  "addTimeSheetError": "Arbeitszeit konnte nicht gespeichert werden. Bitte versuchen Sie es später erneut."
 }

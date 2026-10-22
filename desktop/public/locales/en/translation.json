@@ -119,5 +119,11 @@
   "trainingCourseButton": "Save",
   "trainingCourseReset": "Reset",
   "addTrainingCourseSuccess": "Training Course was saved successfully!",
-  "addTrainingCourseError": "Training Course could not be saved. Please try again later."
+  "addTrainingCourseError": "Training Course could not be saved. Please try again later.",
+  "timesheetTitle": "Timesheet",
+  "addHours": "Add Hours",
+  "timesheetDate": "Date",
+  "timesheetTooBigOrSmall": "Please enter a valid number between 1 and 24",
+  "addTimesheetSuccess": "Timesheet was saved successfully!",
+  "addTimeSheetError": "Timesheet could not be saved. Please try again later."
 }

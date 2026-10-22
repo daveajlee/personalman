@@ -5,6 +5,13 @@ import Header from "../../layout/Header/Header";
 import {useTranslation} from "react-i18next";
 import logo from './../../../assets/personalman-logo.png';
 import * as React from "react";
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
+import { registerLocale, setDefaultLocale } from  "react-datepicker";
+import { de } from 'date-fns/locale/de';
+registerLocale('de', de)
+setDefaultLocale('de');
 
 type ProfilePageProps = {
     docMode: string;
@@ -17,6 +24,8 @@ type ProfilePageProps = {
 function ProfilePage ({docMode}: ProfilePageProps): React.JSX.Element {
 
     const [trainingCourse, setTrainingCourse] = useState("");
+    const [timesheetDate, setTimesheetDate] = useState(new Date());
+    const [hours, setHours] = useState("0");
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -52,6 +61,54 @@ function ProfilePage ({docMode}: ProfilePageProps): React.JSX.Element {
      */
     function trainingCourseChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
         setTrainingCourse(event.target.value);
+    }
+
+    /**
+     * Set the timesheet entry that the user entered to the state for later.
+     * @param event the event triggered by the user.
+     */
+    function timesheetChangeHandler(event: React.ChangeEvent<HTMLInputElement>) {
+        setHours(event.target.value);
+    }
+
+    /**
+     *  Add the hours to the timesheet by sending the request to the API.
+     *  Display an alert that the hours were added successfully or error message.
+     */
+    function addHoursToTimesheet() {
+        var hoursNum = parseInt(hours);
+        if ( isNaN(hoursNum) || hoursNum < 1 || hoursNum > 24 ) {
+            alert(t('timesheetTooBigOrSmall'));
+            return;
+        }
+        fetch(import.meta.env.VITE_SERVER_URL + '/user/timesheet', {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${getToken()}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                company: "",
+                username: getUsername(),
+                date: convertDateFormat(),
+                hours: hoursNum
+            })
+        }).then(function (response) {
+            if ( response.status === 200 ) {
+                alert(t('addTimesheetSuccess'));
+                navigate("/absences", {state:{token: getToken(), company: getCompany(), username: getUsername()}})
+            }
+        }).catch(function (error) {
+            alert(t('addTimesheetError' + error));
+        });
+    }
+
+    function convertDateFormat() {
+        return addZeroPrefix(timesheetDate.getDate()) + "-" + addZeroPrefix((timesheetDate.getMonth()+1)) + "-" + timesheetDate.getFullYear();
+    }
+
+    function addZeroPrefix(num: number) {
+        return num < 10 ? "0" + num : num;
     }
 
     /**
@@ -96,6 +153,16 @@ function ProfilePage ({docMode}: ProfilePageProps): React.JSX.Element {
     }
 
     /**
+     * Set the timesheet date if it is not null.
+     * @param value the date which can be null.
+     */
+    function setTimesheetDateIfNotNull(value: Date | null) {
+        if ( value != null ) {
+            setTimesheetDate(value);
+        }
+    }
+
+    /**
      * Display the relevant elements and data to the user.
      */
     return (
@@ -133,6 +200,51 @@ function ProfilePage ({docMode}: ProfilePageProps): React.JSX.Element {
                     <Row>
                         <Col className="text-center">
                             <Button className="mb-0 px-5 me-2" size='lg' onClick={addTrainingCourse}>{t('trainingCourseButton')}</Button>
+                            <Button className="mb-0 px-5 me-2" size='lg' onClick={resetForm}>{t('trainingCourseReset')}</Button>
+                        </Col>
+                    </Row>
+                </Container>
+
+                <br/><br/>
+
+                <Container className="d-flex flex-row align-items-center justify-content-center mb-3">
+                    <Row>
+                        <Col>
+                            <h3>{t('timesheetTitle')} {getUsername()}</h3>
+                        </Col>
+                    </Row>
+                </Container>
+
+                <Container className="d-flex flex-column">
+                    <Form>
+
+                        <Form.Group as={Row} className="mb-3" controlId="formPlaintextTimesheetDate">
+                            <Form.Label column sm="2">{t('timesheetDate')}:</Form.Label>
+                            <Col sm="10">
+                                <DatePicker locale="de" selected={timesheetDate} onChange={(date: Date | null) => setTimesheetDateIfNotNull(date)} />
+                            </Col>
+                        </Form.Group>
+
+                    </Form>
+                </Container>
+
+                <Container className="d-flex flex-column">
+                    <Form>
+
+                        <Form.Group as={Row} className="mb-3" controlId="formPlaintextTimesheetHours">
+                            <Form.Label column sm="2">{t('addHours')}:</Form.Label>
+                            <Col sm="10">
+                                <Form.Control value={hours} placeholder={"0"} onChange={timesheetChangeHandler}/>
+                            </Col>
+                        </Form.Group>
+
+                    </Form>
+                </Container>
+
+                <Container className='align-items-center justify-content-center text-md-start mt-4 pt-2'>
+                    <Row>
+                        <Col className="text-center">
+                            <Button className="mb-0 px-5 me-2" size='lg' onClick={addHoursToTimesheet}>{t('trainingCourseButton')}</Button>
                             <Button className="mb-0 px-5 me-2" size='lg' onClick={resetForm}>{t('trainingCourseReset')}</Button>
                         </Col>
                     </Row>
